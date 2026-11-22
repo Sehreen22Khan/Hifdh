@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070f24">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Hifz">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon.png">
+<title>Hifz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Amiri+Quran&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070f24;--card:rgba(12,25,54,.80);--line:rgba(230,195,106,.22);--gold:#e8c66e;--gold2:#b98d2c;--em:#3cc08c;--text:#f4eedc;--mut:#a7b1c8;--red:#e8655a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{background-color:var(--bg);background-image:linear-gradient(180deg,rgba(7,15,36,.55),rgba(7,15,36,.93)),url(pattern.png);background-size:auto,320px;color:var(--text);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+main{max-width:560px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 100px)}
+.hidden{display:none!important}
+.tab{display:none;animation:fade .35s ease}.tab.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+h1.title{font:700 34px/1.1 "Cormorant Garamond",serif;color:var(--gold);margin:6px 0 4px;letter-spacing:.3px}
+h2{font:700 22px/1.2 "Cormorant Garamond",serif;color:var(--gold);margin:0 0 10px}
+.sub{color:var(--mut);font-size:14px;margin:0 0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;margin:14px 0;box-shadow:0 12px 34px rgba(0,0,0,.35);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+select,input[type=search],input[type=text]{font:inherit;color:var(--text);background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:14px;padding:11px 12px;width:100%;-webkit-appearance:none;appearance:none}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--gold) 50%),linear-gradient(135deg,var(--gold) 50%,transparent 50%);background-position:calc(100% - 18px) 52%,calc(100% - 12px) 52%;background-size:6px 6px;background-repeat:no-repeat;padding-right:30px}
+option{background:#0c1936;color:var(--text)}
+.gold{background:linear-gradient(135deg,#f6dc93,var(--gold) 45%,var(--gold2));color:#1b1405;font-weight:700;border-radius:16px;padding:14px 16px;box-shadow:0 6px 20px rgba(232,198,110,.25)}
+.soft{border:1px solid var(--line);border-radius:16px;padding:13px 14px;background:rgba(255,255,255,.04);color:var(--text)}
+.danger{border:1px solid rgba(232,101,90,.5);color:#ffb3ab;border-radius:16px;padding:13px;width:100%}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* top */
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand img{width:44px;height:44px;border-radius:12px;box-shadow:0 0 18px rgba(232,198,110,.35)}
+.hello{font:700 24px/1.1 "Cormorant Garamond",serif;color:var(--gold)}
+.date{color:var(--mut);font-size:13px}
+.streak{background:rgba(255,140,60,.12);border:1px solid rgba(255,160,80,.35);border-radius:99px;padding:6px 12px;font-size:15px;white-space:nowrap}
+.dua{text-align:center;margin:16px 0 4px;font:400 24px/1.6 "Amiri",serif;color:var(--gold)}
+.dua span{display:block;font:italic 14px/1.3 "Cormorant Garamond",serif;color:var(--mut);font-size:16px}
+/* plan */
+.planrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center}
+.pn{font:700 38px/1 "Cormorant Garamond",serif;color:var(--gold)}
+.pt{color:var(--mut);font-size:13px;margin-top:4px}
+.goalbar{height:8px;border-radius:9px;background:rgba(255,255,255,.08);margin:16px 0;overflow:hidden}
+.goalbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--em),var(--gold));border-radius:9px;transition:width .6s}
+.big{width:100%;font-size:20px;padding:17px;border-radius:18px;position:relative;overflow:hidden}
+.big:after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);animation:shine 3.2s infinite}
+@keyframes shine{0%,60%{left:-60%}100%{left:130%}}
+.hint{text-align:center;color:var(--mut);font-size:14px;margin-top:10px}
+/* practice */
+.seg{display:grid;grid-template-columns:repeat(3,1fr);background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:14px;padding:4px;margin-bottom:12px}
+.seg button{padding:9px 4px;border-radius:11px;color:var(--mut);font-weight:600;font-size:15px}
+.seg button.on{background:rgba(232,198,110,.16);color:var(--gold)}
+.pick{display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-bottom:10px}
+.revhead{text-align:center;color:var(--gold);font-weight:600;margin-bottom:6px}
+.ref{display:flex;justify-content:space-between;align-items:center;color:var(--mut);font-size:14px}
+.ref button{font-size:18px;padding:6px 8px;border-radius:10px;background:rgba(255,255,255,.05);margin-left:6px}
+.bism{text-align:center;font:400 22px/1.8 "Amiri Quran","Amiri",serif;color:var(--gold);opacity:.85;margin-top:6px}
+.ayah{font:400 30px/2.25 "Amiri Quran","Amiri",serif;text-align:center;min-height:110px;padding:8px 2px;word-spacing:2px}
+.w{transition:color .3s,text-shadow .3s;border-radius:6px}
+.w.ok{color:#86e9b8;text-shadow:0 0 14px rgba(80,220,160,.35)}
+.w.hid{color:transparent;text-shadow:0 0 15px rgba(232,198,110,.6)}
+.w.hid.peek{color:var(--text);text-shadow:none}
+.w.hid.ok{color:#86e9b8;text-shadow:0 0 14px rgba(80,220,160,.35)}
+.num{color:var(--gold);font-size:.8em}
+.dots{display:flex;justify-content:center;gap:9px;margin-top:4px}
+.dots i{width:11px;height:11px;border-radius:50%;border:1.5px solid var(--gold);opacity:.5}
+.dots i.on{background:var(--gold);opacity:1;box-shadow:0 0 10px var(--gold)}
+.lvl{text-align:center;color:var(--mut);font-size:14px;margin-top:6px}
+.heard{text-align:center;color:#9fd9c0;font-size:14px;min-height:20px;margin:8px 0 2px;direction:rtl}
+.ctl{display:grid;grid-template-columns:repeat(5,1fr);align-items:end;margin:10px 0 14px}
+.ctl button{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11.5px;color:var(--mut)}
+.ctl .ic{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--text)}
+.ctl svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ctl .mic .ic{width:74px;height:74px;background:radial-gradient(circle at 35% 30%,#f9e3a3,var(--gold) 45%,var(--gold2));color:#1b1405;border:0;box-shadow:0 0 26px rgba(232,198,110,.45)}
+.ctl .mic svg{width:32px;height:32px;stroke-width:2}
+.ctl .mic.live .ic{background:radial-gradient(circle at 35% 30%,#a8f3cf,var(--em) 50%,#13785a);animation:pulse 1.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(60,192,140,.6)}100%{box-shadow:0 0 0 22px rgba(60,192,140,0)}}
+.ctl .rec .ic i{width:16px;height:16px;border-radius:50%;background:var(--red)}
+.ctl .rec.on .ic{border-color:var(--red);animation:pulseR 1.2s infinite}
+.ctl .rec.on .ic i{border-radius:4px}
+@keyframes pulseR{0%{box-shadow:0 0 0 0 rgba(232,101,90,.6)}100%{box-shadow:0 0 0 18px rgba(232,101,90,0)}}
+.eye.on .ic{color:var(--gold);border-color:var(--gold)}
+.listenMode .ctl .mic,.listenMode .ctl .rec,.listenMode .ctl .eye{visibility:hidden}
+.listen{display:grid;gap:10px}
+.empty{text-align:center;font:400 18px/1.6 -apple-system,sans-serif;color:var(--mut);padding:20px 0}
+.empty b{display:block;font:700 26px "Cormorant Garamond",serif;color:var(--gold);margin-bottom:6px}
+.isEmpty .ref,.isEmpty .dots,.isEmpty .lvl,.isEmpty .ctl,.isEmpty .grade,.isEmpty .bism{display:none!important}
+.burst{animation:burst .7s ease}
+@keyframes burst{0%{box-shadow:0 0 0 0 rgba(232,198,110,.7)}100%{box-shadow:0 0 0 30px rgba(232,198,110,0)}}
+/* journey */
+.hero{text-align:center}
+.ring{position:relative;width:210px;height:210px;margin:4px auto}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:13}
+.ring .trk{stroke:rgba(255,255,255,.08)}
+.ring .arc{stroke:url(#gg);stroke-linecap:round;transition:stroke-dashoffset 1.2s ease;filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
+.ringIn{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.pct{font:700 54px/1 "Cormorant Garamond",serif;color:var(--gold);text-shadow:0 0 24px rgba(232,198,110,.45)}
+.pctl{color:var(--mut);font-size:14px;margin-top:4px}
+.herostats{display:grid;grid-template-columns:1fr 1fr;margin-top:8px}
+.herostats b{display:block;font:700 28px "Cormorant Garamond",serif}
+.herostats span{color:var(--mut);font-size:13px}
+.eta{color:var(--mut);font-size:14px;margin-top:12px;line-height:1.5}
+.garden{padding:0;overflow:hidden}
+.gimg{position:relative}
+.gimg img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover}
+.gcap{position:absolute;left:0;right:0;bottom:0;padding:50px 16px 14px;background:linear-gradient(transparent,rgba(5,12,30,.92))}
+.gcap small{display:block;color:var(--gold);letter-spacing:2px;font-size:11px;text-transform:uppercase}
+.gcap b{display:block;font:700 26px "Cormorant Garamond",serif}
+.gcap span{color:#dfe5f2;font-size:14px}
+.gthumbs{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:12px}
+.gthumbs img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:10px;border:2px solid transparent}
+.gthumbs img.lock{filter:grayscale(1) brightness(.4)}
+.gthumbs img.cur{border-color:var(--gold);box-shadow:0 0 12px rgba(232,198,110,.6)}
+.rise{padding:0;overflow:hidden}
+.stairs{position:relative}
+.stairs>img{display:block;width:100%}
+.hadith{position:absolute;top:0;left:0;right:0;padding:22px 18px;text-align:center}
+.har{font:400 21px/1.9 "Amiri",serif;color:#fff3cf;text-shadow:0 2px 10px rgba(0,0,0,.6)}
+.hen{font:italic 17px/1.4 "Cormorant Garamond",serif;color:#e7ecf7;margin-top:6px}
+.hsrc{color:var(--gold);font-size:12px;margin-top:6px;letter-spacing:1px}
+.marker{position:absolute;transform:translate(-50%,-50%);width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:24px;background:radial-gradient(circle,#fff 0,#ffe9a8 30%,rgba(255,215,120,.0) 70%);animation:glow 2s ease-in-out infinite;transition:top 1.2s ease,left 1.2s ease}
+@keyframes glow{50%{transform:translate(-50%,-50%) scale(1.25)}}
+.stepinfo{padding:14px 18px 18px;text-align:center}
+.stepinfo b{display:block;font:700 26px "Cormorant Garamond",serif;color:var(--gold)}
+.stepinfo span{color:var(--mut);font-size:14px}
+.stepinfo em{display:block;color:var(--mut);font-size:12px;margin-top:8px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;text-align:center}
+.tile b{display:block;font:700 30px "Cormorant Garamond",serif;color:var(--gold)}
+.tile span{color:var(--mut);font-size:13px}
+.heat{display:grid;grid-template-rows:repeat(7,1fr);grid-auto-flow:column;grid-auto-columns:1fr;gap:3px}
+.heat i{aspect-ratio:1;border-radius:3px;background:rgba(255,255,255,.07)}
+.heat .h1{background:#1e5a49}.heat .h2{background:#2a8a67}.heat .h3{background:#4cc28f}.heat .h4{background:var(--gold);box-shadow:0 0 6px rgba(232,198,110,.6)}
+.legend{display:flex;align-items:center;justify-content:flex-end;gap:4px;color:var(--mut);font-size:12px;margin-top:8px}
+.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.badges{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.badge{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11.5px;color:var(--mut);text-align:center}
+.badge img{width:100%;filter:grayscale(1) brightness(.45);opacity:.7;transition:.4s}
+.badge.got img{filter:drop-shadow(0 0 10px rgba(232,198,110,.55));opacity:1}
+.badge.got{color:var(--text)}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(34px,1fr));gap:5px}
+.sgrid button,.jgrid button{aspect-ratio:1;border-radius:9px;font-size:12px;border:1px solid rgba(255,255,255,.08);color:var(--text)}
+.sgrid button.full,.jgrid button.full{color:#1b1405;font-weight:700;box-shadow:0 0 8px rgba(232,198,110,.5)}
+/* my hifz */
+.jgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}
+.jgrid button{font-size:15px;aspect-ratio:auto;padding:10px 0}
+.slist{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px;max-height:420px;overflow:auto}
+.slist button{text-align:left;padding:9px 10px;border-radius:12px;border:1px solid rgba(255,255,255,.08);font-size:14px;display:flex;justify-content:space-between;gap:6px}
+.slist button small{color:var(--mut)}
+.slist button.full{border-color:var(--gold);background:rgba(232,198,110,.14)}
+.slist button.full small{color:var(--gold)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chips button{padding:10px 16px;border-radius:99px;border:1px solid var(--line)}
+.chips button.on{background:var(--gold);color:#1b1405;font-weight:700}
+.range{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:8px;align-items:center;margin:10px 0;color:var(--mut)}
+.foot{text-align:center;color:var(--mut);font-size:12px;margin:20px 0}
+/* nav */
+nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(3,1fr);padding:8px 10px calc(env(safe-area-inset-bottom) + 8px);background:rgba(6,13,32,.92);border-top:1px solid var(--line);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);z-index:20}
+nav button{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--mut);font-size:12px;font-weight:600;padding:4px}
+nav svg{width:27px;height:27px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+nav button.on{color:var(--gold)}
+nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
+/* overlays */
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 14px);transform:translate(-50%,-150%);background:rgba(12,25,54,.97);border:1px solid var(--gold);color:var(--text);padding:12px 18px;border-radius:16px;z-index:50;transition:transform .35s;max-width:90vw;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.toast.on{transform:translate(-50%,0)}
+.cele{position:fixed;inset:0;background:rgba(3,8,20,.88);z-index:60;display:none;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center}
+.cele.on{display:flex}
+.cbox{position:relative;width:min(78vw,340px);aspect-ratio:1}
+.cbox .bu{width:100%;height:100%;object-fit:contain;animation:pop .8s ease}
+.cbox .bd{position:absolute;left:50%;top:50%;width:44%;transform:translate(-50%,-50%);animation:pop 1s ease}
+@keyframes pop{0%{transform:scale(.3) rotate(-12deg);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+.cbox .bd{animation:popc 1s ease}
+@keyframes popc{0%{transform:translate(-50%,-50%) scale(.2);opacity:0}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
+.ct{font:700 32px/1.15 "Cormorant Garamond",serif;color:var(--gold);margin-top:6px}
+.cs{color:#dfe5f2;margin:8px 0 22px;font-size:16px}
+.cele .gold{min-width:200px}
+.spark{position:fixed;width:8px;height:8px;border-radius:50%;background:var(--gold);z-index:61;pointer-events:none;animation:fall 2.2s ease-in forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(540deg);opacity:.2}}
+</style>
+</head>
+<body>
+<main>
+
+<!-- ============ TODAY ============ -->
+<section id="today" class="tab on">
+ <div class="top">
+  <div class="brand"><img src="icon.png" alt=""><div><div class="hello">As-salamu alaykum</div><div class="date" id="hdate"></div></div></div>
+  <div class="streak">🔥 <b id="streakN">0</b></div>
+ </div>
+ <div class="dua">رَبِّ زِدْنِي عِلْمًا<span>“My Lord, increase me in knowledge” · Ta-Ha 114</span></div>
+
+ <div class="card">
+  <div class="planrow">
+   <div><div class="pn" id="pRev">0</div><div class="pt">ayahs to revise</div></div>
+   <div><div class="pn" id="pNew">0/5</div><div class="pt">new ayahs today</div></div>
+  </div>
+  <div class="goalbar"><i id="goalFill"></i></div>
+  <button class="gold big" id="startBtn" onclick="start()">Start</button>
+  <div class="hint" id="startHint"></div>
+ </div>
+
+ <div class="card" id="practice">
+  <div class="seg" id="seg">
+   <button data-m="learn" onclick="setMode('learn')">Learn</button>
+   <button data-m="revise" onclick="setMode('revise')">Revise</button>
+   <button data-m="listen" onclick="setMode('listen')">Listen</button>
+  </div>
+  <div class="pick" id="pickRow">
+   <select id="sur" onchange="pickSurah()" aria-label="Surah"></select>
+   <select id="aya" onchange="pickAyah()" aria-label="Ayah"></select>
+  </div>
+  <div class="revhead hidden" id="revHead"></div>
+  <div class="ref" id="ref"></div>
+  <div class="bism hidden" id="bism">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>
+  <div class="ayah" id="ayah" dir="rtl" lang="ar">Loading the Quran…</div>
+  <div class="dots" id="dots"></div>
+  <div class="lvl" id="lvl"></div>
+  <div class="heard" id="heard"></div>
+  <div class="ctl" id="ctl">
+   <button onclick="go(-1)"><span class="ic"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></span>Back</button>
+   <button class="eye" id="eyeBtn" onclick="toggleHide()"><span class="ic"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><span id="eyeL">Hide</span></button>
+   <button class="mic" id="micBtn" onclick="toggleMic()"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span><span id="micL">Recite</span></button>
+   <button class="rec" id="recBtn" onclick="toggleRec()"><span class="ic"><i></i></span><span id="recL">Record</span></button>
+   <button onclick="go(1)"><span class="ic"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></span><span id="nextL">Next</span></button>
+  </div>
+  <div class="row2 grade" id="gradeRow">
+   <button class="soft" id="badBtn" onclick="grade(-1)">Needs work</button>
+   <button class="gold" id="goodBtn" onclick="grade(1)">I know it ✓</button>
+  </div>
+  <div class="listen hidden" id="listenRow">
+   <button class="gold" onclick="playMine()">▶ Play my recording</button>
+   <button class="soft" onclick="playAllMine()">▶ Play all my recordings in this surah</button>
+   <button class="soft" onclick="playReciter(true)">🔊 Hear the reciter (Mishary Alafasy)</button>
+  </div>
+ </div>
+</section>
+
+<!-- ============ JOURNEY ============ -->
+<section id="journey" class="tab">
+ <h1 class="title">Your Journey</h1>
+ <div class="card hero">
+  <div class="ring">
+   <svg viewBox="0 0 200 200"><defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3cc08c"/><stop offset="1" stop-color="#f6d98a"/></linearGradient></defs>
+    <circle class="trk" cx="100" cy="100" r="88"/><circle class="arc" id="ringArc" cx="100" cy="100" r="88" stroke-dasharray="552.9" stroke-dashoffset="552.9"/></svg>
+   <div class="ringIn"><div class="pct" id="pct">0%</div><div class="pctl">of the Quran</div></div>
+  </div>
+  <div class="herostats"><div><b id="jDone">0</b><span>ayahs memorised</span></div><div><b id="jLeft">6,236</b><span>ayahs to go</span></div></div>
+  <div class="eta" id="eta"></div>
+ </div>
+
+ <div class="card garden">
+  <div class="gimg"><img id="gardenImg" src="garden1.png" alt="Your Hifz garden"><div class="gcap"><small>Your Hifz Garden</small><b id="gTitle"></b><span id="gNext"></span></div></div>
+  <div class="gthumbs" id="gThumbs"></div>
+ </div>
+
+ <div class="card rise">
+  <div class="stairs">
+   <img src="journey.png" alt="">
+   <div class="hadith">
+    <div class="har">اقْرَأْ وَارْتَقِ وَرَتِّلْ كَمَا كُنْتَ تُرَتِّلُ فِي الدُّنْيَا، فَإِنَّ مَنْزِلَكَ عِنْدَ آخِرِ آيَةٍ تَقْرَؤُهَا</div>
+    <div class="hen">“Recite and rise, and recite beautifully as you used to in the world, for your rank will be at the last ayah you recite.”</div>
+    <div class="hsrc">ABU DAWUD &amp; TIRMIDHI</div>
+   </div>
+   <div class="marker" id="marker">★</div>
+  </div>
+  <div class="stepinfo"><b id="stepN">Step 0 of 30</b><span id="stepNext"></span><em>A reminder to keep reciting. Only Allah knows our true rank.</em></div>
+ </div>
+
+ <div class="tiles">
+  <div class="tile"><b id="tStreak">0</b><span>🔥 day streak</span></div>
+  <div class="tile"><b id="tToday">0</b><span>recitations today</span></div>
+  <div class="tile"><b id="tJuz">0</b><span>juz complete of 30</span></div>
+  <div class="tile"><b id="tSur">0</b><span>surahs complete of 114</span></div>
+ </div>
+
+ <div class="card"><h2>Practice days</h2><p class="sub" id="heatCap"></p><div class="heat" id="heat"></div>
+  <div class="legend">Less <i style="background:rgba(255,255,255,.07)"></i><i style="background:#1e5a49"></i><i style="background:#2a8a67"></i><i style="background:#4cc28f"></i><i style="background:var(--gold)"></i> More</div></div>
+
+ <div class="card"><h2>Milestones</h2><div class="badges" id="badges"></div></div>
+
+ <div class="card"><h2>Surahs</h2><p class="sub">Gold shows how much of each surah you know. Tap one to practise it.</p><div class="sgrid" id="sgrid"></div></div>
+</section>
+
+<!-- ============ MY HIFZ ============ -->
+<section id="mine" class="tab">
+ <h1 class="title">My Hifz</h1>
+ <p class="sub">Already know some of the Quran? Mark it here so your journey starts in the right place. Tap again to unmark.</p>
+
+ <div class="card"><h2>Daily goal</h2><p class="sub">How many new ayahs would you like to memorise each day?</p><div class="chips" id="goalChips"></div></div>
+
+ <div class="card"><h2>By juz</h2><div class="jgrid" id="jgrid"></div></div>
+
+ <div class="card"><h2>By surah</h2><input type="search" id="sfilter" placeholder="Search for a surah" oninput="markGrids()"><div class="slist" id="slist"></div></div>
+
+ <div class="card"><h2>By ayahs</h2>
+  <select id="rs" onchange="rangeLimits()" aria-label="Surah"></select>
+  <div class="range">From <select id="rf"></select> to <select id="rt"></select></div>
+  <div class="row2"><button class="soft" onclick="markRange(false)">Unmark</button><button class="gold" onclick="markRange(true)">Mark as known</button></div>
+ </div>
+
+ <div class="card"><h2>Backup</h2><p class="sub">Getting a new phone? Export a backup and save it to iCloud Drive or Files. Then import it on the new phone. It includes your recordings.</p>
+  <div class="row2"><button class="soft" onclick="$('impFile').click()">Import backup</button><button class="gold" onclick="exportData()">Export backup</button></div>
+  <input type="file" id="impFile" accept=".json,application/json" hidden onchange="importData(this.files[0])">
+ </div>
+
+ <div class="card"><h2>Start over</h2><p class="sub">Clears all progress and recordings on this phone.</p><button class="danger" onclick="resetAll()">Reset all progress</button></div>
+ <p class="foot">Quran text: Tanzil (via alquran.cloud) · Recitation: Mishary Alafasy (via everyayah.com)</p>
+</section>
+</main>
+
+<nav>
+ <button id="n-today" class="on" onclick="tab('today')"><svg viewBox="0 0 24 24"><path d="M3 5.5C5.5 4 9 4 12 6c3-2 6.5-2 9-.5V19c-2.5-1.5-6-1.5-9 .5-3-2-6.5-2-9-.5zM12 6v13.5"/></svg>Today</button>
+ <button id="n-journey" onclick="tab('journey')"><svg viewBox="0 0 24 24"><path d="M12 21v-9M12 12C12 7 8.5 5 4 5c0 4.5 3 7 8 7zM12 10c0-4 3-6 8-6 0 4-3 6-8 6"/></svg>Journey</button>
+ <button id="n-mine" onclick="tab('mine')"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M3.5 6l1.2 1.2L7 5M3.5 12l1.2 1.2L7 11M3.5 18l1.2 1.2L7 17"/></svg>My Hifz</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+<div class="cele" id="cele"><div class="cbox"><img class="bu" src="celebrate.png" alt=""><img class="bd hidden" id="celeBadge" alt=""></div><div class="ct" id="celeT"></div><div class="cs" id="celeS"></div><button class="gold" onclick="closeCele()">Alhamdulillah</button></div>
+
+<script>
+/* ---------- basics ---------- */
+const TOTAL=6236,STEPS=30,KEY='hifz-v2';
+const $=id=>document.getElementById(id);
+const K=(s,a)=>s+':'+a;
+const pick=a=>a[Math.random()*a.length|0];
+const fmt=n=>Number(n).toLocaleString('en');
+const p3=n=>String(n).padStart(3,'0');
+const arNum=n=>String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+const dayNum=(d=new Date())=>Math.floor((d.getTime()-d.getTimezoneOffset()*60000)/864e5);
+const dayKey=n=>new Date(n*864e5).toISOString().slice(0,10);
+const today=()=>dayNum();
+const TK=()=>dayKey(today());
+
+function loadS(){let s=null;try{s=JSON.parse(localStorage.getItem(KEY))}catch(e){}s=s&&typeof s==='object'?s:{};
+ for(const k of['lv','days','rv','iv','rec','nw','rvd','bd'])s[k]=s[k]||{};
+ s.goal=s.goal||5;s.step=s.step||0;s.gs=s.gs||0;return s}
+let S=loadS();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('Could not save. Phone storage may be full.')}}
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+
+/* ---------- IndexedDB (Quran text + recordings) ---------- */
+const dbP=new Promise((res,rej)=>{try{const r=indexedDB.open('hifz',1);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains('rec'))d.createObjectStore('rec');if(!d.objectStoreNames.contains('kv'))d.createObjectStore('kv')};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}});
+function idb(store,mode,fn){return dbP.then(d=>new Promise((res,rej)=>{const t=d.transaction(store,mode);const q=fn(t.objectStore(store));t.oncomplete=()=>res(q?q.result:undefined);t.onerror=()=>rej(t.error)}))}
+const getKV=k=>idb('kv','readonly',s=>s.get(k));
+const putKV=(k,v)=>idb('kv','readwrite',s=>s.put(v,k));
+const getRec=k=>idb('rec','readonly',s=>s.get(k));
+const putRec=(k,v)=>idb('rec','readwrite',s=>s.put(v,k));
+const clearRecs=()=>idb('rec','readwrite',s=>s.clear());
+
+/* ---------- Arabic matching ---------- */
+const DIA=/[ؐ-ًؚ-ٰٟۖ-ۭـ]/g;
+function norm(t){return t.replace(DIA,'').replace(/[ٱأإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/[^ء-ي\s]/g,'').replace(/\s+/g,' ').trim()}
+const skel=w=>w.replace(/[اويء]/g,'');
+function lev(a,b){const m=a.length,n=b.length;let p=Array.from({length:n+1},(_,j)=>j);for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[n]}
+function sim(a,b){if(!a||!b)return false;if(a===b)return true;const sa=skel(a),sb=skel(b);if(sa&&sa===sb)return true;
+ if(a.length>=4&&b.length>=4&&(a.includes(b)||b.includes(a)))return true;const L=Math.max(a.length,b.length);return L>=3&&1-lev(a,b)/L>=.7}
+
+/* ---------- Quran data ---------- */
+let Q=[],ALL=[],OFF=[0],JT=new Array(31).fill(0),WC={};
+async function load(){
+ let data=null;try{data=await getKV('quran')}catch(e){}
+ if(!data){
+  $('ayah').textContent='Downloading the Quran… (first time only)';
+  const r=await fetch('https://api.alquran.cloud/v1/quran/quran-uthmani');const j=await r.json();
+  data=j.data.surahs.map(s=>({n:s.number,name:s.englishName,ar:s.name,a:s.ayahs.map(x=>({t:x.text,j:x.juz}))}));
+  try{await putKV('quran',data)}catch(e){}
+ }
+ Q=data;buildIndex();initUI();
+}
+function buildIndex(){ALL=[];JT.fill(0);WC={};let off=0;
+ Q.forEach(s=>{OFF[s.n]=off;
+  if(s.n!==1&&s.n!==9){const t=s.a[0].t.split(/\s+/);if(t.length>4&&norm(t.slice(0,4).join(' '))==='بسم الله الرحمن الرحيم')s.a[0].t=t.slice(4).join(' ')}
+  s.a.forEach((x,i)=>{ALL.push({s:s.n,a:i+1,j:x.j,k:K(s.n,i+1)});JT[x.j]++});off+=s.a.length})}
+const ord=k=>{const[s,a]=k.split(':').map(Number);return OFF[s]+a};
+function wordsOf(s,a){const k=K(s,a);if(WC[k])return WC[k];const out=[];
+ for(const tok of Q[s-1].a[a-1].t.split(/\s+/)){if(!tok)continue;const n=norm(tok);if(!n&&out.length)out[out.length-1].d+=' '+tok;else out.push({d:tok,n})}
+ return WC[k]=out}
+const surahKeys=s=>Q[s-1].a.map((_,i)=>K(s,i+1));
+const juzKeys=j=>ALL.filter(x=>x.j===j).map(x=>x.k);
+
+/* ---------- stats ---------- */
+function streak(){let t=today(),n=0;if(!S.days[dayKey(t)])t--;while(S.days[dayKey(t)]){n++;t--}return n}
+function stats(){let done=0;const jd=new Array(31).fill(0),sd=new Array(115).fill(0);
+ for(const x of ALL)if(S.lv[x.k]===3){done++;jd[x.j]++;sd[x.s]++}
+ let juz=0;for(let j=1;j<=30;j++)if(JT[j]&&jd[j]===JT[j])juz++;
+ let sur=0;for(let s=1;s<=114;s++)if(Q[s-1]&&sd[s]===Q[s-1].a.length)sur++;
+ return{done,juz,sur,jd,sd,pct:done/TOTAL*100,streak:streak(),today:S.days[TK()]||0}}
+const dueKeys=()=>{const t=today();return Object.keys(S.rv).filter(k=>S.rv[k]<=t&&S.lv[k]===3).sort((x,y)=>S.rv[x]-S.rv[y]||ord(x)-ord(y))};
+function nextNewFrom(k){const st=Math.max(0,ord(k)-1);for(let i=0;i<ALL.length;i++){const x=ALL[(st+i)%ALL.length];if(S.lv[x.k]!==3)return x}return null}
+const markDay=()=>{S.days[TK()]=(S.days[TK()]||0)+1};
+
+const GARDEN=[{at:0,name:'A seed is planted'},{at:3,name:'First shoots'},{at:15,name:'Young trees'},{at:40,name:'A flowing stream'},{at:75,name:'Full bloom'}];
+const gardenStage=p=>{let g=0;GARDEN.forEach((x,i)=>{if(p>=x.at)g=i});return g};
+const BADGES=[
+ {img:'badge1.png',name:'First seed',desc:'Memorise your first ayah',ok:x=>x.done>=1},
+ {img:'badge2.png',name:'One juz',desc:'Complete a whole juz',ok:x=>x.juz>=1},
+ {img:'badge3.png',name:'Five juz',desc:'Complete 5 juz',ok:x=>x.juz>=5},
+ {img:'badge4.png',name:'A quarter',desc:'Memorise a quarter of the Quran',ok:x=>x.done>=TOTAL/4},
+ {img:'badge5.png',name:'Halfway',desc:'Memorise half of the Quran',ok:x=>x.done>=TOTAL/2},
+ {img:'badge6.png',name:'7-day streak',desc:'Practise 7 days in a row',ok:x=>x.streak>=7},
+ {img:'badge7.png',name:'Twenty juz',desc:'Complete 20 juz',ok:x=>x.juz>=20},
+ {img:'badge8.png',name:'Hafiz',desc:'Memorise the whole Quran',ok:x=>x.done>=TOTAL}];
+const PRAISE=['Masha\'Allah! ✦','Another ayah in your heart 🌙','Beautiful, keep going ✨','Allahumma barik 💛','Your garden is growing 🌱'];
+const REVPRAISE=['Still strong, masha\'Allah ✦','Well kept 🌙','Barak Allahu feek ✨','Solid! 💛'];
+
+/* ---------- celebrations ---------- */
+let celeQ=[];
+function toast(t){const el=$('toast');el.innerHTML=t;el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),2400)}
+function sparks(n=36){for(let i=0;i<n;i++){const s=document.createElement('i');s.className='spark';s.style.left=Math.random()*100+'vw';s.style.top=(-10-Math.random()*20)+'vh';s.style.animationDelay=Math.random()*.6+'s';s.style.background=Math.random()<.3?'#86e9b8':'#e8c66e';document.body.appendChild(s);setTimeout(()=>s.remove(),3200)}}
+function celebrate(m){if($('cele').classList.contains('on')){celeQ.push(m);return}
+ $('celeT').textContent=m[0];$('celeS').textContent=m[1]||'';const b=$('celeBadge');if(m[2]){b.src=m[2];b.classList.remove('hidden')}else b.classList.add('hidden');
+ $('cele').classList.add('on');sparks();if(navigator.vibrate)navigator.vibrate(60)}
+function closeCele(){$('cele').classList.remove('on');if(celeQ.length)setTimeout(()=>celebrate(celeQ.shift()),250)}
+function checkMilestones(live){if(!Q.length)return false;const st=stats();let any=false;
+ const step=Math.min(STEPS,Math.floor(st.done/TOTAL*STEPS));
+ if(step>S.step&&live){any=true;celebrate(step>=STEPS?['👑 The top of the staircase','You have memorised the whole Quran. Allahumma barik.']:[`You rose to step ${step}`,'Recite and rise ✦'])}
+ S.step=step;
+ const gs=gardenStage(st.pct);if(gs>S.gs&&live){any=true;celebrate(['Your garden grew 🌱',GARDEN[gs].name,`garden${gs+1}.png`])}S.gs=gs;
+ BADGES.forEach((b,i)=>{if(!S.bd[i]&&b.ok(st)){S.bd[i]=1;if(live){any=true;celebrate([`New badge: ${b.name}`,b.desc,b.img])}}});
+ save();return any}
+
+/* ---------- practice state ---------- */
+let mode='learn',cur={s:1,a:1},hide=false,lastM=null,queue=[],session=false,filledS=0,busyUntil=0;
+function fillAya(){if(filledS===cur.s)return;filledS=cur.s;$('aya').innerHTML=Q[cur.s-1].a.map((_,i)=>`<option value="${i+1}">Ayah ${i+1}</option>`).join('')}
+function show(m){
+ if(!Q.length)return;const pr=$('practice');pr.classList.remove('isEmpty');
+ const s=Q[cur.s-1],k=K(cur.s,cur.a),l=S.lv[k]||0,w=wordsOf(cur.s,cur.a);lastM=m||null;
+ $('sur').value=cur.s;fillAya();$('aya').value=cur.a;
+ $('ref').innerHTML=`<span>${s.name} · ${s.ar} · ${cur.a}</span><span>${S.rec[k]?'<button onclick="playMine()" aria-label="My recording">🎧</button>':''}<button onclick="playReciter()" aria-label="Hear reciter">🔊</button></span>`;
+ $('bism').classList.toggle('hidden',!(cur.a===1&&cur.s!==1&&cur.s!==9));
+ $('ayah').innerHTML=w.map((x,i)=>`<span class="w${hide?' hid':''}${m&&m[i]?' ok':''}">${x.d}</span>`).join(' ')+` <span class="num">﴿${arNum(cur.a)}﴾</span>`;
+ $('dots').innerHTML=[1,2,3].map(i=>`<i class="${l>=i?'on':''}"></i>`).join('');
+ if(mode==='revise')$('lvl').textContent='Recite from memory. Tap a word to peek.';
+ else $('lvl').textContent=l===3?'Memorised ✦':l===0?'New ayah · recite it correctly 3 times':`Learning · ${3-l} more time${3-l>1?'s':''}`;
+ $('eyeBtn').classList.toggle('on',hide);$('eyeL').textContent=hide?'Show':'Hide';
+ if(mode==='learn'&&S.last!==k){S.last=k;save()}
+ if(mode==='listen')prefetch(cur.s);
+}
+function pickSurah(){cur={s:+$('sur').value,a:1};stopAll();show()}
+function pickAyah(){cur.a=+$('aya').value;stopAll(false);show()}
+function setMode(m){
+ mode=m;stopAll();document.querySelectorAll('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
+ const pr=$('practice');pr.classList.toggle('listenMode',m==='listen');
+ $('pickRow').classList.toggle('hidden',m==='revise');$('revHead').classList.toggle('hidden',m!=='revise');
+ $('gradeRow').classList.toggle('hidden',m==='listen');$('listenRow').classList.toggle('hidden',m!=='listen');
+ $('badBtn').textContent=m==='revise'?'Forgot':'Needs work';$('goodBtn').textContent=m==='revise'?'Remembered ✓':'I know it ✓';
+ $('nextL').textContent=m==='revise'?'Skip':'Next';$('heard').textContent='';
+ if(m==='revise'){hide=true;queue=dueKeys();nextRevise();return}
+ hide=false;
+ if(m==='learn'&&S.last){const[s,a]=S.last.split(':').map(Number);if(Q[s-1]&&a<=Q[s-1].a.length)cur={s,a}}
+ show();
+}
+function nextRevise(){
+ if(!queue.length){const pr=$('practice');pr.classList.add('isEmpty');$('revHead').textContent='';
+  $('ayah').innerHTML=`<div class="empty"><b>${session?'Revision complete ✦':'All caught up ✦'}</b>${session?'Now on to new ayahs…':'Memorised ayahs come back here when it is time to review them.'}</div>`;
+  if(session){session=false;setTimeout(()=>{if(mode==='revise'){setMode('learn');jumpToNextNew();toast('Revision done ✦ Time for new ayahs')}},1600)}
+  refreshToday();return}
+ const[s,a]=queue[0].split(':').map(Number);cur={s,a};hide=true;show();
+ $('revHead').textContent=`Revision · ${queue.length} left`;
+}
+function jumpToNextNew(){const x=nextNewFrom(S.last||'1:1');if(x){cur={s:x.s,a:x.a};show()}}
+function start(){if(!Q.length)return;const due=dueKeys().length;session=true;
+ if(due)setMode('revise');else{setMode('learn');jumpToNextNew();session=false}
+ $('practice').scrollIntoView({behavior:'smooth',block:'start'})}
+function go(d){if(!Q.length)return;stopAll(false);
+ if(mode==='revise'){if(queue.length>1){if(d>0)queue.push(queue.shift());else queue.unshift(queue.pop())}nextRevise();return}
+ cur.a+=d;const n=Q[cur.s-1].a.length;
+ if(cur.a<1){if(cur.s>1){cur.s--;cur.a=Q[cur.s-1].a.length}else cur.a=1}
+ else if(cur.a>n){if(cur.s<114){cur.s++;cur.a=1}else cur.a=n}
+ show()}
+function toggleHide(){hide=!hide;show(lastM)}
+$('ayah').addEventListener('click',e=>{const w=e.target.closest('.w');if(w&&w.classList.contains('hid'))w.classList.toggle('peek')});
+
+function grade(d){
+ if(!Q.length||$('practice').classList.contains('isEmpty'))return;
+ const k=K(cur.s,cur.a);markDay();
+ if(mode==='revise'){const t=today();
+  if(d>0){S.iv[k]=Math.min(90,Math.max(1,(S.iv[k]||1)*2));S.rv[k]=t+S.iv[k];toast(pick(REVPRAISE))}
+  else{S.iv[k]=1;S.rv[k]=t+1;toast('No worries, it will come back tomorrow')}
+  S.rvd[TK()]=(S.rvd[TK()]||0)+1;save();queue.shift();if(!checkMilestones(true))$('practice').classList.add('burst');
+  setTimeout(()=>$('practice').classList.remove('burst'),700);nextRevise();refreshToday();return}
+ const b=S.lv[k]||0,a=Math.max(0,Math.min(3,b+(d>0?1:-1)));
+ if(a)S.lv[k]=a;else delete S.lv[k];
+ if(a<3){delete S.rv[k];delete S.iv[k]}
+ if(a===3&&b<3){S.iv[k]=1;S.rv[k]=today()+1;S.nw[TK()]=(S.nw[TK()]||0)+1;save();show(lastM);
+  const pr=$('practice');pr.classList.add('burst');setTimeout(()=>pr.classList.remove('burst'),700);
+  if(!checkMilestones(true)){toast(pick(PRAISE));sparks(14)}
+  const nw=S.nw[TK()];if(nw===S.goal)setTimeout(()=>celebrate(['Daily goal reached 🌟',`${nw} new ayahs today. Masha'Allah!`]),900);
+  busyUntil=Date.now()+1300;setTimeout(()=>{const x=nextNewFrom(k);if(x){cur={s:x.s,a:x.a};show()}},1200)}
+ else{save();show(d>0?lastM:null);
+  if(d>0&&b===3){busyUntil=Date.now()+800;setTimeout(()=>go(1),600)}
+  else if(d>0)$('heard').textContent=`Good! ${3-a} more time${3-a>1?'s':''} to memorise it`;
+  else $('heard').textContent='Keep at it, you will get there 💛'}
+ refreshToday()}
+
+/* ---------- voice recognition ---------- */
+let rec=null,wantMic=false,starts=[];
+function micUI(){$('micBtn').classList.toggle('live',wantMic);$('micL').textContent=wantMic?'Listening':'Recite'}
+function micStart(){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){$('heard').textContent='Voice checking is not available here. Use the buttons instead.';return}
+ if(mr)stopRecording();
+ starts=starts.filter(t=>Date.now()-t<4000);starts.push(Date.now());
+ if(starts.length>4){wantMic=false;micUI();$('heard').textContent='The microphone stopped. Tap Recite to continue.';return}
+ rec=new SR();rec.lang='ar-SA';rec.continuous=true;rec.interimResults=true;
+ rec.onresult=e=>{let t='';for(let i=0;i<e.results.length;i++)t+=e.results[i][0].transcript+' ';onHeard(t)};
+ rec.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed'){wantMic=false;micUI();$('heard').textContent='Microphone is blocked. Allow it in Settings › Safari › Microphone.'}};
+ rec.onend=()=>{rec=null;if(wantMic)setTimeout(()=>{if(wantMic&&!rec){try{micStart()}catch(e){wantMic=false;micUI()}}},250);else micUI()};
+ try{rec.start();wantMic=true;micUI();if(Date.now()>busyUntil)$('heard').textContent='Listening… recite the ayah'}catch(e){wantMic=false;micUI()}
+}
+function micOff(){wantMic=false;if(rec){try{rec.abort()}catch(e){}rec=null}micUI()}
+function toggleMic(){if(!Q.length)return;if(wantMic)micOff();else{starts=[];micStart()}}
+function onHeard(t){
+ if(Date.now()<busyUntil||!Q.length||$('practice').classList.contains('isEmpty'))return;
+ const said=norm(t).split(' ').filter(Boolean),w=wordsOf(cur.s,cur.a);let j=0;
+ const m=w.map(x=>{if(!x.n)return false;for(let i=j;i<Math.min(said.length,j+6);i++)if(sim(said[i],x.n)){j=i+1;return true}return false});
+ const real=w.filter(x=>x.n).length||1,sc=m.filter(Boolean).length/real;
+ show(m);$('heard').textContent=t.trim().split(/\s+/).slice(-8).join(' ');
+ if(sc>=(S.th||.8)){busyUntil=Date.now()+1500;$('heard').textContent=`✨ ${Math.round(sc*100)}% matched`;
+  if(rec){try{rec.abort()}catch(e){}}grade(1)}
+}
+
+/* ---------- recording & playback ---------- */
+let mr=null,chunks=[],recT0=0,recTimer=null;const urls={},audio=new Audio();let playlist=[];
+function recUI(){const on=!!(mr&&mr.state==='recording');$('recBtn').classList.toggle('on',on);
+ $('recL').textContent=on?(()=>{const s=Math.floor((Date.now()-recT0)/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')})():'Record'}
+async function toggleRec(){
+ if(mr&&mr.state==='recording'){mr.stop();return}
+ if(!navigator.mediaDevices||!window.MediaRecorder){toast('Recording is not supported on this browser');return}
+ micOff();audio.pause();const k=K(cur.s,cur.a);
+ try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+  const type=['audio/mp4','audio/webm;codecs=opus','audio/webm'].find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t));
+  const r=new MediaRecorder(stream,type?{mimeType:type}:undefined);mr=r;chunks=[];
+  r.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+  r.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());clearInterval(recTimer);const blob=new Blob(chunks,{type:r.mimeType||type||'audio/mp4'});mr=null;recUI();
+   if(blob.size<1500){toast('That recording was too short');return}
+   try{await putRec(k,blob);S.rec[k]=1;save();if(urls[k])URL.revokeObjectURL(urls[k]);urls[k]=URL.createObjectURL(blob);show(lastM);toast('Recording saved 🎧')}catch(e){toast('Could not save the recording')}};
+  r.start();recT0=Date.now();recTimer=setInterval(recUI,500);recUI();
+ }catch(e){mr=null;recUI();toast('Microphone not allowed')}
+}
+function stopRecording(){if(mr&&mr.state==='recording')mr.stop()}
+function stopAll(full=true){micOff();stopRecording();playlist=[];audio.pause();lastM=null}
+async function prefetch(s){for(let a=1;a<=Q[s-1].a.length;a++){const k=K(s,a);if(S.rec[k]&&!urls[k]){try{const b=await getRec(k);if(b)urls[k]=URL.createObjectURL(b)}catch(e){}}}}
+function playUrl(u){audio.pause();audio.src=u;audio.play().catch(()=>toast('Tap play again'))}
+async function playKey(k){if(!S.rec[k]){toast('No recording for this ayah yet. Use Record in Learn.');return}
+ if(urls[k]){playUrl(urls[k]);return}const b=await getRec(k);if(!b){toast('Recording not found');return}urls[k]=URL.createObjectURL(b);playUrl(urls[k])}
+function playMine(){micOff();playlist=[];playKey(K(cur.s,cur.a))}
+function playAllMine(){micOff();playlist=[];for(let a=1;a<=Q[cur.s-1].a.length;a++)if(S.rec[K(cur.s,a)])playlist.push(a);
+ if(!playlist.length){toast('No recordings in this surah yet');return}nextInList()}
+function nextInList(){if(!playlist.length)return;cur.a=playlist.shift();show();playKey(K(cur.s,cur.a))}
+function playReciter(){micOff();playlist=[];playUrl(`https://everyayah.com/data/Alafasy_128kbps/${p3(cur.s)}${p3(cur.a)}.mp3`)}
+audio.onended=()=>{if(playlist.length)nextInList()};
+
+/* ---------- Today card ---------- */
+function refreshToday(){if(!Q.length)return;const due=dueKeys().length,nw=S.nw[TK()]||0,st=streak();
+ $('pRev').textContent=due;$('pNew').textContent=`${nw}/${S.goal}`;$('goalFill').style.width=Math.min(100,nw/S.goal*100)+'%';$('streakN').textContent=st;
+ const nx=nextNewFrom(S.last||'1:1');
+ $('startHint').textContent=due?`${due} ayah${due>1?'s':''} to revise first, then new ayahs`:nw>=S.goal?'Today\'s goal is done, masha\'Allah! Keep going if you like ✦':nx?`Next: ${Q[nx.s-1].name}, ayah ${nx.a}`:'You have memorised the whole Quran. Allahumma barik!';
+ $('startBtn').textContent=due?'Start revision':'Start'}
+function setDate(){const d=new Date();let h='';try{h=new Intl.DateTimeFormat('en-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric'}).format(d)}catch(e){}
+ $('hdate').textContent=d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})+(h?' · '+h:'')}
+
+/* ---------- Journey ---------- */
+function renderJourney(){if(!Q.length)return;const st=stats(),p=st.pct,left=TOTAL-st.done;
+ $('pct').textContent=(st.done===0?'0':st.done===TOTAL?'100':p<10?p.toFixed(1):p.toFixed(1))+'%';
+ $('ringArc').style.strokeDashoffset=552.9*(1-Math.max(st.done?0.01:0,p/100));
+ $('jDone').textContent=fmt(st.done);$('jLeft').textContent=fmt(left);
+ if(left){const days=Math.ceil(left/S.goal);let t=days<60?`${days} days`:days<730?`${Math.round(days/30.4)} months`:`${(days/365).toFixed(1)} years`;
+  $('eta').innerHTML=`At <b>${S.goal}</b> new ayahs a day, you could finish in about <b>${t}</b>, in shaa Allah.`}else $('eta').textContent='You have memorised the whole Quran. Allahumma barik!';
+ const g=gardenStage(p);$('gardenImg').src=`garden${g+1}.png`;$('gTitle').textContent=GARDEN[g].name;
+ $('gNext').textContent=g<4?`${fmt(Math.max(1,Math.ceil(GARDEN[g+1].at/100*TOTAL)-st.done))} more ayahs until your garden grows`:'In full bloom, masha\'Allah';
+ $('gThumbs').innerHTML=GARDEN.map((x,i)=>`<img src="garden${i+1}.png" class="${i>g?'lock':''}${i===g?' cur':''}" alt="${x.name}">`).join('');
+ const step=Math.min(STEPS,Math.floor(st.done/TOTAL*STEPS)),f=step/STEPS;
+ $('marker').style.top=(95.5-f*56)+'%';$('marker').style.left=(50+f*3)+'%';$('marker').textContent=step>=STEPS?'👑':'★';
+ $('stepN').textContent=step>=STEPS?'The top of the staircase ✦':`Step ${step} of ${STEPS}`;
+ $('stepNext').textContent=step>=STEPS?'Allahumma barik':`${fmt(Math.ceil((step+1)*TOTAL/STEPS)-st.done)} more ayahs to rise to the next step`;
+ $('tStreak').textContent=st.streak;$('tToday').textContent=st.today;$('tJuz').textContent=st.juz;$('tSur').textContent=st.sur;
+ renderHeat();
+ $('badges').innerHTML=BADGES.map((b,i)=>{const got=S.bd[i]||b.ok(st);return`<button class="badge${got?' got':''}" onclick="toast('${got?'✦ Earned: ':'🔒 '}${b.desc}')"><img src="${b.img}" alt=""><span>${b.name}</span></button>`}).join('');
+ $('sgrid').innerHTML=Q.map(s=>{const pc=Math.round(st.sd[s.n]/s.a.length*100);return`<button class="${pc===100?'full':''}" style="background:linear-gradient(to top,rgba(232,198,110,.9) ${pc}%,rgba(255,255,255,.05) ${pc}%)" onclick="practiseSurah(${s.n})" title="${s.name} ${pc}%">${s.n}</button>`}).join('')}
+function renderHeat(){const t=today(),weeks=18,wd=new Date().getDay(),startD=t-(weeks-1)*7-wd;let h='',act=0;
+ for(let d=startD;d<=t;d++){const v=S.days[dayKey(d)]||0;if(v)act++;h+=`<i class="h${v===0?0:v<5?1:v<15?2:v<30?3:4}"></i>`}
+ $('heat').innerHTML=h;$('heatCap').textContent=`${act} day${act===1?'':'s'} of practice in the last ${weeks} weeks`}
+function practiseSurah(s){tab('today');setMode('learn');const f=Q[s-1].a.findIndex((_,i)=>S.lv[K(s,i+1)]!==3);cur={s,a:f<0?1:f+1};show();
+ setTimeout(()=>$('practice').scrollIntoView({behavior:'smooth',block:'start'}),50)}
+
+/* ---------- My Hifz ---------- */
+function markKeys(keys,on){const t=today();let c=0;const win=Math.max(14,Math.ceil(keys.length/40));
+ keys.forEach(k=>{if(on){if(S.lv[k]!==3){S.lv[k]=3;S.iv[k]=7;S.rv[k]=t+1+(c%win);c++}}else if(S.lv[k]){delete S.lv[k];delete S.rv[k];delete S.iv[k];c++}});
+ checkMilestones(false);save();markGrids();refreshToday();if(mode!=='revise')show();
+ toast(on?`Marked ${fmt(c)} ayah${c===1?'':'s'} as known ✦`:`Unmarked ${fmt(c)} ayah${c===1?'':'s'}`)}
+function toggleKeys(keys,label){if(keys.every(k=>S.lv[k]===3)){if(confirm(`Unmark ${label}?`))markKeys(keys,false)}else markKeys(keys,true)}
+function markGrids(){if(!Q.length)return;const st=stats();
+ $('goalChips').innerHTML=[3,5,10,20].map(n=>`<button class="${S.goal===n?'on':''}" onclick="S.goal=${n};save();markGrids();refreshToday()">${n} a day</button>`).join('');
+ $('jgrid').innerHTML=Array.from({length:30},(_,i)=>{const j=i+1,pc=Math.round(st.jd[j]/JT[j]*100);return`<button class="${pc===100?'full':''}" style="background:linear-gradient(to top,rgba(232,198,110,.9) ${pc}%,rgba(255,255,255,.05) ${pc}%)" onclick="toggleKeys(juzKeys(${j}),'Juz ${j}')">${j}</button>`}).join('');
+ const f=$('sfilter').value.trim().toLowerCase();
+ $('slist').innerHTML=Q.filter(s=>!f||(s.n+' '+s.name).toLowerCase().includes(f)||s.ar.includes(f)).map(s=>{const pc=Math.round(st.sd[s.n]/s.a.length*100);
+  return`<button class="${pc===100?'full':''}" onclick="toggleKeys(surahKeys(${s.n}),'Surah ${s.name.replace(/'/g,'')}')"><span>${s.n}. ${s.name}</span><small>${pc===100?'✓':pc?pc+'%':s.a.length}</small></button>`}).join('')}
+function rangeLimits(){const s=+$('rs').value||1,n=Q[s-1].a.length,o=Array.from({length:n},(_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');$('rf').innerHTML=o;$('rt').innerHTML=o;$('rf').value=1;$('rt').value=n}
+function markRange(on){const s=+$('rs').value;let a=+$('rf').value,b=+$('rt').value;if(a>b)[a,b]=[b,a];const keys=[];for(let i=a;i<=b;i++)keys.push(K(s,i));markKeys(keys,on)}
+
+/* ---------- backup ---------- */
+async function allRecs(){const d=await dbP;return new Promise(r=>{const out={},q=d.transaction('rec').objectStore('rec').openCursor();q.onsuccess=e=>{const c=e.target.result;if(c){out[c.key]=c.value;c.continue()}else r(out)};q.onerror=()=>r(out)})}
+const b64=b=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)});
+async function exportData(){toast('Preparing backup…');let audioMap={};try{const recs=await allRecs();for(const k in recs)audioMap[k]=await b64(recs[k])}catch(e){}
+ const file=new File([JSON.stringify({app:'hifz',v:1,S,audio:audioMap})],`hifz-backup-${TK()}.json`,{type:'application/json'});
+ if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Hifz backup'})}catch(e){}}
+ else{const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=file.name;document.body.appendChild(a);a.click();a.remove()}}
+async function importData(f){if(!f)return;
+ try{const j=JSON.parse(await f.text());if(!j.S||typeof j.S!=='object')throw 0;
+  if(!confirm('Replace the progress on this phone with this backup?')){$('impFile').value='';return}
+  toast('Restoring…');for(const k in(j.audio||{})){try{const blob=await(await fetch(j.audio[k])).blob();await putRec(k,blob)}catch(e){}}
+  localStorage.setItem(KEY,JSON.stringify(j.S));S=loadS();save();for(const k in urls)delete urls[k];
+  refreshAll();toast('Backup restored ✦')}
+ catch(e){toast('That file is not a Hifz backup')}
+ $('impFile').value=''}
+async function resetAll(){if(!confirm('Reset ALL progress and recordings on this phone?'))return;if(!confirm('Are you sure? This cannot be undone.'))return;
+ const g=S.goal;localStorage.removeItem(KEY);S=loadS();S.goal=g;save();try{await clearRecs()}catch(e){}refreshAll();toast('Progress reset. A fresh start, bismillah ✦')}
+
+/* ---------- tabs & init ---------- */
+function tab(n){document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.id===n));
+ ['today','journey','mine'].forEach(x=>$('n-'+x).classList.toggle('on',x===n));
+ if(n!=='today'){micOff();stopRecording()}
+ if(n==='journey')renderJourney();if(n==='mine')markGrids();if(n==='today')refreshToday();scrollTo(0,0)}
+function refreshAll(){refreshToday();setMode(mode==='revise'?'learn':mode);if($('journey').classList.contains('on'))renderJourney();if($('mine').classList.contains('on'))markGrids()}
+function initUI(){const opts=Q.map(s=>`<option value="${s.n}">${s.n}. ${s.name}</option>`).join('');$('sur').innerHTML=opts;$('rs').innerHTML=opts;rangeLimits();
+ checkMilestones(false);setMode('learn');refreshToday()}
+document.addEventListener('visibilitychange',()=>{if(document.hidden){micOff();stopRecording()}else{setDate();refreshToday()}});
+setDate();
+load().catch(e=>{console.error(e);$('ayah').innerHTML='<div class="empty"><b>Could not load the Quran</b>Please connect to the internet the first time, then <a href="" style="color:var(--gold)">tap here to try again</a>.</div>'});
+</script>
+</body>
+</html>
