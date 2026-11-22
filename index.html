@@ -178,8 +178,18 @@ option{background:#0c1936;color:var(--text)}
 .chips button.on{background:var(--gold);color:#1b1405;font-weight:700}
 .range{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:8px;align-items:center;margin:10px 0;color:var(--mut)}
 .foot{text-align:center;color:var(--mut);font-size:12px;margin:20px 0}
+.linkbtn{display:block;text-align:center;text-decoration:none;width:100%}
+.fbcard p{margin:0 0 14px}
+.fbic{font-size:30px;line-height:1;margin-bottom:8px}
+.duacard{text-align:center}
+.duacard .ar{font:400 23px/1.9 "Amiri",serif;color:var(--gold)}
+.duacard .en{font:italic 17px/1.4 "Cormorant Garamond",serif;color:#dfe5f2;margin:4px 0 12px}
+.about{display:flex;gap:14px;align-items:center}
+.about img{width:60px;height:60px;border-radius:16px;box-shadow:0 0 18px rgba(232,198,110,.35)}
+.about b{display:block;font:700 24px "Cormorant Garamond",serif;color:var(--gold)}
+.ver{display:inline-block;margin-top:4px;padding:3px 10px;border-radius:99px;border:1px solid var(--line);color:var(--gold);font-size:13px}
 /* nav */
-nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(3,1fr);padding:8px 10px calc(env(safe-area-inset-bottom) + 8px);background:rgba(6,13,32,.92);border-top:1px solid var(--line);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);z-index:20}
+nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);padding:8px 6px calc(env(safe-area-inset-bottom) + 8px);background:rgba(6,13,32,.92);border-top:1px solid var(--line);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);z-index:20}
 nav button{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--mut);font-size:12px;font-weight:600;padding:4px}
 nav svg{width:27px;height:27px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 nav button.on{color:var(--gold)}
@@ -275,6 +285,7 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
  <div class="card garden">
   <div class="gimg"><img id="gardenImg" src="garden1.png" alt="Your Hifz garden"><div class="gcap"><small>Your Hifz Garden</small><b id="gTitle"></b><span id="gNext"></span></div></div>
   <div class="gthumbs" id="gThumbs"></div>
+  <div style="padding:0 12px 14px"><button class="soft" style="width:100%" onclick="openGarden(0)">🌿 View my gardens</button></div>
  </div>
 
  <div class="card rise">
@@ -330,12 +341,49 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
  <div class="card"><h2>Start over</h2><p class="sub">Clears all progress and recordings on this phone.</p><button class="danger" onclick="resetAll()">Reset all progress</button></div>
  <p class="foot">Quran text: Tanzil (via alquran.cloud) · Recitation: Mishary Alafasy (via everyayah.com)</p>
 </section>
+
+<!-- ============ FEEDBACK & UPDATES ============ -->
+<section id="feedback" class="tab">
+ <h1 class="title">💬 Feedback &amp; updates</h1>
+ <p class="sub">Help make this app better, and stay up to date with new features.</p>
+
+ <div class="card fbcard" id="cardSuggest">
+  <div class="fbic">💡</div><h2>Suggest an improvement</h2>
+  <p class="sub">Found a problem or have an idea? Share it in our WhatsApp suggestions group.</p>
+  <a class="gold linkbtn" id="linkSuggest" target="_blank" rel="noopener noreferrer">Open the suggestions group</a>
+ </div>
+
+ <div class="card fbcard" id="cardCommunity">
+  <div class="fbic">🔔</div><h2>Get updates</h2>
+  <p class="sub">Join our WhatsApp community to hear about new versions and features.</p>
+  <a class="gold linkbtn" id="linkCommunity" target="_blank" rel="noopener noreferrer">Join the community</a>
+ </div>
+
+ <div class="card fbcard">
+  <div class="fbic">🤲</div><h2>Share the app</h2>
+  <p class="sub">Know someone memorising the Quran? Send them the app. Every ayah they learn is a reward for you too, in shaa Allah.</p>
+  <button class="gold linkbtn" onclick="shareApp()">Share the app</button>
+ </div>
+
+ <div class="card duacard">
+  <div class="ar">رَبَّنَا تَقَبَّلْ مِنَّا ۖ إِنَّكَ أَنتَ ٱلسَّمِيعُ ٱلْعَلِيمُ</div>
+  <div class="en">“Our Lord, accept this from us. You are the All-Hearing, the All-Knowing.” · Al-Baqarah 127</div>
+  <p class="sub" style="margin:0">If this app helps you, please remember us, and everyone who helped make it, in your du'a. JazakAllahu khayran 💛</p>
+ </div>
+
+ <div class="card">
+  <h2>About</h2>
+  <div class="about"><img src="icon.png" alt=""><div><b>Hifz</b><span class="sub" style="margin:0">Memorise the Quran, one ayah at a time.</span><br><span class="ver" id="verTag"></span></div></div>
+  <p class="sub" style="margin:14px 0 0">Quran text: Tanzil (via alquran.cloud) · Recitation: Mishary Alafasy (via everyayah.com). Your progress and recordings stay on your phone.</p>
+ </div>
+</section>
 </main>
 
 <nav>
  <button id="n-today" class="on" onclick="tab('today')"><svg viewBox="0 0 24 24"><path d="M3 5.5C5.5 4 9 4 12 6c3-2 6.5-2 9-.5V19c-2.5-1.5-6-1.5-9 .5-3-2-6.5-2-9-.5zM12 6v13.5"/></svg>Today</button>
  <button id="n-journey" onclick="tab('journey')"><svg viewBox="0 0 24 24"><path d="M12 21v-9M12 12C12 7 8.5 5 4 5c0 4.5 3 7 8 7zM12 10c0-4 3-6 8-6 0 4-3 6-8 6"/></svg>Journey</button>
  <button id="n-mine" onclick="tab('mine')"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M3.5 6l1.2 1.2L7 5M3.5 12l1.2 1.2L7 11M3.5 18l1.2 1.2L7 17"/></svg>My Hifz</button>
+ <button id="n-feedback" onclick="tab('feedback')"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4zM8 9.5h8M8 12.5h5"/></svg>Feedback</button>
 </nav>
 
 <div class="gal" id="gal"><button class="gx" onclick="closeGarden()" aria-label="Close">✕</button>
@@ -345,6 +393,13 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
 <div class="cele" id="cele"><div class="cbox"><img class="bu" src="celebrate.png" alt=""><img class="bd hidden" id="celeBadge" alt=""></div><div class="ct" id="celeT"></div><div class="cs" id="celeS"></div><button class="gold" onclick="closeCele()">Alhamdulillah</button></div>
 
 <script>
+/* ========== SETTINGS: edit these links. Leave one as '' to hide its card. ========== */
+const SETTINGS={
+ version:'2.2',
+ communityLink:'https://chat.whatsapp.com/INKnnJ0rrD9AliIeyFUOsa',
+ suggestionsLink:'https://chat.whatsapp.com/FeCkj8STUZkHilwuN1XAhy?s=cl&p=i&iam=2',
+ appLink:'' /* leave blank to share this site's own address */
+};
 /* ---------- basics ---------- */
 const TOTAL=6236,STEPS=30,KEY='hifz-v2';
 const $=id=>document.getElementById(id);
@@ -657,16 +712,30 @@ async function importData(f){if(!f)return;
 async function resetAll(){if(!confirm('Reset ALL progress and recordings on this phone?'))return;if(!confirm('Are you sure? This cannot be undone.'))return;
  const g=S.goal;localStorage.removeItem(KEY);S=loadS();S.goal=g;save();try{await clearRecs()}catch(e){}refreshAll();toast('Progress reset. A fresh start, bismillah ✦')}
 
+/* ---------- feedback & updates ---------- */
+function setupFeedback(){
+ const link=(id,card,url)=>{const u=(url||'').trim();$(card).classList.toggle('hidden',!u);if(u)$(id).href=u};
+ link('linkSuggest','cardSuggest',SETTINGS.suggestionsLink);
+ link('linkCommunity','cardCommunity',SETTINGS.communityLink);
+ $('verTag').textContent='Version '+SETTINGS.version;
+}
+const appUrl=()=>(SETTINGS.appLink||'').trim()||(location.origin+location.pathname);
+async function shareApp(){const url=appUrl(),text='Hifz: a free app to help you memorise the Quran, one ayah at a time.';
+ if(navigator.share){try{await navigator.share({title:'Hifz',text,url});return}catch(e){if(e&&e.name==='AbortError')return}}
+ try{await navigator.clipboard.writeText(url);toast('Link copied ✦ Paste it to share')}
+ catch(e){const t=document.createElement('textarea');t.value=url;t.setAttribute('readonly','');t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();t.setSelectionRange(0,url.length);
+  let ok=false;try{ok=document.execCommand('copy')}catch(_){}t.remove();ok?toast('Link copied ✦ Paste it to share'):prompt('Copy this link to share the app:',url)}}
+
 /* ---------- tabs & init ---------- */
 function tab(n){document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.id===n));
- ['today','journey','mine'].forEach(x=>$('n-'+x).classList.toggle('on',x===n));
+ ['today','journey','mine','feedback'].forEach(x=>$('n-'+x).classList.toggle('on',x===n));
  if(n!=='today'){micOff();stopRecording()}
  if(n==='journey')renderJourney();if(n==='mine')markGrids();if(n==='today')refreshToday();scrollTo(0,0)}
 function refreshAll(){refreshToday();setMode(mode==='revise'?'learn':mode);if($('journey').classList.contains('on'))renderJourney();if($('mine').classList.contains('on'))markGrids()}
 function initUI(){const opts=Q.map(s=>`<option value="${s.n}">${s.n}. ${s.name}</option>`).join('');$('sur').innerHTML=opts;$('rs').innerHTML=opts;rangeLimits();
  checkMilestones(false);setMode('learn');refreshToday()}
 document.addEventListener('visibilitychange',()=>{if(document.hidden){micOff();stopRecording()}else{setDate();refreshToday()}});
-setDate();
+setDate();setupFeedback();
 load().catch(e=>{console.error(e);$('ayah').innerHTML='<div class="empty"><b>Could not load the Quran</b>Please connect to the internet the first time, then <a href="" style="color:var(--gold)">tap here to try again</a>.</div>'});
 </script>
 </body>
