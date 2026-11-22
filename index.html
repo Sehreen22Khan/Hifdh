@@ -117,6 +117,21 @@ option{background:#0c1936;color:var(--text)}
 .gcap b{display:block;font:700 26px "Cormorant Garamond",serif}
 .gcap span{color:#dfe5f2;font-size:14px}
 .gthumbs{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:12px}
+.gthumbs button{position:relative;padding:0}
+.gthumbs button b{position:absolute;inset:0;display:grid;place-items:center;font-size:16px}
+.gimg img{cursor:pointer}
+.gal{position:fixed;inset:0;background:#040a1a;z-index:55;display:none;flex-direction:column;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 16px)}
+.gal.on{display:flex}
+.gal img{width:100%;max-width:520px;max-height:68vh;object-fit:contain;border-radius:20px;box-shadow:0 0 40px rgba(232,198,110,.3);animation:fade .35s ease}
+.gal .gt{font:700 28px "Cormorant Garamond",serif;color:var(--gold);margin-top:16px;text-align:center}
+.gal .gs{color:var(--mut);font-size:14px;margin-top:4px;text-align:center}
+.gal .gnav{display:flex;align-items:center;gap:18px;margin-top:18px}
+.gal .gnav button{width:48px;height:48px;border-radius:50%;border:1px solid var(--line);font-size:22px;color:var(--gold)}
+.gal .gnav button:disabled{opacity:.25}
+.gal .gdots{display:flex;gap:8px}
+.gal .gdots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.2)}
+.gal .gdots i.on{background:var(--gold);box-shadow:0 0 8px var(--gold)}
+.gal .gx{position:absolute;top:calc(env(safe-area-inset-top) + 12px);right:16px;font-size:28px;color:var(--text);width:44px;height:44px}
 .gthumbs img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:10px;border:2px solid transparent}
 .gthumbs img.lock{filter:grayscale(1) brightness(.4)}
 .gthumbs img.cur{border-color:var(--gold);box-shadow:0 0 12px rgba(232,198,110,.6)}
@@ -323,6 +338,9 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
  <button id="n-mine" onclick="tab('mine')"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M3.5 6l1.2 1.2L7 5M3.5 12l1.2 1.2L7 11M3.5 18l1.2 1.2L7 17"/></svg>My Hifz</button>
 </nav>
 
+<div class="gal" id="gal"><button class="gx" onclick="closeGarden()" aria-label="Close">✕</button>
+ <img id="galImg" alt=""><div class="gt" id="galT"></div><div class="gs" id="galS"></div>
+ <div class="gnav"><button id="galPrev" onclick="stepGarden(-1)" aria-label="Previous">‹</button><div class="gdots" id="galDots"></div><button id="galNext" onclick="stepGarden(1)" aria-label="Next">›</button></div></div>
 <div class="toast" id="toast"></div>
 <div class="cele" id="cele"><div class="cbox"><img class="bu" src="celebrate.png" alt=""><img class="bd hidden" id="celeBadge" alt=""></div><div class="ct" id="celeT"></div><div class="cs" id="celeS"></div><button class="gold" onclick="closeCele()">Alhamdulillah</button></div>
 
@@ -578,7 +596,8 @@ function renderJourney(){if(!Q.length)return;const st=stats(),p=st.pct,left=TOTA
   $('eta').innerHTML=`At <b>${S.goal}</b> new ayahs a day, you could finish in about <b>${t}</b>, in shaa Allah.`}else $('eta').textContent='You have memorised the whole Quran. Allahumma barik!';
  const g=gardenStage(p);$('gardenImg').src=`garden${g+1}.png`;$('gTitle').textContent=GARDEN[g].name;
  $('gNext').textContent=g<4?`${fmt(Math.max(1,Math.ceil(GARDEN[g+1].at/100*TOTAL)-st.done))} more ayahs until your garden grows`:'In full bloom, masha\'Allah';
- $('gThumbs').innerHTML=GARDEN.map((x,i)=>`<img src="garden${i+1}.png" class="${i>g?'lock':''}${i===g?' cur':''}" alt="${x.name}">`).join('');
+ $('gThumbs').innerHTML=GARDEN.map((x,i)=>`<button onclick="openGarden(${i})"><img src="garden${i+1}.png" class="${i>g?'lock':''}${i===g?' cur':''}" alt="${x.name}">${i>g?'<b>🔒</b>':''}</button>`).join('');
+ $('gardenImg').onclick=()=>openGarden(g);
  const step=Math.min(STEPS,Math.floor(st.done/TOTAL*STEPS)),f=step/STEPS;
  $('marker').style.top=(95.5-f*56)+'%';$('marker').style.left=(50+f*3)+'%';$('marker').textContent=step>=STEPS?'👑':'★';
  $('stepN').textContent=step>=STEPS?'The top of the staircase ✦':`Step ${step} of ${STEPS}`;
@@ -587,6 +606,18 @@ function renderJourney(){if(!Q.length)return;const st=stats(),p=st.pct,left=TOTA
  renderHeat();
  $('badges').innerHTML=BADGES.map((b,i)=>{const got=S.bd[i]||b.ok(st);return`<button class="badge${got?' got':''}" onclick="toast('${got?'✦ Earned: ':'🔒 '}${b.desc}')"><img src="${b.img}" alt=""><span>${b.name}</span></button>`}).join('');
  $('sgrid').innerHTML=Q.map(s=>{const pc=Math.round(st.sd[s.n]/s.a.length*100);return`<button class="${pc===100?'full':''}" style="background:linear-gradient(to top,rgba(232,198,110,.9) ${pc}%,rgba(255,255,255,.05) ${pc}%)" onclick="practiseSurah(${s.n})" title="${s.name} ${pc}%">${s.n}</button>`}).join('')}
+let galI=0,galMax=0,galX=null;
+function openGarden(i){galMax=gardenStage(stats().pct);
+ if(i>galMax){toast(`🔒 Unlocks at ${GARDEN[i].at}% · ${fmt(Math.ceil(GARDEN[i].at/100*TOTAL)-stats().done)} more ayahs`);return}
+ galI=i;drawGarden();$('gal').classList.add('on')}
+function drawGarden(){const x=GARDEN[galI];$('galImg').src=`garden${galI+1}.png`;$('galT').textContent=x.name;
+ $('galS').textContent=(galI===galMax?'Your garden now · ':'')+(x.at?`Unlocked at ${x.at}%`:'Your first garden');
+ $('galPrev').disabled=galI===0;$('galNext').disabled=galI>=galMax;
+ $('galDots').innerHTML=GARDEN.map((_,i)=>i<=galMax?`<i class="${i===galI?'on':''}"></i>`:'').join('')}
+function stepGarden(d){const n=galI+d;if(n<0||n>galMax)return;galI=n;drawGarden()}
+function closeGarden(){$('gal').classList.remove('on')}
+$('gal').addEventListener('touchstart',e=>{galX=e.touches[0].clientX},{passive:true});
+$('gal').addEventListener('touchend',e=>{if(galX===null)return;const dx=e.changedTouches[0].clientX-galX;galX=null;if(Math.abs(dx)>50)stepGarden(dx<0?1:-1)});
 function renderHeat(){const t=today(),weeks=18,wd=new Date().getDay(),startD=t-(weeks-1)*7-wd;let h='',act=0;
  for(let d=startD;d<=t;d++){const v=S.days[dayKey(d)]||0;if(v)act++;h+=`<i class="h${v===0?0:v<5?1:v<15?2:v<30?3:4}"></i>`}
  $('heat').innerHTML=h;$('heatCap').textContent=`${act} day${act===1?'':'s'} of practice in the last ${weeks} weeks`}
