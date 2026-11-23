@@ -11,11 +11,13 @@
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="icon" href="icon.png">
 <title>Hifdh</title>
+<script>(function(){var t="night";try{t=localStorage.getItem("hifdh-theme")||(matchMedia("(prefers-color-scheme: light)").matches?"day":"night")}catch(e){}document.documentElement.dataset.theme=t;if(t==="day"){var m=document.querySelector("meta[name=apple-mobile-web-app-status-bar-style]");if(m)m.content="default";var c=document.querySelector("meta[name=theme-color]");if(c)c.content="#f4ecda"}})()</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Amiri+Quran&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#070f24;--card:rgba(12,25,54,.80);--line:rgba(230,195,106,.22);--gold:#e8c66e;--gold2:#b98d2c;--em:#3cc08c;--text:#f4eedc;--mut:#a7b1c8;--red:#e8655a}
+:root{--bg:#070f24;--card:rgba(12,25,54,.80);--line:rgba(230,195,106,.22);--gold:#e8c66e;--gold2:#b98d2c;--em:#3cc08c;--text:#f4eedc;--mut:#a7b1c8;--red:#e8655a;--field:rgba(255,255,255,.06);--paper:#0c1836;--ink:#f1e8cf;--hl:rgba(232,198,110,.17);--ok:#6fe3ab;--miss:#ff8f85;--navbg:rgba(6,13,32,.92);--opt:#0c1936;--frame:#c9a24a}
+[data-theme=day]{--bg:#f4ecda;--card:rgba(255,252,244,.93);--line:rgba(150,110,30,.28);--gold:#946510;--gold2:#6f4a08;--text:#2a2216;--mut:#6c6352;--field:rgba(60,40,0,.05);--paper:#fffaf0;--ink:#16130e;--hl:rgba(214,160,40,.22);--ok:#0b7f4c;--miss:#c23a2e;--navbg:rgba(250,245,232,.96);--opt:#fffaf0;--frame:#b8892e}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0}
 body{background-color:var(--bg);background-image:linear-gradient(180deg,rgba(7,15,36,.55),rgba(7,15,36,.93)),url(pattern.png);background-size:auto,320px;color:var(--text);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;min-height:100vh}
@@ -75,7 +77,7 @@ option{background:#0c1936;color:var(--text)}
 .dots i.on{background:var(--gold);opacity:1;box-shadow:0 0 10px var(--gold)}
 .lvl{text-align:center;color:var(--mut);font-size:14px;margin-top:6px}
 .heard{text-align:center;color:#9fd9c0;font-size:14px;min-height:20px;margin:8px 0 2px;direction:rtl}
-.ctl{display:grid;grid-template-columns:repeat(5,1fr);align-items:end;margin:10px 0 14px}
+.ctl{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end;margin:10px 0 14px}
 .ctl button{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11.5px;color:var(--mut)}
 .ctl .ic{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--text)}
 .ctl svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -189,14 +191,14 @@ option{background:#0c1936;color:var(--text)}
 .about b{display:block;font:700 24px "Cormorant Garamond",serif;color:var(--gold)}
 .ver{display:inline-block;margin-top:4px;padding:3px 10px;border-radius:99px;border:1px solid var(--line);color:var(--gold);font-size:13px}
 /* nav */
-nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);padding:8px 6px calc(env(safe-area-inset-bottom) + 8px);background:rgba(6,13,32,.92);border-top:1px solid var(--line);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);z-index:20}
+nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);padding:8px 6px calc(env(safe-area-inset-bottom) + 8px);background:var(--navbg);border-top:1px solid var(--line);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);z-index:20}
 nav button{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--mut);font-size:12px;font-weight:600;padding:4px}
 nav svg{width:27px;height:27px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 nav button.on{color:var(--gold)}
 nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
 /* overlays */
-.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 14px);transform:translate(-50%,-150%);background:rgba(12,25,54,.97);border:1px solid var(--gold);color:var(--text);padding:12px 18px;border-radius:16px;z-index:50;transition:transform .35s;max-width:90vw;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.5)}
-.toast.on{transform:translate(-50%,0)}
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 14px);transform:translate(-50%,-150%);opacity:0;visibility:hidden;background:rgba(12,25,54,.97);border:1px solid var(--gold);color:var(--text);padding:12px 18px;border-radius:16px;z-index:50;transition:transform .35s,opacity .35s,visibility .35s;max-width:90vw;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.toast.on{transform:translate(-50%,0);opacity:1;visibility:visible}
 .cele{position:fixed;inset:0;background:rgba(3,8,20,.88);z-index:60;display:none;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center}
 .cele.on{display:flex}
 .cbox{position:relative;width:min(78vw,340px);aspect-ratio:1}
@@ -210,6 +212,73 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
 .cele .gold{min-width:200px}
 .spark{position:fixed;width:8px;height:8px;border-radius:50%;background:var(--gold);z-index:61;pointer-events:none;animation:fall 2.2s ease-in forwards}
 @keyframes fall{to{transform:translateY(105vh) rotate(540deg);opacity:.2}}
+@font-face{font-family:"UthmanicHafs";src:url(https://verses.quran.foundation/fonts/quran/hafs/uthmanic_hafs/UthmanicHafs1Ver18.woff2) format("woff2"),url(https://verses.quran.foundation/fonts/quran/hafs/uthmanic_hafs/UthmanicHafs1Ver18.ttf) format("truetype");font-display:swap}
+/* ---- themes ---- */
+[data-theme=day] body{background-image:linear-gradient(180deg,rgba(244,236,218,.9),rgba(244,236,218,.97)),url(pattern.png)}
+[data-theme=day] option{background:var(--opt)}
+[data-theme=day] .soft,[data-theme=day] .ctl .ic,[data-theme=day] .seg{background:var(--field)}
+[data-theme=day] .heat i{background:var(--field)}
+[data-theme=day] .heat .h1{background:#9fd3b9}[data-theme=day] .heat .h2{background:#5cb38b}[data-theme=day] .heat .h3{background:#2a8a67}[data-theme=day] .heat .h4{background:var(--gold)}
+[data-theme=day] .sgrid button,[data-theme=day] .jgrid button,[data-theme=day] .slist button{border-color:var(--line)}
+[data-theme=day] .toast{background:var(--paper);color:var(--text)}
+[data-theme=day] nav{background:var(--navbg)}
+[data-theme=day] .ctl .mic .ic{color:#1b1405}
+.topR{display:flex;gap:8px;align-items:center}
+.themeBtn{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:18px;background:var(--field)}
+/* ---- mushaf reader ---- */
+.reader{padding:14px 12px}
+.goto{display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-bottom:10px}
+.mushaf{position:relative;touch-action:pan-y}
+.mpage{background:var(--paper);color:var(--ink);border-radius:14px;padding:8px 9px 6px;border:1.5px solid var(--frame);box-shadow:inset 0 0 0 4px var(--paper),inset 0 0 0 5px rgba(201,162,74,.5),0 8px 24px rgba(0,0,0,.25);direction:rtl;-webkit-user-select:none;user-select:none}
+.mhead{display:flex;justify-content:space-between;font:400 14px/1.7 "Amiri",serif;color:var(--gold);padding:2px 8px 3px;border-bottom:1px solid rgba(201,162,74,.35);margin-bottom:4px}
+.mfoot{text-align:center;font:400 14px/1.6 "Amiri",serif;color:var(--gold);border-top:1px solid rgba(201,162,74,.35);margin-top:4px;padding-top:2px}
+.mload{min-height:440px;display:grid;place-items:center;color:var(--mut);font:400 15px -apple-system,sans-serif;direction:ltr;text-align:center;padding:20px}
+.mlines{padding:0 2px;font-size:20px}
+.ml{display:flex;justify-content:space-between;align-items:center;height:2.05em;white-space:nowrap;font-family:var(--qf),"Amiri Quran",serif}
+.uni .ml{font-family:"UthmanicHafs","Amiri Quran","Amiri",serif}
+.ml.c{justify-content:center;gap:.25em}
+.measure .ml{width:max-content;justify-content:flex-start;gap:.12em}
+.measure .ml.c{gap:.25em}
+.mh{height:2.05em;display:flex;align-items:center;justify-content:center}
+.sh{width:100%;height:1.6em;border:1.5px solid var(--frame);border-radius:999px;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,transparent,rgba(201,162,74,.16),transparent);position:relative}
+.sh:before,.sh:after{content:"۞";position:absolute;top:50%;transform:translateY(-50%);color:var(--frame);font-size:.75em}
+.sh:before{right:.7em}.sh:after{left:.7em}
+.shn{font-family:"surahnames";font-size:1.3em;color:var(--gold);line-height:1}
+.shn+.shn{margin-right:.3em}
+.shn.txt{font-family:"Amiri",serif;font-size:.8em;line-height:1.4}
+.bs{font-family:"UthmanicHafs","Amiri Quran","Amiri",serif;font-size:.95em}
+.mflow{font:400 23px/2.3 "UthmanicHafs","Amiri Quran","Amiri",serif;text-align:justify;text-align-last:center;padding:4px 6px}
+.mflow .sh{margin:8px 0;font-size:20px}
+.bsf{text-align:center;font-size:.95em}
+.mw,.me{border-radius:6px;transition:color .2s,background-color .2s,box-shadow .2s;cursor:pointer}
+.me{color:var(--gold)}
+.mw.cur,.me.cur{background:var(--hl)}
+.mw.play,.me.play{background:rgba(60,192,140,.24)}
+.mw.ok{color:var(--ok)}
+.mw.miss{color:var(--miss)}
+.mw.nxt{box-shadow:inset 0 -2.5px 0 var(--gold)}
+.mw.hid{color:transparent!important;background:rgba(201,162,74,.17)}
+.mw.peek{color:var(--ink)!important;background:var(--hl)}
+.pnav{display:flex;justify-content:space-between;align-items:center;margin:10px 0 2px;gap:6px}
+.pnav button{padding:9px 12px;border-radius:12px;border:1px solid var(--line);background:var(--field);font-size:14px;color:var(--text);white-space:nowrap}
+.pnav span{color:var(--mut);font-size:13px;text-align:center}
+.ayinfo{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-weight:600;font-size:15px}
+.ayinfo .dots{margin:0}
+.ctl .ic.em{font-size:21px}
+.listenMode .ctl,.listenMode .grade{display:none!important}
+.isEmpty .mushaf,.isEmpty .pnav,.isEmpty .ayinfo,.isEmpty .lvl,.isEmpty .ctl,.isEmpty .grade,.isEmpty .heard{display:none!important}
+.selrow{display:grid;grid-template-columns:1.6fr 1fr;gap:8px}
+/* ---- player ---- */
+.player{position:fixed;left:10px;right:10px;bottom:calc(env(safe-area-inset-bottom) + 72px);z-index:25;max-width:540px;margin:0 auto;background:var(--card);border:1px solid var(--gold);border-radius:18px;padding:9px 10px;display:none;align-items:center;gap:8px;box-shadow:0 10px 30px rgba(0,0,0,.4);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.player.on{display:flex}
+.player .pi{flex:1;min-width:0}
+.player .pi b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.player .pi span{display:block;color:var(--mut);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.player button{width:42px;height:42px;flex:none;border-radius:50%;border:1px solid var(--line);font-size:15px;color:var(--text);background:var(--field)}
+.player .pp{background:var(--gold);color:#1b1405;border:0;font-size:16px}
+.player .rp{width:auto;padding:0 10px;border-radius:14px;font-size:13px}
+@media (max-width:360px){.reader{padding:12px 8px}.ctl .ic{width:42px;height:42px}.ctl .mic .ic{width:62px;height:62px}.ctl button{font-size:10.5px}.pnav button{padding:8px 9px;font-size:13px}}
+body.playing main{padding-bottom:calc(env(safe-area-inset-bottom) + 170px)}
 </style>
 </head>
 <body>
@@ -219,7 +288,7 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
 <section id="today" class="tab on">
  <div class="top">
   <div class="brand"><img src="icon.png" alt=""><div><div class="hello">As-salamu alaykum</div><div class="date" id="hdate"></div></div></div>
-  <div class="streak">🔥 <b id="streakN">0</b></div>
+  <div class="topR"><button class="themeBtn" id="themeBtn" onclick="toggleTheme()" aria-label="Day or night mode">☀️</button><div class="streak">🔥 <b id="streakN">0</b></div></div>
  </div>
  <div class="dua">رَبِّ زِدْنِي عِلْمًا<span>“My Lord, increase me in knowledge” · Ta-Ha 114</span></div>
 
@@ -233,38 +302,38 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
   <div class="hint" id="startHint"></div>
  </div>
 
- <div class="card" id="practice">
+ <div class="card reader" id="practice">
   <div class="seg" id="seg">
    <button data-m="learn" onclick="setMode('learn')">Learn</button>
    <button data-m="revise" onclick="setMode('revise')">Revise</button>
    <button data-m="listen" onclick="setMode('listen')">Listen</button>
   </div>
-  <div class="pick" id="pickRow">
+  <div class="goto" id="pickRow">
    <select id="sur" onchange="pickSurah()" aria-label="Surah"></select>
    <select id="aya" onchange="pickAyah()" aria-label="Ayah"></select>
   </div>
   <div class="revhead hidden" id="revHead"></div>
-  <div class="ref" id="ref"></div>
-  <div class="bism hidden" id="bism">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>
-  <div class="ayah" id="ayah" dir="rtl" lang="ar">Loading the Quran…</div>
-  <div class="dots" id="dots"></div>
+  <div class="mushaf" id="mushaf"><div class="mpage"><div class="mload">Loading the Quran…</div></div></div>
+  <div class="pnav"><button onclick="turn(1)" id="pnNext">‹ Next page</button><span id="pgLbl"></span><button onclick="turn(-1)" id="pnPrev">Back ›</button></div>
+  <div class="ayinfo"><span id="ref"></span><div class="dots" id="dots"></div></div>
   <div class="lvl" id="lvl"></div>
   <div class="heard" id="heard"></div>
   <div class="ctl" id="ctl">
-   <button onclick="go(-1)"><span class="ic"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></span>Back</button>
    <button class="eye" id="eyeBtn" onclick="toggleHide()"><span class="ic"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><span id="eyeL">Hide</span></button>
+   <button onclick="hearAyah()"><span class="ic em">🔊</span>Hear it</button>
    <button class="mic" id="micBtn" onclick="toggleMic()"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span><span id="micL">Recite</span></button>
    <button class="rec" id="recBtn" onclick="toggleRec()"><span class="ic"><i></i></span><span id="recL">Record</span></button>
-   <button onclick="go(1)"><span class="ic"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></span><span id="nextL">Next</span></button>
+   <button onclick="playMine()"><span class="ic em">🎧</span>My voice</button>
   </div>
   <div class="row2 grade" id="gradeRow">
    <button class="soft" id="badBtn" onclick="grade(-1)">Needs work</button>
    <button class="gold" id="goodBtn" onclick="grade(1)">I know it ✓</button>
   </div>
   <div class="listen hidden" id="listenRow">
-   <button class="gold" onclick="playMine()">▶ Play my recording</button>
-   <button class="soft" onclick="playAllMine()">▶ Play all my recordings in this surah</button>
-   <button class="soft" onclick="playReciter(true)">🔊 Hear the reciter (Mishary Alafasy)</button>
+   <div class="selrow"><select id="recSel" onchange="setReciter(this.value)" aria-label="Reciter"></select><select id="repSel" onchange="setRepeat(+this.value)" aria-label="Repeat"></select></div>
+   <button class="gold" onclick="playFrom('reciter')">▶ Play from this ayah</button>
+   <button class="soft" onclick="playFrom('mine')">🎧 Play my recordings from this ayah</button>
+   <p class="sub" style="margin:0;text-align:center">Tap any ayah on the page to choose where to start.</p>
   </div>
  </div>
 </section>
@@ -323,6 +392,13 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
 
  <div class="card"><h2>Daily goal</h2><p class="sub">How many new ayahs would you like to memorise each day?</p><div class="chips" id="goalChips"></div></div>
 
+ <div class="card"><h2>Reading &amp; sound</h2>
+  <p class="sub">Page style</p><div class="chips" id="themeChips"></div>
+  <p class="sub" style="margin:16px 0 8px">Reciter</p><select id="recSel2" onchange="setReciter(this.value)" aria-label="Reciter"></select>
+  <p class="sub" style="margin:16px 0 8px">When listening, repeat each ayah</p><select id="repSel2" onchange="setRepeat(+this.value)" aria-label="Repeat"></select>
+ </div>
+
+
  <div class="card"><h2>By juz</h2><div class="jgrid" id="jgrid"></div></div>
 
  <div class="card"><h2>By surah</h2><input type="search" id="sfilter" placeholder="Search for a surah" oninput="markGrids()"><div class="slist" id="slist"></div></div>
@@ -339,7 +415,7 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
  </div>
 
  <div class="card"><h2>Start over</h2><p class="sub">Clears all progress and recordings on this phone.</p><button class="danger" onclick="resetAll()">Reset all progress</button></div>
- <p class="foot">Quran text: Tanzil (via alquran.cloud) · Recitation: Mishary Alafasy (via everyayah.com)</p>
+ <p class="foot">Quran text: Tanzil (via alquran.cloud) · Mushaf pages: Quran.com · Recitations: everyayah.com</p>
 </section>
 
 <!-- ============ FEEDBACK & UPDATES ============ -->
@@ -374,7 +450,7 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
  <div class="card">
   <h2>About</h2>
   <div class="about"><img src="icon.png" alt=""><div><b>Hifdh</b><span class="sub" style="margin:0">Memorise the Quran, one ayah at a time.</span><br><span class="ver" id="verTag"></span></div></div>
-  <p class="sub" style="margin:14px 0 0">Quran text: Tanzil (via alquran.cloud) · Recitation: Mishary Alafasy (via everyayah.com). Your progress and recordings stay on your phone.</p>
+  <p class="sub" style="margin:14px 0 0">Quran text: Tanzil (via alquran.cloud) · Mushaf pages and fonts: Quran.com · Recitations: everyayah.com. Your progress and recordings stay on your phone.</p>
  </div>
 </section>
 </main>
@@ -386,6 +462,7 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
  <button id="n-feedback" onclick="tab('feedback')"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4zM8 9.5h8M8 12.5h5"/></svg>Feedback</button>
 </nav>
 
+<div class="player" id="player"><button onclick="stopPlayer()" aria-label="Stop">■</button><div class="pi"><b id="plT"></b><span id="plS"></span></div><button class="rp" id="plR" onclick="cycleRepeat()">🔁 1×</button><button class="pp" id="plP" onclick="togglePause()" aria-label="Play or pause">❚❚</button></div>
 <div class="gal" id="gal"><button class="gx" onclick="closeGarden()" aria-label="Close">✕</button>
  <img id="galImg" alt=""><div class="gt" id="galT"></div><div class="gs" id="galS"></div>
  <div class="gnav"><button id="galPrev" onclick="stepGarden(-1)" aria-label="Previous">‹</button><div class="gdots" id="galDots"></div><button id="galNext" onclick="stepGarden(1)" aria-label="Next">›</button></div></div>
@@ -395,11 +472,13 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
 <script>
 /* ========== SETTINGS: edit these links. Leave one as '' to hide its card. ========== */
 const SETTINGS={
- version:'2.4',
+ version:'3.0',
  communityLink:'https://chat.whatsapp.com/INKnnJ0rrD9AliIeyFUOsa',
  suggestionsLink:'https://chat.whatsapp.com/FeCkj8STUZkHilwuN1XAhy?s=cl&p=i&iam=2',
  appLink:'' /* leave blank to share this site's own address */
 };
+const RECITERS=[['Alafasy_128kbps','Mishary Alafasy'],['Abdul_Basit_Murattal_192kbps','Abdul Basit (Murattal)'],['Husary_128kbps','Mahmoud Khalil Al-Husary'],['Husary_Muallim_128kbps','Al-Husary (Teaching)'],['Minshawy_Murattal_128kbps','Al-Minshawi (Murattal)'],['Abdurrahmaan_As-Sudais_192kbps','Abdurrahman As-Sudais'],['Saood_ash-Shuraym_128kbps','Saud Ash-Shuraim'],['MaherAlMuaiqly128kbps','Maher Al-Muaiqly'],['Ghamadi_40kbps','Saad Al-Ghamdi'],['Abu_Bakr_Ash-Shaatree_128kbps','Abu Bakr Ash-Shatri'],['Hudhaify_128kbps','Ali Al-Hudhaifi'],['Muhammad_Ayyoub_128kbps','Muhammad Ayyub'],['Yasser_Ad-Dussary_128kbps','Yasser Ad-Dossari'],['Nasser_Alqatami_128kbps','Nasser Al-Qatami'],['ahmed_ibn_ali_al_ajamy_128kbps','Ahmed Al-Ajmi'],['Hani_Rifai_192kbps','Hani Ar-Rifai']];
+const REPEATS=[1,2,3,5,10];
 /* ---------- basics ---------- */
 const TOTAL=6236,STEPS=30,KEY='hifdh-v1';
 const $=id=>document.getElementById(id);
@@ -415,7 +494,7 @@ const TK=()=>dayKey(today());
 
 function loadS(){let s=null;try{s=JSON.parse(localStorage.getItem(KEY))}catch(e){}s=s&&typeof s==='object'?s:{};
  for(const k of['lv','days','rv','iv','rec','nw','rvd','bd'])s[k]=s[k]||{};
- s.goal=s.goal||5;s.step=s.step||0;s.gs=s.gs||0;return s}
+ s.goal=s.goal||5;s.reciter=s.reciter||'Alafasy_128kbps';s.rep=s.rep||1;s.step=s.step||0;s.gs=s.gs||0;return s}
 let S=loadS();
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('Could not save. Phone storage may be full.')}}
 if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
@@ -430,33 +509,33 @@ const putRec=(k,v)=>idb('rec','readwrite',s=>s.put(v,k));
 const clearRecs=()=>idb('rec','readwrite',s=>s.clear());
 
 /* ---------- Arabic matching ---------- */
-const DIA=/[ؐ-ًؚ-ٰٟۖ-ۭـ]/g;
-function norm(t){return t.replace(DIA,'').replace(/[ٱأإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/[^ء-ي\s]/g,'').replace(/\s+/g,' ').trim()}
+const DIA=/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g;
+function norm(t){return t.replace(DIA,'').replace(/[ٱأإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/[^\u0621-\u064A\s]/g,'').replace(/\s+/g,' ').trim()}
 const skel=w=>w.replace(/[اويء]/g,'');
 function lev(a,b){const m=a.length,n=b.length;let p=Array.from({length:n+1},(_,j)=>j);for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[n]}
 function sim(a,b){if(!a||!b)return false;if(a===b)return true;const sa=skel(a),sb=skel(b);if(sa&&sa===sb)return true;
  if(a.length>=4&&b.length>=4&&(a.includes(b)||b.includes(a)))return true;const L=Math.max(a.length,b.length);return L>=3&&1-lev(a,b)/L>=.7}
 
 /* ---------- Quran data ---------- */
-let Q=[],ALL=[],OFF=[0],JT=new Array(31).fill(0),WC={};
+let Q=[],ALL=[],OFF=[0],JT=new Array(31).fill(0),WC={},PG=[];
 async function load(){
- let data=null;try{data=await getKV('quran')}catch(e){}
+ let data=null;try{data=await getKV('quran-v3')}catch(e){}
  if(!data){
-  $('ayah').textContent='Downloading the Quran… (first time only)';
-  const r=await fetch('https://api.alquran.cloud/v1/quran/quran-uthmani');const j=await r.json();
-  data=j.data.surahs.map(s=>({n:s.number,name:s.englishName,ar:s.name,a:s.ayahs.map(x=>({t:x.text,j:x.juz}))}));
-  try{await putKV('quran',data)}catch(e){}
+  setMushafMsg('Downloading the Quran… (first time only)');
+  const r=await fetch('https://api.alquran.cloud/v1/quran/quran-uthmani');if(!r.ok)throw new Error('download failed');const j=await r.json();
+  data=j.data.surahs.map(s=>({n:s.number,name:s.englishName,ar:s.name,a:s.ayahs.map(x=>({t:x.text,j:x.juz,p:x.page}))}));
+  try{await putKV('quran-v3',data);idb('kv','readwrite',st=>st.delete('quran')).catch(()=>{})}catch(e){}
  }
  Q=data;buildIndex();initUI();
 }
-function buildIndex(){ALL=[];JT.fill(0);WC={};let off=0;
+function buildIndex(){ALL=[];JT.fill(0);WC={};PG=[];let off=0;
  Q.forEach(s=>{OFF[s.n]=off;
   if(s.n!==1&&s.n!==9){const t=s.a[0].t.split(/\s+/);if(t.length>4&&norm(t.slice(0,4).join(' '))==='بسم الله الرحمن الرحيم')s.a[0].t=t.slice(4).join(' ')}
-  s.a.forEach((x,i)=>{ALL.push({s:s.n,a:i+1,j:x.j,k:K(s.n,i+1)});JT[x.j]++});off+=s.a.length})}
+  s.a.forEach((x,i)=>{const pg=x.p||1;(PG[pg]=PG[pg]||[]).push(ALL.length);ALL.push({s:s.n,a:i+1,j:x.j,p:pg,k:K(s.n,i+1)});JT[x.j]++});off+=s.a.length})}
 const ord=k=>{const[s,a]=k.split(':').map(Number);return OFF[s]+a};
 function wordsOf(s,a){const k=K(s,a);if(WC[k])return WC[k];const out=[];
- for(const tok of Q[s-1].a[a-1].t.split(/\s+/)){if(!tok)continue;const n=norm(tok);if(!n&&out.length)out[out.length-1].d+=' '+tok;else out.push({d:tok,n})}
- return WC[k]=out}
+ let pre='';for(const tok of Q[s-1].a[a-1].t.split(/\s+/)){if(!tok)continue;const n=norm(tok);if(!n){if(out.length)out[out.length-1].d+=' '+tok;else pre+=tok+' ';continue}out.push({d:pre+tok,n});pre=''}
+ if(pre&&out.length)out[0].d=pre+out[0].d;return WC[k]=out}
 const surahKeys=s=>Q[s-1].a.map((_,i)=>K(s,i+1));
 const juzKeys=j=>ALL.filter(x=>x.j===j).map(x=>x.k);
 
@@ -502,136 +581,309 @@ function checkMilestones(live){if(!Q.length)return false;const st=stats();let an
  save();return any}
 
 /* ---------- practice state ---------- */
-let mode='learn',cur={s:1,a:1},hide=false,lastM=null,queue=[],session=false,filledS=0,busyUntil=0;
+let mode='learn',cur={s:1,a:1},hide=false,queue=[],session=false,filledS=0,busyUntil=0;
+let shownPage=0,PW={},peek=new Set(),renderTok=0;
+const curK=()=>K(cur.s,cur.a);
+const pageOf=(s,a)=>(Q[s-1]&&Q[s-1].a[a-1]&&Q[s-1].a[a-1].p)||1;
 function fillAya(){if(filledS===cur.s)return;filledS=cur.s;$('aya').innerHTML=Q[cur.s-1].a.map((_,i)=>`<option value="${i+1}">Ayah ${i+1}</option>`).join('')}
-function show(m){
- if(!Q.length)return;const pr=$('practice');pr.classList.remove('isEmpty');
- const s=Q[cur.s-1],k=K(cur.s,cur.a),l=S.lv[k]||0,w=wordsOf(cur.s,cur.a);lastM=m||null;
+function setMushafMsg(t){$('mushaf').innerHTML=`<div class="mpage"><div class="mload">${t}</div></div>`}
+const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+
+/* ---------- mushaf pages (Madani 15-line layout) ---------- */
+const QCF_A=p=>`https://verses.quran.foundation/fonts/quran/hafs/v2/woff2/p${p}.woff2`;
+const QCF_B=p=>`https://static-cdn.tarteel.ai/qul/fonts/quran_fonts/v2/ttf/p${p}.ttf`;
+const pageMem={},fontP={},fontOK={};let snOK=false;
+async function getPage(p){
+ if(pageMem[p])return pageMem[p];
+ try{const c=await getKV('pg2:'+p);if(c&&c.length)return pageMem[p]=c}catch(e){}
+ try{const ctl=window.AbortController?new AbortController():null;const to=setTimeout(()=>ctl&&ctl.abort(),9000);
+  const r=await fetch(`https://api.quran.com/api/v4/verses/by_page/${p}?words=true&word_fields=code_v2,text_uthmani,line_number,page_number&per_page=all`,ctl?{signal:ctl.signal}:{});clearTimeout(to);
+  if(!r.ok)return null;const j=await r.json();const w=[];
+  for(const v of j.verses||[])for(const x of v.words||[])w.push({k:v.verse_key,c:x.code_v2||'',t:x.text_uthmani||'',l:x.line_number||0,e:x.char_type_name==='end'});
+  if(!w.length||w.some(x=>!x.l||!x.k))return null;
+  pageMem[p]=w;putKV('pg2:'+p,w).catch(()=>{});return w}catch(e){return null}}
+function loadFont(p){
+ if(fontOK[p])return Promise.resolve(true);if(fontP[p])return fontP[p];
+ if(!window.FontFace||!document.fonts)return Promise.resolve(false);
+ const ff=new FontFace('qcf'+p,`url(${QCF_A(p)}) format('woff2'), url(${QCF_B(p)}) format('truetype')`);
+ return fontP[p]=Promise.race([ff.load().then(f=>{document.fonts.add(f);fontOK[p]=true;return true}),new Promise(r=>setTimeout(()=>r(false),10000))])
+  .catch(()=>false).then(ok=>{delete fontP[p];return ok})}
+function loadSurahFont(){if(!window.FontFace||!document.fonts)return;
+ const ff=new FontFace('surahnames',"url(https://verses.quran.foundation/fonts/quran/surah-names/v1/sura_names.woff2) format('woff2'), url(https://verses.quran.foundation/fonts/quran/surah-names/v1/sura_names.ttf) format('truetype')");
+ ff.load().then(f=>{document.fonts.add(f);const c=document.createElement('canvas').getContext('2d');c.font='40px surahnames';
+  snOK=Math.abs(c.measureText('001').width-c.measureText('002').width)>1;if(snOK&&shownPage)renderPage(shownPage,true)}).catch(()=>{})}
+const headHTML=s=>`<div class="sh">${snOK?`<span class="shn">surah</span><span class="shn">${p3(s)}</span>`:`<span class="shn txt">${esc(Q[s-1].ar)}</span>`}</div>`;
+const BISM='بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ';
+function bismHTML(){const p1=pageMem[1];if(p1&&fontOK[1]){const g=p1.filter(w=>w.k==='1:1'&&!w.e).map(w=>w.c).join(' ');if(g)return`<span style="font-family:qcf1">${g}</span>`}return BISM}
+
+async function renderPage(p,force){
+ if(!Q.length)return;p=Math.max(1,Math.min(604,p||1));if(!PG[p])p=1;
+ const tok=++renderTok;const same=shownPage===p;shownPage=p;updPageLbl();
+ const mem=pageMem[p];
+ if(mem&&fontOK[p]){drawLines(p,mem,true)}
+ else{
+  if(!same||force||!$('mushaf').querySelector(`.mpage[data-p="${p}"]`))drawFlow(p);
+  const data=await getPage(p);if(tok!==renderTok)return;
+  if(data){const ok=await loadFont(p);if(tok!==renderTok)return;drawLines(p,data,ok)}
+ }
+ preloadNear(p)}
+function preloadNear(p){[p+1,p-1].forEach(n=>{if(n>=1&&n<=604&&!(pageMem[n]&&fontOK[n]))getPage(n).then(d=>{if(d)loadFont(n)})})}
+function drawLines(p,w,qcf){
+ const lines={};let maxL=0;w.forEach(x=>{(lines[x.l]=lines[x.l]||[]).push(x);if(x.l>maxL)maxL=x.l});
+ const L=p<=2?maxL:Math.max(15,maxL),rows=[];
+ for(let i=1;i<=L;){
+  if(lines[i]){rows.push({t:'l',w:lines[i]});i++;continue}
+  let j=i;while(j<=L&&!lines[j])j++;const len=j-i;let s=0;
+  if(j<=L){const[ss,aa]=lines[j][0].k.split(':').map(Number);if(aa===1&&lines[j][0]===w.find(x=>x.k===lines[j][0].k))s=ss}
+  else{const nx=PG[p+1]&&ALL[PG[p+1][0]];if(nx&&nx.a===1)s=nx.s}
+  const items=[];
+  if(s){const hb=s!==1&&s!==9;if(len>=2){items.push({t:'h',s});if(hb)items.push({t:'b'})}else if(j<=L&&hb&&i===1)items.push({t:'b'});else items.push({t:'h',s})}
+  while(items.length<len)items.push({t:'x'});rows.push(...items.slice(0,len));i=j}
+ const html=rows.map(r=>{
+  if(r.t==='h')return`<div class="mh">${headHTML(r.s)}</div>`;
+  if(r.t==='b')return`<div class="mh bs">${bismHTML()}</div>`;
+  if(r.t==='x')return'<div class="mh"></div>';
+  return'<div class="ml">'+r.w.map(x=>x.e?`<span class="me" data-k="${x.k}">${qcf?x.c:'﴿'+arNum(x.k.split(':')[1])+'﴾'}</span>`:`<span class="mw" data-k="${x.k}" data-t="${esc(x.t)}">${qcf?x.c:esc(x.t)}</span>`).join('')+'</div>'}).join('');
+ mount(p,`<div class="mlines${qcf?'':' uni'}" style="--qf:${qcf?'qcf'+p:'UthmanicHafs'}">${html}</div>`,'lines')}
+function drawFlow(p){
+ let h='';for(const idx of PG[p]){const x=ALL[idx];
+  if(x.a===1){h+=headHTML(x.s);if(x.s!==1&&x.s!==9)h+=`<div class="bsf">${BISM}</div>`}
+  h+=wordsOf(x.s,x.a).map(w=>`<span class="mw" data-k="${x.k}">${w.d}</span>`).join(' ')+` <span class="me" data-k="${x.k}">﴿${arNum(x.a)}﴾</span> `}
+ mount(p,`<div class="mflow">${h}</div>`,'flow')}
+function mount(p,inner,kind){
+ const f=ALL[PG[p][0]];
+ $('mushaf').innerHTML=`<div class="mpage ${kind}" data-p="${p}"><div class="mhead"><span>${esc(Q[f.s-1].ar)}</span><span>الجزء ${arNum(f.j)}</span></div>${inner}<div class="mfoot">${arNum(p)}</div></div>`;
+ indexWords();if(kind==='lines')fitLines();paint()}
+function indexWords(){PW={};$('mushaf').querySelectorAll('.mw,.me').forEach(el=>{const k=el.dataset.k,o=PW[k]||(PW[k]={w:[],n:[],e:[]});
+ if(el.classList.contains('me'))o.e.push(el);else{el.dataset.i=o.w.length;o.w.push(el);o.n.push(norm(el.dataset.t||el.textContent))}})}
+function mapFor(k){const o=PW[k];if(!o)return null;if(o.map)return o.map;
+ const[s,a]=k.split(':').map(Number),full=wordsOf(s,a).map(w=>w.n),map=new Array(full.length).fill(null);
+ if(o.n.length===full.length)o.w.forEach((el,i)=>map[i]=el);
+ else{let f=0,first=true;o.n.forEach((n,pi)=>{if(!n)return;const lim=first?full.length:Math.min(full.length,f+3);for(let q=f;q<lim;q++)if(sim(full[q],n)){map[q]=o.w[pi];f=q+1;first=false;return}})}
+ o.map=map;o.inv=new Map();map.forEach((el,i)=>{if(el)o.inv.set(el,i)});return map}
+function fitLines(){const box=$('mushaf').querySelector('.mlines');if(!box)return;const W=box.clientWidth;if(!W)return;
+ const ls=[...box.querySelectorAll('.ml')],cen=shownPage<=2;box.style.fontSize='20px';ls.forEach(l=>l.classList.toggle('c',cen));box.classList.add('measure');
+ const ws=ls.map(l=>l.getBoundingClientRect().width);box.classList.remove('measure');
+ const M=Math.max(1,...ws);box.style.fontSize=Math.max(10,Math.min(44,20*W*(cen?0.94:0.985)/M))+'px';
+ ls.forEach((l,i)=>l.classList.toggle('c',cen||ws[i]<M*0.8))}
+let fitT=null;addEventListener('resize',()=>{clearTimeout(fitT);fitT=setTimeout(fitLines,150)});
+
+function paint(){
+ const ck=curK(),co=ord(ck),m=prog.k===ck?prog.cm:[],full=wordsOf(cur.s,cur.a).map(w=>w.n);
+ let last=-1;m.forEach((v,i)=>{if(v)last=i});
+ let nxt=-1;if(wantMic){for(let i=last+1;i<full.length;i++)if(full[i]){nxt=i;break}}
+ const showSel=!(mode==='listen'&&player.on);
+ for(const k in PW){const o=PW[k],isC=k===ck,ko=ord(k),hidK=hide&&mode!=='listen'&&ko>=co,isP=player.on&&k===player.k;
+  if(isC)mapFor(k);
+  o.w.forEach((el,pi)=>{const fi=isC&&o.inv?o.inv.get(el):undefined;let c='mw';
+   if(isC&&showSel)c+=' cur';if(isP)c+=' play';
+   const said=fi!==undefined&&m[fi],missed=fi!==undefined&&!m[fi]&&fi<last&&full[fi];
+   if(said)c+=' ok';else if(missed)c+=' miss';
+   if(fi!==undefined&&fi===nxt)c+=' nxt';
+   const pk=peek.has(k+'#'+pi);
+   if(hidK&&!said&&!missed)c+=pk?' peek':' hid';
+   el.className=c});
+  o.e.forEach(el=>{el.className='me'+(isC&&showSel?' cur':'')+(isP?' play':'')})}}
+function updInfo(){if(!Q.length)return;const s=Q[cur.s-1],k=curK(),l=S.lv[k]||0;
  $('sur').value=cur.s;fillAya();$('aya').value=cur.a;
- $('ref').innerHTML=`<span>${s.name} · ${s.ar} · ${cur.a}</span><span>${S.rec[k]?'<button onclick="playMine()" aria-label="My recording">🎧</button>':''}<button onclick="playReciter()" aria-label="Hear reciter">🔊</button></span>`;
- $('bism').classList.toggle('hidden',!(cur.a===1&&cur.s!==1&&cur.s!==9));
- $('ayah').innerHTML=w.map((x,i)=>`<span class="w${hide?' hid':''}${m&&m[i]?' ok':''}">${x.d}</span>`).join(' ')+` <span class="num">﴿${arNum(cur.a)}﴾</span>`;
+ $('ref').textContent=`${s.name} · Ayah ${cur.a}`;
  $('dots').innerHTML=[1,2,3].map(i=>`<i class="${l>=i?'on':''}"></i>`).join('');
- if(mode==='revise')$('lvl').textContent='Recite from memory. Tap a word to peek.';
- else $('lvl').textContent=l===3?'Memorised ✦':l===0?'New ayah · recite it correctly 3 times':`Learning · ${3-l} more time${3-l>1?'s':''}`;
- $('eyeBtn').classList.toggle('on',hide);$('eyeL').textContent=hide?'Show':'Hide';
- if(mode==='learn'&&S.last!==k){S.last=k;save()}
- if(mode==='listen')prefetch(cur.s);
-}
-function pickSurah(){cur={s:+$('sur').value,a:1};stopAll();show()}
-function pickAyah(){cur.a=+$('aya').value;stopAll(false);show()}
+ $('lvl').textContent=mode==='revise'?'Recite from memory. Tap a hidden word to peek.':mode==='listen'?(S.rec[k]?'You have a recording of this ayah 🎧':'Tap any ayah on the page to select it.'):l===3?'Memorised ✦':l===0?'New ayah · recite it correctly 3 times':`Learning · ${3-l} more time${3-l>1?'s':''}`;
+ $('eyeBtn').classList.toggle('on',hide);$('eyeL').textContent=hide?'Show':'Hide';updPageLbl();
+ if(mode==='learn'&&S.last!==k){S.last=k;save()}}
+function updPageLbl(){const p=shownPage||pageOf(cur.s,cur.a),f=PG[p]&&ALL[PG[p][0]];$('pgLbl').textContent=`Page ${p}${f?' · Juz '+f.j:''}`}
+function showCur(){if(!Q.length)return;const p=pageOf(cur.s,cur.a);if(p!==shownPage)renderPage(p);else paint();updInfo()}
+function selectAyah(s,a){cur={s,a};resetProg();peek.clear();
+ if(player.on&&player.src&&mode==='listen'){startPlayer(player.src,curK(),player.single);return}
+ if(player.on)stopPlayer();showCur()}
+$('mushaf').addEventListener('click',e=>{const el=e.target.closest('.mw,.me');if(!el||!Q.length)return;const k=el.dataset.k;
+ if(el.classList.contains('hid')||el.classList.contains('peek')){const id=k+'#'+el.dataset.i;peek.has(id)?peek.delete(id):peek.add(id);paint();return}
+ if(mode==='revise')return;const[s,a]=k.split(':').map(Number);if(s&&a)selectAyah(s,a)});
+let sx=null,sy=0;
+$('mushaf').addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
+$('mushaf').addEventListener('touchend',e=>{if(sx===null)return;const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;sx=null;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)turn(dx>0?1:-1)},{passive:true});
+function turn(d){if(!Q.length)return;
+ if(mode==='revise'){if(queue.length>1){if(d>0)queue.push(queue.shift());else queue.unshift(queue.pop())}nextRevise();return}
+ const p=Math.max(1,Math.min(604,(shownPage||pageOf(cur.s,cur.a))+d));if(p===shownPage||!PG[p])return;
+ const x=ALL[PG[p][0]];cur={s:x.s,a:x.a};resetProg();peek.clear();if(player.on)stopPlayer();renderPage(p);updInfo()}
+function pickSurah(){if(player.on)stopPlayer();cur={s:+$('sur').value,a:1};resetProg();peek.clear();showCur()}
+function pickAyah(){if(player.on)stopPlayer();cur.a=+$('aya').value;resetProg();peek.clear();showCur()}
+function stepAyah(d,keep){const i=Math.max(0,Math.min(ALL.length-1,ord(curK())-1+d)),x=ALL[i];cur={s:x.s,a:x.a};resetProg(keep);peek.clear();showCur()}
 function setMode(m){
- mode=m;stopAll();document.querySelectorAll('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
- const pr=$('practice');pr.classList.toggle('listenMode',m==='listen');
+ mode=m;micOff();stopRecording();if(m!=='listen'&&player.on)stopPlayer();
+ document.querySelectorAll('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
+ const pr=$('practice');pr.classList.remove('isEmpty');pr.classList.toggle('listenMode',m==='listen');
  $('pickRow').classList.toggle('hidden',m==='revise');$('revHead').classList.toggle('hidden',m!=='revise');
- $('gradeRow').classList.toggle('hidden',m==='listen');$('listenRow').classList.toggle('hidden',m!=='listen');
+ $('listenRow').classList.toggle('hidden',m!=='listen');
  $('badBtn').textContent=m==='revise'?'Forgot':'Needs work';$('goodBtn').textContent=m==='revise'?'Remembered ✓':'I know it ✓';
- $('nextL').textContent=m==='revise'?'Skip':'Next';$('heard').textContent='';
+ $('pnNext').textContent=m==='revise'?'‹ Skip':'‹ Next page';$('pnPrev').textContent=m==='revise'?'Back ›':'Back ›';
+ $('heard').textContent='';peek.clear();resetProg();
  if(m==='revise'){hide=true;queue=dueKeys();nextRevise();return}
  hide=false;
  if(m==='learn'&&S.last){const[s,a]=S.last.split(':').map(Number);if(Q[s-1]&&a<=Q[s-1].a.length)cur={s,a}}
- show();
-}
-function nextRevise(){
- if(!queue.length){const pr=$('practice');pr.classList.add('isEmpty');$('revHead').textContent='';
-  $('ayah').innerHTML=`<div class="empty"><b>${session?'Revision complete ✦':'All caught up ✦'}</b>${session?'Now on to new ayahs…':'Memorised ayahs come back here when it is time to review them.'}</div>`;
-  if(session){session=false;setTimeout(()=>{if(mode==='revise'){setMode('learn');jumpToNextNew();toast('Revision done ✦ Time for new ayahs')}},1600)}
+ showCur()}
+function nextRevise(){const pr=$('practice');
+ if(!queue.length){pr.classList.add('isEmpty');$('revHead').innerHTML=`<div class="empty"><b>${session?'Revision complete ✦':'All caught up ✦'}</b>${session?'Now on to new ayahs…':'Memorised ayahs come back here when it is time to review them.'}</div>`;
+  micOff();if(session){session=false;setTimeout(()=>{if(mode==='revise'){setMode('learn');jumpToNextNew();toast('Revision done ✦ Time for new ayahs')}},1600)}
   refreshToday();return}
- const[s,a]=queue[0].split(':').map(Number);cur={s,a};hide=true;show();
- $('revHead').textContent=`Revision · ${queue.length} left`;
-}
-function jumpToNextNew(){const x=nextNewFrom(S.last||'1:1');if(x){cur={s:x.s,a:x.a};show()}}
+ pr.classList.remove('isEmpty');const[s,a]=queue[0].split(':').map(Number);cur={s,a};hide=true;resetProg(true);peek.clear();showCur();
+ $('revHead').textContent=`Revision · ${queue.length} left`}
+function jumpToNextNew(){const x=nextNewFrom(S.last||'1:1');if(x){cur={s:x.s,a:x.a};resetProg();showCur()}}
 function start(){if(!Q.length)return;const due=dueKeys().length;session=true;
  if(due)setMode('revise');else{setMode('learn');jumpToNextNew();session=false}
  $('practice').scrollIntoView({behavior:'smooth',block:'start'})}
-function go(d){if(!Q.length)return;stopAll(false);
- if(mode==='revise'){if(queue.length>1){if(d>0)queue.push(queue.shift());else queue.unshift(queue.pop())}nextRevise();return}
- cur.a+=d;const n=Q[cur.s-1].a.length;
- if(cur.a<1){if(cur.s>1){cur.s--;cur.a=Q[cur.s-1].a.length}else cur.a=1}
- else if(cur.a>n){if(cur.s<114){cur.s++;cur.a=1}else cur.a=n}
- show()}
-function toggleHide(){hide=!hide;show(lastM)}
-$('ayah').addEventListener('click',e=>{const w=e.target.closest('.w');if(w&&w.classList.contains('hid'))w.classList.toggle('peek')});
+function toggleHide(){hide=!hide;peek.clear();paint();updInfo()}
 
-function grade(d){
+function grade(d,fromMic){
  if(!Q.length||$('practice').classList.contains('isEmpty'))return;
- const k=K(cur.s,cur.a);markDay();
+ const k=curK();markDay();
  if(mode==='revise'){const t=today();
   if(d>0){S.iv[k]=Math.min(90,Math.max(1,(S.iv[k]||1)*2));S.rv[k]=t+S.iv[k];toast(pick(REVPRAISE))}
   else{S.iv[k]=1;S.rv[k]=t+1;toast('No worries, it will come back tomorrow')}
-  S.rvd[TK()]=(S.rvd[TK()]||0)+1;save();queue.shift();if(!checkMilestones(true))$('practice').classList.add('burst');
-  setTimeout(()=>$('practice').classList.remove('burst'),700);nextRevise();refreshToday();return}
+  S.rvd[TK()]=(S.rvd[TK()]||0)+1;save();queue.shift();if(!checkMilestones(true))burst();
+  if(fromMic){busyUntil=Date.now()+700;setTimeout(()=>{nextRevise();refreshToday()},500)}else{resetProg();nextRevise();refreshToday()}
+  return}
  const b=S.lv[k]||0,a=Math.max(0,Math.min(3,b+(d>0?1:-1)));
  if(a)S.lv[k]=a;else delete S.lv[k];
  if(a<3){delete S.rv[k];delete S.iv[k]}
- if(a===3&&b<3){S.iv[k]=1;S.rv[k]=today()+1;S.nw[TK()]=(S.nw[TK()]||0)+1;save();show(lastM);
-  const pr=$('practice');pr.classList.add('burst');setTimeout(()=>pr.classList.remove('burst'),700);
+ if(a===3&&b<3){S.iv[k]=1;S.rv[k]=today()+1;S.nw[TK()]=(S.nw[TK()]||0)+1;save();updInfo();burst();
   if(!checkMilestones(true)){toast(pick(PRAISE));sparks(14)}
   const nw=S.nw[TK()];if(nw===S.goal)setTimeout(()=>celebrate(['Daily goal reached 🌟',`${nw} new ayahs today. Masha'Allah!`]),900);
-  busyUntil=Date.now()+1300;setTimeout(()=>{const x=nextNewFrom(k);if(x){cur={s:x.s,a:x.a};show()}},1200)}
- else{save();show(d>0?lastM:null);
-  if(d>0&&b===3){busyUntil=Date.now()+800;setTimeout(()=>go(1),600)}
-  else if(d>0)$('heard').textContent=`Good! ${3-a} more time${3-a>1?'s':''} to memorise it`;
-  else $('heard').textContent='Keep at it, you will get there 💛'}
+  busyUntil=Date.now()+800;const x=nextNewFrom(k);
+  setTimeout(()=>{if(x&&curK()===k){cur={s:x.s,a:x.a};resetProg(true);peek.clear();showCur()}},600)}
+ else{save();
+  if(d>0&&b===3){busyUntil=Date.now()+600;setTimeout(()=>{if(curK()===k)stepAyah(1,true)},450)}
+  else{resetProg(fromMic);updInfo();paint();$('heard').textContent=d>0?`Good! ${3-a} more time${3-a>1?'s':''} to memorise it`:'Keep at it, you will get there 💛'}}
  refreshToday()}
+function burst(){const pr=$('practice');pr.classList.add('burst');setTimeout(()=>pr.classList.remove('burst'),700)}
 
-/* ---------- voice recognition ---------- */
-let rec=null,wantMic=false,starts=[];
-function micUI(){$('micBtn').classList.toggle('live',wantMic);$('micL').textContent=wantMic?'Listening':'Recite'}
+/* ---------- voice recognition (live word highlighting) ---------- */
+let rec=null,wantMic=false,starts=[],base=0,lastSaid=[],doneT=null,prog={k:'',com:[],st:0,cm:[]};
+const LETTERS=new Set(['الف','لام','ميم','صاد','را','راء','ري','كاف','ها','هاء','يا','ياء','عين','طا','طاء','سين','حا','حاء','قاف','نون','الم','المص','الر','المر','كهيعص','طه','طسم','طس','يس','حم','عسق']);
+const MUQ=new Set(['الم','المص','الر','المر','كهيعص','طه','طسم','طس','يس','ص','حم','عسق','ق','ن']);
+const SRERR={'not-allowed':'Microphone access is blocked. Allow the microphone for Safari in your iPhone Settings, then tap Recite.','service-not-allowed':'Voice checking needs Dictation. Turn it on in Settings › General › Keyboard › Dictation, then tap Recite.','audio-capture':'No microphone was found.','network':'Voice checking needs an internet connection.','language-not-supported':'Arabic voice recognition is not available on this device.'};
+function resetProg(keepBase){prog={k:Q.length?curK():'',com:[],st:0,cm:[]};if(!keepBase)base=lastSaid.length;clearTimeout(doneT)}
+function micUI(){$('micBtn').classList.toggle('live',wantMic);$('micL').textContent=wantMic?'Listening':'Recite';paint()}
 function micStart(){
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!SR){$('heard').textContent='Voice checking is not available here. Use the buttons instead.';return}
- if(mr)stopRecording();
- starts=starts.filter(t=>Date.now()-t<4000);starts.push(Date.now());
- if(starts.length>4){wantMic=false;micUI();$('heard').textContent='The microphone stopped. Tap Recite to continue.';return}
- rec=new SR();rec.lang='ar-SA';rec.continuous=true;rec.interimResults=true;
- rec.onresult=e=>{let t='';for(let i=0;i<e.results.length;i++)t+=e.results[i][0].transcript+' ';onHeard(t)};
- rec.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed'){wantMic=false;micUI();$('heard').textContent='Microphone is blocked. Allow it in Settings › Safari › Microphone.'}};
- rec.onend=()=>{rec=null;if(wantMic)setTimeout(()=>{if(wantMic&&!rec){try{micStart()}catch(e){wantMic=false;micUI()}}},250);else micUI()};
- try{rec.start();wantMic=true;micUI();if(Date.now()>busyUntil)$('heard').textContent='Listening… recite the ayah'}catch(e){wantMic=false;micUI()}
-}
-function micOff(){wantMic=false;if(rec){try{rec.abort()}catch(e){}rec=null}micUI()}
+ if(!SR){$('heard').textContent='Voice checking is not available in this browser. Open the app in Safari, or use the buttons.';return}
+ if(mr)stopRecording();if(player.on)stopPlayer();
+ starts=starts.filter(t=>Date.now()-t<6000);starts.push(Date.now());
+ if(starts.length>5){wantMic=false;micUI();$('heard').textContent='The microphone keeps stopping. Tap Recite to try again.';return}
+ if(prog.k===curK()){prog.com=prog.cm.slice();let l=-1;prog.com.forEach((v,i)=>{if(v)l=i});prog.st=l+1}else resetProg(true);
+ lastSaid=[];base=0;
+ const r=new SR();rec=r;r.lang='ar-SA';r.continuous=true;r.interimResults=true;r.maxAlternatives=1;
+ r.onresult=e=>{if(rec!==r)return;let t='';for(let i=0;i<e.results.length;i++)t+=e.results[i][0].transcript+' ';onHeard(t)};
+ r.onerror=e=>{if(rec!==r)return;const msg=SRERR[e.error];if(msg){wantMic=false;rec=null;try{r.abort()}catch(_){}micUI();$('heard').textContent=msg}};
+ r.onend=()=>{if(rec!==r)return;rec=null;if(wantMic)setTimeout(()=>{if(wantMic&&!rec)micStart()},200);else micUI()};
+ try{r.start();wantMic=true;micUI();if(Date.now()>busyUntil)$('heard').textContent='Listening… start reciting'}
+ catch(e){rec=null;wantMic=false;micUI();$('heard').textContent='Could not start the microphone. Tap Recite again.'}}
+function micOff(){wantMic=false;const r=rec;rec=null;if(r){try{r.abort()}catch(e){}}clearTimeout(doneT);if(Q.length)micUI()}
 function toggleMic(){if(!Q.length)return;if(wantMic)micOff();else{starts=[];micStart()}}
-function onHeard(t){
- if(Date.now()<busyUntil||!Q.length||$('practice').classList.contains('isEmpty'))return;
- const said=norm(t).split(' ').filter(Boolean),w=wordsOf(cur.s,cur.a);let j=0;
- const m=w.map(x=>{if(!x.n)return false;for(let i=j;i<Math.min(said.length,j+6);i++)if(sim(said[i],x.n)){j=i+1;return true}return false});
- const real=w.filter(x=>x.n).length||1,sc=m.filter(Boolean).length/real;
- show(m);$('heard').textContent=t.trim().split(/\s+/).slice(-8).join(' ');
- if(sc>=(S.th||.8)){busyUntil=Date.now()+1500;$('heard').textContent=`✨ ${Math.round(sc*100)}% matched`;
-  if(rec){try{rec.abort()}catch(e){}}grade(1)}
-}
+function onHeard(t){const said=norm(t).split(' ').filter(Boolean);lastSaid=said;
+ $('heard').textContent=t.trim().split(/\s+/).slice(-7).join(' ');
+ if(Date.now()<busyUntil||!Q.length||mode==='listen'||$('practice').classList.contains('isEmpty'))return;evaluate()}
+function matchFrom(said,W,st,muq){const m=new Array(W.length).fill(false);let j=0;
+ for(let i=st;i<W.length;i++){const w=W[i];if(!w)continue;
+  if(muq&&i===0&&MUQ.has(w)){for(let q=j;q<said.length;q++){if(LETTERS.has(said[q])||sim(said[q],w)){let e=q+1;while(e<said.length&&LETTERS.has(said[e]))e++;m[i]=true;j=e;break}}continue}
+  for(let q=j;q<Math.min(said.length,j+8);q++)if(sim(said[q],w)){m[i]=true;j=q+1;break}}
+ return{m,j}}
+function evaluate(){
+ const k=curK();if(prog.k!==k)resetProg(true);
+ const W=wordsOf(cur.s,cur.a).map(w=>w.n),said=lastSaid.slice(base),muq=cur.a===1||k==='42:2';
+ const{m,j}=matchFrom(said,W,prog.st,muq);
+ const cm=W.map((_,i)=>!!(prog.com[i]||m[i]));prog.cm=cm;
+ let real=0,got=0,lastReal=-1,lastHit=-1;W.forEach((w,i)=>{if(w){real++;lastReal=i;if(cm[i]){got++;lastHit=i}}});
+ const sc=got/(real||1);paint();
+ const map=mapFor(k);
+ if(map&&wantMic&&!prog.turned){let nx=-1;for(let i=lastHit+1;i<W.length;i++)if(W[i]){nx=i;break}
+  const mx=map.reduce((a,el,i)=>el?i:a,-1);if(nx>mx&&mx>=0&&got>0&&shownPage<604){prog.turned=true;renderPage(shownPage+1)}}
+ clearTimeout(doneT);const th=S.th||.8,nb=base+j;
+ if((cm[lastReal]&&sc>=th)||sc>=.999)complete(nb,sc);
+ else if(sc>=th)doneT=setTimeout(()=>{if(prog.k===k&&wantMic)complete(nb,sc)},1800)}
+function complete(nb,sc){clearTimeout(doneT);base=nb;busyUntil=Date.now()+700;$('heard').textContent=`✨ ${Math.round(sc*100)}% matched`;grade(1,true)}
 
-/* ---------- recording & playback ---------- */
-let mr=null,chunks=[],recT0=0,recTimer=null;const urls={},audio=new Audio();let playlist=[];
+/* ---------- recording ---------- */
+let mr=null,chunks=[],recT0=0,recTimer=null;const urls={};
 function recUI(){const on=!!(mr&&mr.state==='recording');$('recBtn').classList.toggle('on',on);
  $('recL').textContent=on?(()=>{const s=Math.floor((Date.now()-recT0)/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')})():'Record'}
 async function toggleRec(){
  if(mr&&mr.state==='recording'){mr.stop();return}
  if(!navigator.mediaDevices||!window.MediaRecorder){toast('Recording is not supported on this browser');return}
- micOff();audio.pause();const k=K(cur.s,cur.a);
+ micOff();if(player.on)stopPlayer();const k=curK();
  try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});
   const type=['audio/mp4','audio/webm;codecs=opus','audio/webm'].find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t));
   const r=new MediaRecorder(stream,type?{mimeType:type}:undefined);mr=r;chunks=[];
   r.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
   r.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());clearInterval(recTimer);const blob=new Blob(chunks,{type:r.mimeType||type||'audio/mp4'});mr=null;recUI();
    if(blob.size<1500){toast('That recording was too short');return}
-   try{await putRec(k,blob);S.rec[k]=1;save();if(urls[k])URL.revokeObjectURL(urls[k]);urls[k]=URL.createObjectURL(blob);show(lastM);toast('Recording saved 🎧')}catch(e){toast('Could not save the recording')}};
+   try{await putRec(k,blob);S.rec[k]=1;save();if(urls[k])URL.revokeObjectURL(urls[k]);urls[k]=URL.createObjectURL(blob);updInfo();toast('Recording saved 🎧')}catch(e){toast('Could not save the recording')}};
   r.start();recT0=Date.now();recTimer=setInterval(recUI,500);recUI();
- }catch(e){mr=null;recUI();toast('Microphone not allowed')}
-}
+ }catch(e){mr=null;recUI();toast('Microphone not allowed')}}
 function stopRecording(){if(mr&&mr.state==='recording')mr.stop()}
-function stopAll(full=true){micOff();stopRecording();playlist=[];audio.pause();lastM=null}
-async function prefetch(s){for(let a=1;a<=Q[s-1].a.length;a++){const k=K(s,a);if(S.rec[k]&&!urls[k]){try{const b=await getRec(k);if(b)urls[k]=URL.createObjectURL(b)}catch(e){}}}}
-function playUrl(u){audio.pause();audio.src=u;audio.play().catch(()=>toast('Tap play again'))}
-async function playKey(k){if(!S.rec[k]){toast('No recording for this ayah yet. Use Record in Learn.');return}
- if(urls[k]){playUrl(urls[k]);return}const b=await getRec(k);if(!b){toast('Recording not found');return}urls[k]=URL.createObjectURL(b);playUrl(urls[k])}
-function playMine(){micOff();playlist=[];playKey(K(cur.s,cur.a))}
-function playAllMine(){micOff();playlist=[];for(let a=1;a<=Q[cur.s-1].a.length;a++)if(S.rec[K(cur.s,a)])playlist.push(a);
- if(!playlist.length){toast('No recordings in this surah yet');return}nextInList()}
-function nextInList(){if(!playlist.length)return;cur.a=playlist.shift();show();playKey(K(cur.s,cur.a))}
-function playReciter(){micOff();playlist=[];playUrl(`https://everyayah.com/data/Alafasy_128kbps/${p3(cur.s)}${p3(cur.a)}.mp3`)}
-audio.onended=()=>{if(playlist.length)nextInList()};
+function stopAll(){micOff();stopRecording()}
+
+/* ---------- listening: reciters & my recordings ---------- */
+const audio=new Audio(),pre=new Audio();audio.preload='auto';pre.preload='auto';
+const SILENT='data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
+let player={on:false,src:'',list:[],i:0,left:1,k:'',single:false};
+const recInfo=()=>RECITERS.find(r=>r[0]===S.reciter)||RECITERS[0];
+const recUrl=(s,a)=>`https://everyayah.com/data/${recInfo()[0]}/${p3(s)}${p3(a)}.mp3`;
+function unlockAudio(){try{audio.src=SILENT;const p=audio.play();if(p)p.catch(()=>{})}catch(e){}}
+function startPlayer(src,fromK,single){
+ micOff();stopRecording();
+ const[s,a0]=fromK.split(':').map(Number),n=Q[s-1].a.length,list=[];
+ if(single)list.push({s,a:a0});else for(let a=a0;a<=n;a++){if(src==='mine'&&!S.rec[K(s,a)])continue;list.push({s,a})}
+ if(!list.length){toast(src==='mine'?'No recordings from this ayah onwards in this surah yet. Use Record in Learn.':'Nothing to play');return}
+ if(src==='reciter'&&!single&&list[0].a===1&&s!==1&&s!==9)list.unshift({s,a:1,b:true});
+ player={on:true,src,list,i:0,left:S.rep||1,k:'',single:!!single};
+ document.body.classList.add('playing');$('player').classList.add('on');playItem()}
+async function playItem(){
+ if(!player.on)return;const it=player.list[player.i];if(!it){finishPlayer();return}
+ const k=K(it.s,it.a);player.k=it.b?'':k;
+ if(curK()!==k||it.b){cur={s:it.s,a:it.a};resetProg()}
+ if(mode!=='revise'||!it.b)showCur();
+ updPlayerUI();
+ let url;
+ if(player.src==='reciter')url=it.b?`https://everyayah.com/data/${recInfo()[0]}/001001.mp3`:recUrl(it.s,it.a);
+ else{url=urls[k];if(!url){try{const b=await getRec(k);if(b)url=urls[k]=URL.createObjectURL(b)}catch(e){}}
+  if(!player.on)return;if(!url){player.i++;player.left=S.rep||1;return playItem()}}
+ audio.src=url;const pr=audio.play();if(pr)pr.catch(err=>{if(player.on&&err&&err.name==='NotAllowedError'){updPlayerUI();toast('Tap ▶ to play')}});
+ const nx=player.list[player.i+1];if(nx&&player.src==='reciter'){try{pre.src=nx.b?url:recUrl(nx.s,nx.a);pre.load()}catch(e){}}
+ mediaMeta(it)}
+audio.addEventListener('ended',()=>{if(!player.on||audio.src.startsWith('data:'))return;const it=player.list[player.i];
+ if(it&&!it.b&&player.left>1){player.left--;audio.currentTime=0;const p=audio.play();if(p)p.catch(()=>{});updPlayerUI();return}
+ player.i++;player.left=S.rep||1;playItem()});
+audio.addEventListener('error',()=>{if(!player.on||!audio.src||audio.src.startsWith('data:'))return;toast(player.src==='reciter'?'Could not play the recitation. Check your internet connection.':'Could not play this recording.');stopPlayer()});
+audio.addEventListener('play',()=>updPlayerUI());audio.addEventListener('pause',()=>updPlayerUI());
+function finishPlayer(){const s=player.list.length&&player.list[player.list.length-1].s;const single=player.single;stopPlayer();if(!single)toast(player.src==='mine'?'Finished your recordings ✦':`Finished Surah ${s?Q[s-1].name:''} ✦`)}
+function stopPlayer(){player.on=false;player.k='';try{audio.pause()}catch(e){}$('player').classList.remove('on');document.body.classList.remove('playing');paint()}
+function togglePause(){if(!player.on)return;if(audio.paused){const p=audio.play();if(p)p.catch(()=>{})}else audio.pause()}
+function updPlayerUI(){if(!player.on)return;const it=player.list[player.i];if(!it)return;
+ $('plT').textContent=it.b?'Bismillah':`${Q[it.s-1].name} · Ayah ${it.a}${(S.rep||1)>1?` · ${(S.rep||1)-player.left+1}/${S.rep}`:''}`;
+ $('plS').textContent=player.src==='reciter'?recInfo()[1]:'My recordings';
+ $('plR').textContent=`🔁 ${S.rep||1}×`;$('plP').textContent=audio.paused?'▶':'❚❚'}
+function mediaMeta(it){try{if(!('mediaSession' in navigator)||!window.MediaMetadata)return;
+ navigator.mediaSession.metadata=new MediaMetadata({title:it.b?'Bismillah':`${Q[it.s-1].name} ${it.a}`,artist:player.src==='reciter'?recInfo()[1]:'My recordings',album:'Hifdh',artwork:[{src:'icon.png',sizes:'512x512',type:'image/png'}]});
+ navigator.mediaSession.setActionHandler('play',()=>audio.play());navigator.mediaSession.setActionHandler('pause',()=>audio.pause());
+ navigator.mediaSession.setActionHandler('nexttrack',()=>{player.i++;player.left=S.rep||1;playItem()});
+ navigator.mediaSession.setActionHandler('previoustrack',()=>{player.i=Math.max(0,player.i-1);player.left=S.rep||1;playItem()})}catch(e){}}
+function hearAyah(){if(!Q.length)return;startPlayer('reciter',curK(),true)}
+function playMine(){if(!Q.length)return;if(!S.rec[curK()]){toast('No recording for this ayah yet. Tap Record first.');return}unlockAudio();startPlayer('mine',curK(),true)}
+function playFrom(src){if(!Q.length)return;if(src==='mine')unlockAudio();startPlayer(src,curK(),false)}
+function setReciter(f){S.reciter=f;save();fillSettings();if(player.on&&player.src==='reciter'){const it=player.list[player.i];startPlayer('reciter',K(it.s,it.a),player.single)}}
+function setRepeat(n){S.rep=n;save();fillSettings();if(player.on){player.left=n;updPlayerUI()}}
+function cycleRepeat(){const i=REPEATS.indexOf(S.rep||1);setRepeat(REPEATS[(i+1)%REPEATS.length])}
+function fillSettings(){const ro=RECITERS.map(r=>`<option value="${r[0]}">${r[1]}</option>`).join(''),po=REPEATS.map(n=>`<option value="${n}">${n===1?'Once':n+' times'}</option>`).join('');
+ ['recSel','recSel2'].forEach(id=>{const el=$(id);if(!el)return;if(!el.options.length)el.innerHTML=ro;el.value=recInfo()[0]});
+ ['repSel','repSel2'].forEach(id=>{const el=$(id);if(!el)return;if(!el.options.length)el.innerHTML=po;el.value=S.rep||1});
+ updPlayerUI()}
+
+/* ---------- day & night ---------- */
+function applyTheme(t){t=t==='day'?'day':'night';document.documentElement.dataset.theme=t;try{localStorage.setItem('hifdh-theme',t)}catch(e){}
+ $('themeBtn').textContent=t==='day'?'🌙':'☀️';const mc=document.querySelector('meta[name=theme-color]');if(mc)mc.content=t==='day'?'#f4ecda':'#070f24';
+ const tc=$('themeChips');if(tc)tc.innerHTML=[['night','🌙 Night'],['day','☀️ Day']].map(([v,l])=>`<button class="${t===v?'on':''}" onclick="applyTheme('${v}')">${l}</button>`).join('')}
+function toggleTheme(){applyTheme(document.documentElement.dataset.theme==='day'?'night':'day')}
 
 /* ---------- Today card ---------- */
 function refreshToday(){if(!Q.length)return;const due=dueKeys().length,nw=S.nw[TK()]||0,st=streak();
@@ -676,13 +928,13 @@ $('gal').addEventListener('touchend',e=>{if(galX===null)return;const dx=e.change
 function renderHeat(){const t=today(),weeks=18,wd=new Date().getDay(),startD=t-(weeks-1)*7-wd;let h='',act=0;
  for(let d=startD;d<=t;d++){const v=S.days[dayKey(d)]||0;if(v)act++;h+=`<i class="h${v===0?0:v<5?1:v<15?2:v<30?3:4}"></i>`}
  $('heat').innerHTML=h;$('heatCap').textContent=`${act} day${act===1?'':'s'} of practice in the last ${weeks} weeks`}
-function practiseSurah(s){tab('today');setMode('learn');const f=Q[s-1].a.findIndex((_,i)=>S.lv[K(s,i+1)]!==3);cur={s,a:f<0?1:f+1};show();
+function practiseSurah(s){tab('today');setMode('learn');const f=Q[s-1].a.findIndex((_,i)=>S.lv[K(s,i+1)]!==3);cur={s,a:f<0?1:f+1};resetProg();showCur();
  setTimeout(()=>$('practice').scrollIntoView({behavior:'smooth',block:'start'}),50)}
 
 /* ---------- My Hifdh ---------- */
 function markKeys(keys,on){const t=today();let c=0;const win=Math.max(14,Math.ceil(keys.length/40));
  keys.forEach(k=>{if(on){if(S.lv[k]!==3){S.lv[k]=3;S.iv[k]=7;S.rv[k]=t+1+(c%win);c++}}else if(S.lv[k]){delete S.lv[k];delete S.rv[k];delete S.iv[k];c++}});
- checkMilestones(false);save();markGrids();refreshToday();if(mode!=='revise')show();
+ checkMilestones(false);save();markGrids();refreshToday();if(mode!=='revise'){updInfo();paint()}
  toast(on?`Marked ${fmt(c)} ayah${c===1?'':'s'} as known ✦`:`Unmarked ${fmt(c)} ayah${c===1?'':'s'}`)}
 function toggleKeys(keys,label){if(keys.every(k=>S.lv[k]===3)){if(confirm(`Unmark ${label}?`))markKeys(keys,false)}else markKeys(keys,true)}
 function markGrids(){if(!Q.length)return;const st=stats();
@@ -729,14 +981,16 @@ async function shareApp(){const url=appUrl(),text='Hifdh: a free app to help you
 /* ---------- tabs & init ---------- */
 function tab(n){document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.id===n));
  ['today','journey','mine','feedback'].forEach(x=>$('n-'+x).classList.toggle('on',x===n));
- if(n!=='today'){micOff();stopRecording()}
+ if(n!=='today'){micOff();stopRecording()}else requestAnimationFrame(fitLines);
  if(n==='journey')renderJourney();if(n==='mine')markGrids();if(n==='today')refreshToday();scrollTo(0,0)}
 function refreshAll(){refreshToday();setMode(mode==='revise'?'learn':mode);if($('journey').classList.contains('on'))renderJourney();if($('mine').classList.contains('on'))markGrids()}
 function initUI(){const opts=Q.map(s=>`<option value="${s.n}">${s.n}. ${s.name}</option>`).join('');$('sur').innerHTML=opts;$('rs').innerHTML=opts;rangeLimits();
+ fillSettings();applyTheme(document.documentElement.dataset.theme);loadSurahFont();getPage(1).then(d=>{if(d)loadFont(1)});
  checkMilestones(false);setMode('learn');refreshToday()}
-document.addEventListener('visibilitychange',()=>{if(document.hidden){micOff();stopRecording()}else{setDate();refreshToday()}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){micOff();stopRecording()}else{setDate();refreshToday();requestAnimationFrame(fitLines)}});
 setDate();setupFeedback();
-load().catch(e=>{console.error(e);$('ayah').innerHTML='<div class="empty"><b>Could not load the Quran</b>Please connect to the internet the first time, then <a href="" style="color:var(--gold)">tap here to try again</a>.</div>'});
+applyTheme(document.documentElement.dataset.theme);
+load().catch(e=>{console.error(e);setMushafMsg('<div><b style="color:var(--gold)">Could not load the Quran</b><br>Please connect to the internet the first time, then <a href="" style="color:var(--gold)">tap here to try again</a>.</div>')});
 </script>
 </body>
 </html>
