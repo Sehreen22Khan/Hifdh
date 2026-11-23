@@ -11,11 +11,11 @@
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="icon" href="icon.png">
 <title>Hifdh</title>
-<script>(function(){var t="night";try{t=localStorage.getItem("hifdh-theme")||(matchMedia("(prefers-color-scheme: light)").matches?"day":"night")}catch(e){}document.documentElement.dataset.theme=t;if(t==="day"){var m=document.querySelector("meta[name=apple-mobile-web-app-status-bar-style]");if(m)m.content="default";var c=document.querySelector("meta[name=theme-color]");if(c)c.content="#f4ecda"}})()</script>
+<script id="theme">(function(){var t="night";try{t=localStorage.getItem("hifdh-theme")||(matchMedia("(prefers-color-scheme: light)").matches?"day":"night")}catch(e){}document.documentElement.dataset.theme=t;if(t==="day"){var m=document.querySelector("meta[name=apple-mobile-web-app-status-bar-style]");if(m)m.content="default";var c=document.querySelector("meta[name=theme-color]");if(c)c.content="#f4ecda"}})()</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Amiri+Quran&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
-<style>
+<style id="appcss">
 :root{--bg:#070f24;--card:rgba(12,25,54,.80);--line:rgba(230,195,106,.22);--gold:#e8c66e;--gold2:#b98d2c;--em:#3cc08c;--text:#f4eedc;--mut:#a7b1c8;--red:#e8655a;--field:rgba(255,255,255,.06);--paper:#0c1836;--ink:#f1e8cf;--hl:rgba(232,198,110,.17);--ok:#6fe3ab;--miss:#ff8f85;--navbg:rgba(6,13,32,.92);--opt:#0c1936;--frame:#c9a24a}
 [data-theme=day]{--bg:#f4ecda;--card:rgba(255,252,244,.93);--line:rgba(150,110,30,.28);--gold:#946510;--gold2:#6f4a08;--text:#2a2216;--mut:#6c6352;--field:rgba(60,40,0,.05);--paper:#fffaf0;--ink:#16130e;--hl:rgba(214,160,40,.22);--ok:#0b7f4c;--miss:#c23a2e;--navbg:rgba(250,245,232,.96);--opt:#fffaf0;--frame:#b8892e}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -278,6 +278,14 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
 .player .pp{background:var(--gold);color:#1b1405;border:0;font-size:16px}
 .player .rp{width:auto;padding:0 10px;border-radius:14px;font-size:13px}
 @media (max-width:360px){.reader{padding:12px 8px}.ctl .ic{width:42px;height:42px}.ctl .mic .ic{width:62px;height:62px}.ctl button{font-size:10.5px}.pnav button{padding:8px 9px;font-size:13px}}
+.upd{position:fixed;left:10px;right:10px;top:calc(env(safe-area-inset-top) + 10px);z-index:45;max-width:540px;margin:0 auto;display:none;align-items:center;gap:10px;background:var(--card);border:1px solid var(--gold);border-radius:18px;padding:10px 8px 10px 14px;box-shadow:0 10px 30px rgba(0,0,0,.4);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.upd.on{display:flex;animation:fade .35s ease}
+.upd .ut{flex:1;min-width:0}
+.upd .ut b{display:block;font-size:15px;color:var(--gold)}
+.upd .ut span{display:block;font-size:12.5px;color:var(--mut)}
+.upd .gold{padding:10px 16px;border-radius:13px;font-size:15px;flex:none}
+.upd .gold:disabled{opacity:.7}
+.upd .ux{width:36px;height:36px;flex:none;border-radius:50%;color:var(--mut);font-size:15px}
 body.playing main{padding-bottom:calc(env(safe-area-inset-bottom) + 170px)}
 </style>
 </head>
@@ -451,6 +459,7 @@ body.playing main{padding-bottom:calc(env(safe-area-inset-bottom) + 170px)}
   <h2>About</h2>
   <div class="about"><img src="icon.png" alt=""><div><b>Hifdh</b><span class="sub" style="margin:0">Memorise the Quran, one ayah at a time.</span><br><span class="ver" id="verTag"></span></div></div>
   <p class="sub" style="margin:14px 0 0">Quran text: Tanzil (via alquran.cloud) · Mushaf pages and fonts: Quran.com · Recitations: everyayah.com. Your progress and recordings stay on your phone.</p>
+  <button class="soft" style="width:100%;margin-top:14px" onclick="checkUpdate(true)">🔄 Check for updates</button>
  </div>
 </section>
 </main>
@@ -466,19 +475,22 @@ body.playing main{padding-bottom:calc(env(safe-area-inset-bottom) + 170px)}
 <div class="gal" id="gal"><button class="gx" onclick="closeGarden()" aria-label="Close">✕</button>
  <img id="galImg" alt=""><div class="gt" id="galT"></div><div class="gs" id="galS"></div>
  <div class="gnav"><button id="galPrev" onclick="stepGarden(-1)" aria-label="Previous">‹</button><div class="gdots" id="galDots"></div><button id="galNext" onclick="stepGarden(1)" aria-label="Next">›</button></div></div>
+<div class="upd" id="upd" role="status"><div class="ut"><b id="updT">An update is ready</b><span>Tap Update. Your progress stays safe.</span></div><button class="gold" id="updBtn" onclick="applyUpdate()">Update</button><button class="ux" onclick="hideUpdate(true)" aria-label="Not now">✕</button></div>
 <div class="toast" id="toast"></div>
 <div class="cele" id="cele"><div class="cbox"><img class="bu" src="celebrate.png" alt=""><img class="bd hidden" id="celeBadge" alt=""></div><div class="ct" id="celeT"></div><div class="cs" id="celeS"></div><button class="gold" onclick="closeCele()">Alhamdulillah</button></div>
 
-<script>
+<script id="app">
 /* ========== SETTINGS: edit these links. Leave one as '' to hide its card. ========== */
 const SETTINGS={
- version:'3.0',
+ version:'3.1',
  communityLink:'https://chat.whatsapp.com/INKnnJ0rrD9AliIeyFUOsa',
  suggestionsLink:'https://chat.whatsapp.com/FeCkj8STUZkHilwuN1XAhy?s=cl&p=i&iam=2',
  appLink:'' /* leave blank to share this site's own address */
 };
 const RECITERS=[['Alafasy_128kbps','Mishary Alafasy'],['Abdul_Basit_Murattal_192kbps','Abdul Basit (Murattal)'],['Husary_128kbps','Mahmoud Khalil Al-Husary'],['Husary_Muallim_128kbps','Al-Husary (Teaching)'],['Minshawy_Murattal_128kbps','Al-Minshawi (Murattal)'],['Abdurrahmaan_As-Sudais_192kbps','Abdurrahman As-Sudais'],['Saood_ash-Shuraym_128kbps','Saud Ash-Shuraim'],['MaherAlMuaiqly128kbps','Maher Al-Muaiqly'],['Ghamadi_40kbps','Saad Al-Ghamdi'],['Abu_Bakr_Ash-Shaatree_128kbps','Abu Bakr Ash-Shatri'],['Hudhaify_128kbps','Ali Al-Hudhaifi'],['Muhammad_Ayyoub_128kbps','Muhammad Ayyub'],['Yasser_Ad-Dussary_128kbps','Yasser Ad-Dossari'],['Nasser_Alqatami_128kbps','Nasser Al-Qatami'],['ahmed_ibn_ali_al_ajamy_128kbps','Ahmed Al-Ajmi'],['Hani_Rifai_192kbps','Hani Ar-Rifai']];
 const REPEATS=[1,2,3,5,10];
+/* fingerprint of this copy of the app, taken before anything changes the page (used to spot updates) */
+const BOOT=appSig(document);
 /* ---------- basics ---------- */
 const TOTAL=6236,STEPS=30,KEY='hifdh-v1';
 const $=id=>document.getElementById(id);
@@ -978,6 +990,39 @@ async function shareApp(){const url=appUrl(),text='Hifdh: a free app to help you
  catch(e){const t=document.createElement('textarea');t.value=url;t.setAttribute('readonly','');t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();t.setSelectionRange(0,url.length);
   let ok=false;try{ok=document.execCommand('copy')}catch(_){}t.remove();ok?toast('Link copied ✦ Paste it to share'):prompt('Copy this link to share the app:',url)}}
 
+/* ---------- app updates: spot a newer copy on the website and offer to load it ---------- */
+const APP_URL=location.origin+location.pathname,updTried=new URLSearchParams(location.search).get('u');
+let updSig='',updSkip='',updLast=0,updBusy=false;
+if(updTried)try{const q=new URLSearchParams(location.search);q.delete('u');const qs=q.toString();history.replaceState(history.state,'',location.pathname+(qs?'?'+qs:'')+location.hash)}catch(e){}
+function sigHash(s){let a=0x811c9dc5,b=0x2545f491;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);a=Math.imul(a^c,16777619);b=Math.imul(b^c,0x5bd1e995)}return(a>>>0).toString(36)+'-'+(b>>>0).toString(36)}
+function appSig(doc){return sigHash(['#appcss','#theme','#app','main','nav','#player','#gal','#cele'].map(q=>{const e=doc.querySelector(q);return e?e.textContent:''}).join('\u0001'))}
+function verOf(doc){for(const x of doc.querySelectorAll('script')){const m=x.textContent.match(/\bversion:'([^']+)'/);if(m)return m[1]}return''}
+async function fetchApp(url,cache){
+ const ctl=window.AbortController?new AbortController():null,to=setTimeout(()=>ctl&&ctl.abort(),12000);
+ try{const r=await fetch(url,ctl?{cache,signal:ctl.signal}:{cache});
+  if(!r.ok||(r.url&&new URL(r.url).origin!==location.origin))return null;
+  const doc=new DOMParser().parseFromString(await r.text(),'text/html');
+  if(!doc.querySelector('nav')||![...doc.querySelectorAll('script')].some(x=>x.textContent.includes('const SETTINGS=')))return null;
+  return{sig:appSig(doc),ver:verOf(doc)}}
+ catch(e){return null}finally{clearTimeout(to)}}
+async function checkUpdate(manual){
+ if(!/^https?:$/.test(location.protocol)||updBusy)return;
+ if(!manual&&(document.hidden||Date.now()-updLast<15000))return;
+ updBusy=true;updLast=Date.now();
+ const s=await fetchApp(APP_URL+'?check='+Date.now().toString(36),'no-store');updBusy=false;
+ if(!s){if(manual)toast('Could not check for updates. Check your internet connection.');return}
+ if(s.sig===BOOT){hideUpdate();if(manual)toast(`You have the latest version (${SETTINGS.version}) ✦`);return}
+ if(!manual&&(s.sig===updSkip||s.sig===updTried))return;
+ updSig=s.sig;$('updT').textContent=s.ver&&s.ver!==SETTINGS.version?`Hifdh ${s.ver} is ready`:'An update is ready';
+ const b=$('updBtn');b.disabled=false;b.textContent='Update';$('upd').classList.add('on');
+ fetch(APP_URL,{cache:'reload'}).catch(()=>{}) /* store the new copy so the next launch opens it */}
+function hideUpdate(later){if(later)updSkip=updSig;$('upd').classList.remove('on')}
+async function applyUpdate(){
+ if(mr&&mr.state==='recording'){toast('Stop your recording first, then tap Update');return}
+ const b=$('updBtn');b.disabled=true;b.textContent='Updating…';micOff();if(player.on)stopPlayer();save();
+ if(!await fetchApp(APP_URL,'reload')){b.disabled=false;b.textContent='Update';toast('No internet connection. Try again in a moment.');return}
+ location.replace(APP_URL+'?u='+encodeURIComponent(updSig)+location.hash)}
+
 /* ---------- tabs & init ---------- */
 function tab(n){document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.id===n));
  ['today','journey','mine','feedback'].forEach(x=>$('n-'+x).classList.toggle('on',x===n));
@@ -987,10 +1032,12 @@ function refreshAll(){refreshToday();setMode(mode==='revise'?'learn':mode);if($(
 function initUI(){const opts=Q.map(s=>`<option value="${s.n}">${s.n}. ${s.name}</option>`).join('');$('sur').innerHTML=opts;$('rs').innerHTML=opts;rangeLimits();
  fillSettings();applyTheme(document.documentElement.dataset.theme);loadSurahFont();getPage(1).then(d=>{if(d)loadFont(1)});
  checkMilestones(false);setMode('learn');refreshToday()}
-document.addEventListener('visibilitychange',()=>{if(document.hidden){micOff();stopRecording()}else{setDate();refreshToday();requestAnimationFrame(fitLines)}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){micOff();stopRecording()}else{setDate();refreshToday();requestAnimationFrame(fitLines);checkUpdate()}});
 setDate();setupFeedback();
 applyTheme(document.documentElement.dataset.theme);
 load().catch(e=>{console.error(e);setMushafMsg('<div><b style="color:var(--gold)">Could not load the Quran</b><br>Please connect to the internet the first time, then <a href="" style="color:var(--gold)">tap here to try again</a>.</div>')});
+if(updTried&&updTried===BOOT)setTimeout(()=>toast(`Updated to Version ${SETTINGS.version} ✦`),900);
+setTimeout(()=>checkUpdate(),4000);setInterval(()=>checkUpdate(),5*60e3);
 </script>
 </body>
 </html>
