@@ -77,7 +77,7 @@ option{background:#0c1936;color:var(--text)}
 .dots i.on{background:var(--gold);opacity:1;box-shadow:0 0 10px var(--gold)}
 .lvl{text-align:center;color:var(--mut);font-size:14px;margin-top:6px}
 .heard{text-align:center;color:#9fd9c0;font-size:14px;min-height:20px;margin:8px 0 2px;direction:rtl}
-.ctl{display:grid;grid-template-columns:repeat(5,1fr);align-items:end;margin:10px 0 14px}
+.ctl{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end;margin:10px 0 14px}
 .ctl button{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11.5px;color:var(--mut)}
 .ctl .ic{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--text)}
 .ctl svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -197,8 +197,8 @@ nav svg{width:27px;height:27px;fill:none;stroke:currentColor;stroke-width:1.7;st
 nav button.on{color:var(--gold)}
 nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
 /* overlays */
-.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 14px);transform:translate(-50%,-150%);background:rgba(12,25,54,.97);border:1px solid var(--gold);color:var(--text);padding:12px 18px;border-radius:16px;z-index:50;transition:transform .35s;max-width:90vw;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.5)}
-.toast.on{transform:translate(-50%,0)}
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 14px);transform:translate(-50%,-150%);opacity:0;visibility:hidden;background:rgba(12,25,54,.97);border:1px solid var(--gold);color:var(--text);padding:12px 18px;border-radius:16px;z-index:50;transition:transform .35s,opacity .35s,visibility .35s;max-width:90vw;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.toast.on{transform:translate(-50%,0);opacity:1;visibility:visible}
 .cele{position:fixed;inset:0;background:rgba(3,8,20,.88);z-index:60;display:none;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center}
 .cele.on{display:flex}
 .cbox{position:relative;width:min(78vw,340px);aspect-ratio:1}
@@ -238,11 +238,13 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
 .uni .ml{font-family:"UthmanicHafs","Amiri Quran","Amiri",serif}
 .ml.c{justify-content:center;gap:.25em}
 .measure .ml{width:max-content;justify-content:flex-start;gap:.12em}
+.measure .ml.c{gap:.25em}
 .mh{height:2.05em;display:flex;align-items:center;justify-content:center}
 .sh{width:100%;height:1.6em;border:1.5px solid var(--frame);border-radius:999px;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,transparent,rgba(201,162,74,.16),transparent);position:relative}
 .sh:before,.sh:after{content:"۞";position:absolute;top:50%;transform:translateY(-50%);color:var(--frame);font-size:.75em}
 .sh:before{right:.7em}.sh:after{left:.7em}
 .shn{font-family:"surahnames";font-size:1.3em;color:var(--gold);line-height:1}
+.shn+.shn{margin-right:.3em}
 .shn.txt{font-family:"Amiri",serif;font-size:.8em;line-height:1.4}
 .bs{font-family:"UthmanicHafs","Amiri Quran","Amiri",serif;font-size:.95em}
 .mflow{font:400 23px/2.3 "UthmanicHafs","Amiri Quran","Amiri",serif;text-align:justify;text-align-last:center;padding:4px 6px}
@@ -275,6 +277,7 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
 .player button{width:42px;height:42px;flex:none;border-radius:50%;border:1px solid var(--line);font-size:15px;color:var(--text);background:var(--field)}
 .player .pp{background:var(--gold);color:#1b1405;border:0;font-size:16px}
 .player .rp{width:auto;padding:0 10px;border-radius:14px;font-size:13px}
+@media (max-width:360px){.reader{padding:12px 8px}.ctl .ic{width:42px;height:42px}.ctl .mic .ic{width:62px;height:62px}.ctl button{font-size:10.5px}.pnav button{padding:8px 9px;font-size:13px}}
 body.playing main{padding-bottom:calc(env(safe-area-inset-bottom) + 170px)}
 </style>
 </head>
@@ -412,7 +415,7 @@ body.playing main{padding-bottom:calc(env(safe-area-inset-bottom) + 170px)}
  </div>
 
  <div class="card"><h2>Start over</h2><p class="sub">Clears all progress and recordings on this phone.</p><button class="danger" onclick="resetAll()">Reset all progress</button></div>
- <p class="foot">Quran text: Tanzil (via alquran.cloud) · Recitation: Mishary Alafasy (via everyayah.com)</p>
+ <p class="foot">Quran text: Tanzil (via alquran.cloud) · Mushaf pages: Quran.com · Recitations: everyayah.com</p>
 </section>
 
 <!-- ============ FEEDBACK & UPDATES ============ -->
@@ -447,7 +450,7 @@ body.playing main{padding-bottom:calc(env(safe-area-inset-bottom) + 170px)}
  <div class="card">
   <h2>About</h2>
   <div class="about"><img src="icon.png" alt=""><div><b>Hifdh</b><span class="sub" style="margin:0">Memorise the Quran, one ayah at a time.</span><br><span class="ver" id="verTag"></span></div></div>
-  <p class="sub" style="margin:14px 0 0">Quran text: Tanzil (via alquran.cloud) · Recitation: Mishary Alafasy (via everyayah.com). Your progress and recordings stay on your phone.</p>
+  <p class="sub" style="margin:14px 0 0">Quran text: Tanzil (via alquran.cloud) · Mushaf pages and fonts: Quran.com · Recitations: everyayah.com. Your progress and recordings stay on your phone.</p>
  </div>
 </section>
 </main>
@@ -506,8 +509,8 @@ const putRec=(k,v)=>idb('rec','readwrite',s=>s.put(v,k));
 const clearRecs=()=>idb('rec','readwrite',s=>s.clear());
 
 /* ---------- Arabic matching ---------- */
-const DIA=/[ؐ-ًؚ-ٰٟۖ-ۭـ]/g;
-function norm(t){return t.replace(DIA,'').replace(/[ٱأإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/[^ء-ي\s]/g,'').replace(/\s+/g,' ').trim()}
+const DIA=/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g;
+function norm(t){return t.replace(DIA,'').replace(/[ٱأإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/[^\u0621-\u064A\s]/g,'').replace(/\s+/g,' ').trim()}
 const skel=w=>w.replace(/[اويء]/g,'');
 function lev(a,b){const m=a.length,n=b.length;let p=Array.from({length:n+1},(_,j)=>j);for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[n]}
 function sim(a,b){if(!a||!b)return false;if(a===b)return true;const sa=skel(a),sb=skel(b);if(sa&&sa===sb)return true;
@@ -531,8 +534,8 @@ function buildIndex(){ALL=[];JT.fill(0);WC={};PG=[];let off=0;
   s.a.forEach((x,i)=>{const pg=x.p||1;(PG[pg]=PG[pg]||[]).push(ALL.length);ALL.push({s:s.n,a:i+1,j:x.j,p:pg,k:K(s.n,i+1)});JT[x.j]++});off+=s.a.length})}
 const ord=k=>{const[s,a]=k.split(':').map(Number);return OFF[s]+a};
 function wordsOf(s,a){const k=K(s,a);if(WC[k])return WC[k];const out=[];
- for(const tok of Q[s-1].a[a-1].t.split(/\s+/)){if(!tok)continue;const n=norm(tok);if(!n&&out.length)out[out.length-1].d+=' '+tok;else out.push({d:tok,n})}
- return WC[k]=out}
+ let pre='';for(const tok of Q[s-1].a[a-1].t.split(/\s+/)){if(!tok)continue;const n=norm(tok);if(!n){if(out.length)out[out.length-1].d+=' '+tok;else pre+=tok+' ';continue}out.push({d:pre+tok,n});pre=''}
+ if(pre&&out.length)out[0].d=pre+out[0].d;return WC[k]=out}
 const surahKeys=s=>Q[s-1].a.map((_,i)=>K(s,i+1));
 const juzKeys=j=>ALL.filter(x=>x.j===j).map(x=>x.k);
 
@@ -609,7 +612,7 @@ function loadSurahFont(){if(!window.FontFace||!document.fonts)return;
  const ff=new FontFace('surahnames',"url(https://verses.quran.foundation/fonts/quran/surah-names/v1/sura_names.woff2) format('woff2'), url(https://verses.quran.foundation/fonts/quran/surah-names/v1/sura_names.ttf) format('truetype')");
  ff.load().then(f=>{document.fonts.add(f);const c=document.createElement('canvas').getContext('2d');c.font='40px surahnames';
   snOK=Math.abs(c.measureText('001').width-c.measureText('002').width)>1;if(snOK&&shownPage)renderPage(shownPage,true)}).catch(()=>{})}
-const headHTML=s=>`<div class="sh"><span class="shn${snOK?'':' txt'}">${snOK?p3(s):esc(Q[s-1].ar)}</span></div>`;
+const headHTML=s=>`<div class="sh">${snOK?`<span class="shn">surah</span><span class="shn">${p3(s)}</span>`:`<span class="shn txt">${esc(Q[s-1].ar)}</span>`}</div>`;
 const BISM='بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ';
 function bismHTML(){const p1=pageMem[1];if(p1&&fontOK[1]){const g=p1.filter(w=>w.k==='1:1'&&!w.e).map(w=>w.c).join(' ');if(g)return`<span style="font-family:qcf1">${g}</span>`}return BISM}
 
@@ -659,9 +662,10 @@ function mapFor(k){const o=PW[k];if(!o)return null;if(o.map)return o.map;
  else{let f=0,first=true;o.n.forEach((n,pi)=>{if(!n)return;const lim=first?full.length:Math.min(full.length,f+3);for(let q=f;q<lim;q++)if(sim(full[q],n)){map[q]=o.w[pi];f=q+1;first=false;return}})}
  o.map=map;o.inv=new Map();map.forEach((el,i)=>{if(el)o.inv.set(el,i)});return map}
 function fitLines(){const box=$('mushaf').querySelector('.mlines');if(!box)return;const W=box.clientWidth;if(!W)return;
- box.style.fontSize='20px';box.classList.add('measure');const ls=[...box.querySelectorAll('.ml')];const ws=ls.map(l=>l.getBoundingClientRect().width);box.classList.remove('measure');
- const M=Math.max(1,...ws);box.style.fontSize=Math.max(11,Math.min(44,20*W*0.985/M))+'px';
- ls.forEach((l,i)=>l.classList.toggle('c',shownPage<=2||ws[i]<M*0.8))}
+ const ls=[...box.querySelectorAll('.ml')],cen=shownPage<=2;box.style.fontSize='20px';ls.forEach(l=>l.classList.toggle('c',cen));box.classList.add('measure');
+ const ws=ls.map(l=>l.getBoundingClientRect().width);box.classList.remove('measure');
+ const M=Math.max(1,...ws);box.style.fontSize=Math.max(10,Math.min(44,20*W*(cen?0.94:0.985)/M))+'px';
+ ls.forEach((l,i)=>l.classList.toggle('c',cen||ws[i]<M*0.8))}
 let fitT=null;addEventListener('resize',()=>{clearTimeout(fitT);fitT=setTimeout(fitLines,150)});
 
 function paint(){
@@ -870,7 +874,7 @@ function playFrom(src){if(!Q.length)return;if(src==='mine')unlockAudio();startPl
 function setReciter(f){S.reciter=f;save();fillSettings();if(player.on&&player.src==='reciter'){const it=player.list[player.i];startPlayer('reciter',K(it.s,it.a),player.single)}}
 function setRepeat(n){S.rep=n;save();fillSettings();if(player.on){player.left=n;updPlayerUI()}}
 function cycleRepeat(){const i=REPEATS.indexOf(S.rep||1);setRepeat(REPEATS[(i+1)%REPEATS.length])}
-function fillSettings(){const ro=RECITERS.map(r=>`<option value="${r[0]}">${r[1]}</option>`).join(''),po=REPEATS.map(n=>`<option value="${n}">Repeat ${n===1?'once':n+' times'}</option>`).join('');
+function fillSettings(){const ro=RECITERS.map(r=>`<option value="${r[0]}">${r[1]}</option>`).join(''),po=REPEATS.map(n=>`<option value="${n}">${n===1?'Once':n+' times'}</option>`).join('');
  ['recSel','recSel2'].forEach(id=>{const el=$(id);if(!el)return;if(!el.options.length)el.innerHTML=ro;el.value=recInfo()[0]});
  ['repSel','repSel2'].forEach(id=>{const el=$(id);if(!el)return;if(!el.options.length)el.innerHTML=po;el.value=S.rep||1});
  updPlayerUI()}
