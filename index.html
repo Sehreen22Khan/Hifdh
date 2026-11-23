@@ -7,10 +7,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Hifz">
+<meta name="apple-mobile-web-app-title" content="Hifdh">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="icon" href="icon.png">
-<title>Hifz</title>
+<title>Hifdh</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Amiri+Quran&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
@@ -165,7 +165,7 @@ option{background:#0c1936;color:var(--text)}
 .sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(34px,1fr));gap:5px}
 .sgrid button,.jgrid button{aspect-ratio:1;border-radius:9px;font-size:12px;border:1px solid rgba(255,255,255,.08);color:var(--text)}
 .sgrid button.full,.jgrid button.full{color:#1b1405;font-weight:700;box-shadow:0 0 8px rgba(232,198,110,.5)}
-/* my hifz */
+/* my hifdh */
 .jgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}
 .jgrid button{font-size:15px;aspect-ratio:auto;padding:10px 0}
 .slist{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px;max-height:420px;overflow:auto}
@@ -283,7 +283,7 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
  </div>
 
  <div class="card garden">
-  <div class="gimg"><img id="gardenImg" src="garden1.png" alt="Your Hifz garden"><div class="gcap"><small>Your Hifz Garden</small><b id="gTitle"></b><span id="gNext"></span></div></div>
+  <div class="gimg"><img id="gardenImg" src="garden1.png" alt="Your Hifdh garden"><div class="gcap"><small>Your Hifdh Garden</small><b id="gTitle"></b><span id="gNext"></span></div></div>
   <div class="gthumbs" id="gThumbs"></div>
   <div style="padding:0 12px 14px"><button class="soft" style="width:100%" onclick="openGarden(0)">🌿 View my gardens</button></div>
  </div>
@@ -316,9 +316,9 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
  <div class="card"><h2>Surahs</h2><p class="sub">Gold shows how much of each surah you know. Tap one to practise it.</p><div class="sgrid" id="sgrid"></div></div>
 </section>
 
-<!-- ============ MY HIFZ ============ -->
+<!-- ============ MY HIFDH ============ -->
 <section id="mine" class="tab">
- <h1 class="title">My Hifz</h1>
+ <h1 class="title">My Hifdh</h1>
  <p class="sub">Already know some of the Quran? Mark it here so your journey starts in the right place. Tap again to unmark.</p>
 
  <div class="card"><h2>Daily goal</h2><p class="sub">How many new ayahs would you like to memorise each day?</p><div class="chips" id="goalChips"></div></div>
@@ -373,7 +373,7 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
 
  <div class="card">
   <h2>About</h2>
-  <div class="about"><img src="icon.png" alt=""><div><b>Hifz</b><span class="sub" style="margin:0">Memorise the Quran, one ayah at a time.</span><br><span class="ver" id="verTag"></span></div></div>
+  <div class="about"><img src="icon.png" alt=""><div><b>Hifdh</b><span class="sub" style="margin:0">Memorise the Quran, one ayah at a time.</span><br><span class="ver" id="verTag"></span></div></div>
   <p class="sub" style="margin:14px 0 0">Quran text: Tanzil (via alquran.cloud) · Recitation: Mishary Alafasy (via everyayah.com). Your progress and recordings stay on your phone.</p>
  </div>
 </section>
@@ -382,7 +382,7 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
 <nav>
  <button id="n-today" class="on" onclick="tab('today')"><svg viewBox="0 0 24 24"><path d="M3 5.5C5.5 4 9 4 12 6c3-2 6.5-2 9-.5V19c-2.5-1.5-6-1.5-9 .5-3-2-6.5-2-9-.5zM12 6v13.5"/></svg>Today</button>
  <button id="n-journey" onclick="tab('journey')"><svg viewBox="0 0 24 24"><path d="M12 21v-9M12 12C12 7 8.5 5 4 5c0 4.5 3 7 8 7zM12 10c0-4 3-6 8-6 0 4-3 6-8 6"/></svg>Journey</button>
- <button id="n-mine" onclick="tab('mine')"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M3.5 6l1.2 1.2L7 5M3.5 12l1.2 1.2L7 11M3.5 18l1.2 1.2L7 17"/></svg>My Hifz</button>
+ <button id="n-mine" onclick="tab('mine')"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M3.5 6l1.2 1.2L7 5M3.5 12l1.2 1.2L7 11M3.5 18l1.2 1.2L7 17"/></svg>My Hifdh</button>
  <button id="n-feedback" onclick="tab('feedback')"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4zM8 9.5h8M8 12.5h5"/></svg>Feedback</button>
 </nav>
 
@@ -395,13 +395,13 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
 <script>
 /* ========== SETTINGS: edit these links. Leave one as '' to hide its card. ========== */
 const SETTINGS={
- version:'2.2',
+ version:'2.4',
  communityLink:'https://chat.whatsapp.com/INKnnJ0rrD9AliIeyFUOsa',
  suggestionsLink:'https://chat.whatsapp.com/FeCkj8STUZkHilwuN1XAhy?s=cl&p=i&iam=2',
  appLink:'' /* leave blank to share this site's own address */
 };
 /* ---------- basics ---------- */
-const TOTAL=6236,STEPS=30,KEY='hifz-v2';
+const TOTAL=6236,STEPS=30,KEY='hifdh-v1';
 const $=id=>document.getElementById(id);
 const K=(s,a)=>s+':'+a;
 const pick=a=>a[Math.random()*a.length|0];
@@ -421,7 +421,7 @@ function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('
 if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
 
 /* ---------- IndexedDB (Quran text + recordings) ---------- */
-const dbP=new Promise((res,rej)=>{try{const r=indexedDB.open('hifz',1);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains('rec'))d.createObjectStore('rec');if(!d.objectStoreNames.contains('kv'))d.createObjectStore('kv')};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}});
+const dbP=new Promise((res,rej)=>{try{const r=indexedDB.open('hifdh',1);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains('rec'))d.createObjectStore('rec');if(!d.objectStoreNames.contains('kv'))d.createObjectStore('kv')};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}});
 function idb(store,mode,fn){return dbP.then(d=>new Promise((res,rej)=>{const t=d.transaction(store,mode);const q=fn(t.objectStore(store));t.oncomplete=()=>res(q?q.result:undefined);t.onerror=()=>rej(t.error)}))}
 const getKV=k=>idb('kv','readonly',s=>s.get(k));
 const putKV=(k,v)=>idb('kv','readwrite',s=>s.put(v,k));
@@ -679,7 +679,7 @@ function renderHeat(){const t=today(),weeks=18,wd=new Date().getDay(),startD=t-(
 function practiseSurah(s){tab('today');setMode('learn');const f=Q[s-1].a.findIndex((_,i)=>S.lv[K(s,i+1)]!==3);cur={s,a:f<0?1:f+1};show();
  setTimeout(()=>$('practice').scrollIntoView({behavior:'smooth',block:'start'}),50)}
 
-/* ---------- My Hifz ---------- */
+/* ---------- My Hifdh ---------- */
 function markKeys(keys,on){const t=today();let c=0;const win=Math.max(14,Math.ceil(keys.length/40));
  keys.forEach(k=>{if(on){if(S.lv[k]!==3){S.lv[k]=3;S.iv[k]=7;S.rv[k]=t+1+(c%win);c++}}else if(S.lv[k]){delete S.lv[k];delete S.rv[k];delete S.iv[k];c++}});
  checkMilestones(false);save();markGrids();refreshToday();if(mode!=='revise')show();
@@ -698,8 +698,8 @@ function markRange(on){const s=+$('rs').value;let a=+$('rf').value,b=+$('rt').va
 async function allRecs(){const d=await dbP;return new Promise(r=>{const out={},q=d.transaction('rec').objectStore('rec').openCursor();q.onsuccess=e=>{const c=e.target.result;if(c){out[c.key]=c.value;c.continue()}else r(out)};q.onerror=()=>r(out)})}
 const b64=b=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)});
 async function exportData(){toast('Preparing backup…');let audioMap={};try{const recs=await allRecs();for(const k in recs)audioMap[k]=await b64(recs[k])}catch(e){}
- const file=new File([JSON.stringify({app:'hifz',v:1,S,audio:audioMap})],`hifz-backup-${TK()}.json`,{type:'application/json'});
- if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Hifz backup'})}catch(e){}}
+ const file=new File([JSON.stringify({app:'hifdh',v:1,S,audio:audioMap})],`hifdh-backup-${TK()}.json`,{type:'application/json'});
+ if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Hifdh backup'})}catch(e){}}
  else{const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=file.name;document.body.appendChild(a);a.click();a.remove()}}
 async function importData(f){if(!f)return;
  try{const j=JSON.parse(await f.text());if(!j.S||typeof j.S!=='object')throw 0;
@@ -707,7 +707,7 @@ async function importData(f){if(!f)return;
   toast('Restoring…');for(const k in(j.audio||{})){try{const blob=await(await fetch(j.audio[k])).blob();await putRec(k,blob)}catch(e){}}
   localStorage.setItem(KEY,JSON.stringify(j.S));S=loadS();save();for(const k in urls)delete urls[k];
   refreshAll();toast('Backup restored ✦')}
- catch(e){toast('That file is not a Hifz backup')}
+ catch(e){toast('That file is not a Hifdh backup')}
  $('impFile').value=''}
 async function resetAll(){if(!confirm('Reset ALL progress and recordings on this phone?'))return;if(!confirm('Are you sure? This cannot be undone.'))return;
  const g=S.goal;localStorage.removeItem(KEY);S=loadS();S.goal=g;save();try{await clearRecs()}catch(e){}refreshAll();toast('Progress reset. A fresh start, bismillah ✦')}
@@ -720,8 +720,8 @@ function setupFeedback(){
  $('verTag').textContent='Version '+SETTINGS.version;
 }
 const appUrl=()=>(SETTINGS.appLink||'').trim()||(location.origin+location.pathname);
-async function shareApp(){const url=appUrl(),text='Hifz: a free app to help you memorise the Quran, one ayah at a time.';
- if(navigator.share){try{await navigator.share({title:'Hifz',text,url});return}catch(e){if(e&&e.name==='AbortError')return}}
+async function shareApp(){const url=appUrl(),text='Hifdh: a free app to help you memorise the Quran, one ayah at a time.';
+ if(navigator.share){try{await navigator.share({title:'Hifdh',text,url});return}catch(e){if(e&&e.name==='AbortError')return}}
  try{await navigator.clipboard.writeText(url);toast('Link copied ✦ Paste it to share')}
  catch(e){const t=document.createElement('textarea');t.value=url;t.setAttribute('readonly','');t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();t.setSelectionRange(0,url.length);
   let ok=false;try{ok=document.execCommand('copy')}catch(_){}t.remove();ok?toast('Link copied ✦ Paste it to share'):prompt('Copy this link to share the app:',url)}}
