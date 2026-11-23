@@ -228,18 +228,18 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
 /* ---- mushaf reader ---- */
 .reader{padding:14px 12px}
 .goto{display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-bottom:10px}
-.mushaf{position:relative;touch-action:pan-y}
+.mushaf{position:relative;touch-action:pan-y;cursor:pointer} /* cursor: lets iPhone Safari send taps on empty space too */
 .mpage{background:var(--paper);color:var(--ink);border-radius:14px;padding:8px 9px 6px;border:1.5px solid var(--frame);box-shadow:inset 0 0 0 4px var(--paper),inset 0 0 0 5px rgba(201,162,74,.5),0 8px 24px rgba(0,0,0,.25);direction:rtl;-webkit-user-select:none;user-select:none}
 .mhead{display:flex;justify-content:space-between;font:400 14px/1.7 "Amiri",serif;color:var(--gold);padding:2px 8px 3px;border-bottom:1px solid rgba(201,162,74,.35);margin-bottom:4px}
 .mfoot{text-align:center;font:400 14px/1.6 "Amiri",serif;color:var(--gold);border-top:1px solid rgba(201,162,74,.35);margin-top:4px;padding-top:2px}
 .mload{min-height:440px;display:grid;place-items:center;color:var(--mut);font:400 15px -apple-system,sans-serif;direction:ltr;text-align:center;padding:20px}
 .mlines{padding:0 2px;font-size:20px}
-.ml{display:flex;justify-content:space-between;align-items:center;height:2.05em;white-space:nowrap;font-family:var(--qf),"Amiri Quran",serif}
+.ml{display:flex;justify-content:space-between;align-items:center;height:var(--lh,2.05em);white-space:nowrap;font-family:var(--qf),"Amiri Quran",serif}
 .uni .ml{font-family:"UthmanicHafs","Amiri Quran","Amiri",serif}
 .ml.c{justify-content:center;gap:.25em}
 .measure .ml{width:max-content;justify-content:flex-start;gap:.12em}
 .measure .ml.c{gap:.25em}
-.mh{height:2.05em;display:flex;align-items:center;justify-content:center}
+.mh{height:var(--lh,2.05em);display:flex;align-items:center;justify-content:center}
 .sh{width:100%;height:1.6em;border:1.5px solid var(--frame);border-radius:999px;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,transparent,rgba(201,162,74,.16),transparent);position:relative}
 .sh:before,.sh:after{content:"۞";position:absolute;top:50%;transform:translateY(-50%);color:var(--frame);font-size:.75em}
 .sh:before{right:.7em}.sh:after{left:.7em}
@@ -277,7 +277,7 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
 .player button{width:42px;height:42px;flex:none;border-radius:50%;border:1px solid var(--line);font-size:15px;color:var(--text);background:var(--field)}
 .player .pp{background:var(--gold);color:#1b1405;border:0;font-size:16px}
 .player .rp{width:auto;padding:0 10px;border-radius:14px;font-size:13px}
-@media (max-width:360px){.reader{padding:12px 8px}.ctl .ic{width:42px;height:42px}.ctl .mic .ic{width:62px;height:62px}.ctl button{font-size:10.5px}.pnav button{padding:8px 9px;font-size:13px}}
+@media (max-width:360px){.pj{display:none}.reader{padding:12px 8px}.ctl .ic{width:42px;height:42px}.ctl .mic .ic{width:62px;height:62px}.ctl button{font-size:10.5px}.pnav button{padding:8px 9px;font-size:13px}}
 .upd{position:fixed;left:10px;right:10px;top:calc(env(safe-area-inset-top) + 10px);z-index:45;max-width:540px;margin:0 auto;display:none;align-items:center;gap:10px;background:var(--card);border:1px solid var(--gold);border-radius:18px;padding:10px 8px 10px 14px;box-shadow:0 10px 30px rgba(0,0,0,.4);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
 .upd.on{display:flex;animation:fade .35s ease}
 .upd .ut{flex:1;min-width:0}
@@ -286,6 +286,37 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
 .upd .gold{padding:10px 16px;border-radius:13px;font-size:15px;flex:none}
 .upd .gold:disabled{opacity:.7}
 .upd .ux{width:36px;height:36px;flex:none;border-radius:50%;color:var(--mut);font-size:15px}
+/* ---- full-screen mushaf ---- */
+.pnav .pgBtn{display:inline-flex;align-items:center;gap:6px;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.pgBtn svg{width:15px;height:15px;flex:none;fill:none;stroke:var(--gold);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.imm{position:fixed;inset:0;z-index:30;background:var(--paper);display:none;flex-direction:column}
+.imm.on{display:flex}
+body.immOn{overflow:hidden}
+.imPage{flex:1;min-height:0;display:flex;overflow:auto;overscroll-behavior:contain;touch-action:pan-y;cursor:pointer;padding:calc(env(safe-area-inset-top) + 6px) 4px calc(env(safe-area-inset-bottom) + 6px)}
+body.immOn.playing .imPage{padding-bottom:calc(env(safe-area-inset-bottom) + 74px)}
+.imm .mushaf{width:100%;margin:auto}
+.imBar{position:absolute;left:0;right:0;top:0;z-index:2;display:flex;align-items:center;gap:8px;padding:calc(env(safe-area-inset-top) + 8px) 10px 14px;background:linear-gradient(var(--paper) 68%,transparent);transition:opacity .25s,transform .25s}
+.imm.bare .imBar{opacity:0;transform:translateY(-100%);pointer-events:none}
+.imB{width:42px;height:42px;flex:none;border-radius:50%;border:1px solid var(--line);background:var(--field);color:var(--text);display:grid;place-items:center;font-size:16px}
+.imB svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.imB.live{background:var(--em);border-color:var(--em);color:#06281b}
+.imT{flex:1;min-width:0;text-align:center}
+.imT b{display:block;font:700 19px/1.2 "Cormorant Garamond",serif;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.imT span{display:block;font-size:12.5px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;unicode-bidi:plaintext}
+body.immOn .player{z-index:35;bottom:calc(env(safe-area-inset-bottom) + 10px)}
+/* ---- word meaning card ---- */
+.wsheet{position:fixed;left:10px;right:10px;bottom:calc(env(safe-area-inset-bottom) + 76px);z-index:42;max-width:540px;margin:0 auto;text-align:center;background:var(--card);border:1px solid var(--gold);border-radius:20px;padding:12px 16px 14px;box-shadow:0 12px 34px rgba(0,0,0,.45);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);transform:translateY(calc(100% + 140px));visibility:hidden;transition:transform .25s ease,visibility .25s}
+.wsheet.on{transform:none;visibility:visible}
+body.playing .wsheet{bottom:calc(env(safe-area-inset-bottom) + 140px)}
+body.immOn .wsheet{bottom:calc(env(safe-area-inset-bottom) + 12px)}
+body.immOn.playing .wsheet{bottom:calc(env(safe-area-inset-bottom) + 78px)}
+.wsX{position:absolute;top:8px;right:8px;width:34px;height:34px;border-radius:50%;color:var(--mut);font-size:15px}
+.wsAr{font:400 36px/1.7 "UthmanicHafs","Amiri Quran","Amiri",serif;color:var(--ink);direction:rtl;padding:0 30px}
+.wsM{font-size:19px;font-weight:600;color:var(--text);line-height:1.3}
+.wsTr{color:var(--mut);font-size:14px;margin-top:4px}
+.wsTr i{color:var(--gold);font-style:italic}
+.wsheet .soft{width:100%;margin-top:12px;padding:11px;border-radius:14px;font-size:15px}
+.mw.wsel{background:var(--hl);box-shadow:inset 0 -2.5px 0 var(--gold)}
 body.playing main{padding-bottom:calc(env(safe-area-inset-bottom) + 170px)}
 </style>
 </head>
@@ -322,7 +353,7 @@ body.playing main{padding-bottom:calc(env(safe-area-inset-bottom) + 170px)}
   </div>
   <div class="revhead hidden" id="revHead"></div>
   <div class="mushaf" id="mushaf"><div class="mpage"><div class="mload">Loading the Quran…</div></div></div>
-  <div class="pnav"><button onclick="turn(1)" id="pnNext">‹ Next page</button><span id="pgLbl"></span><button onclick="turn(-1)" id="pnPrev">Back ›</button></div>
+  <div class="pnav" id="pnav"><button onclick="turn(1)" id="pnNext">‹ Next page</button><button class="pgBtn" id="pgBtn" onclick="openImm()" aria-label="Open the mushaf full screen"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span id="pgLbl"></span></button><button onclick="turn(-1)" id="pnPrev">Back ›</button></div>
   <div class="ayinfo"><span id="ref"></span><div class="dots" id="dots"></div></div>
   <div class="lvl" id="lvl"></div>
   <div class="heard" id="heard"></div>
@@ -423,7 +454,7 @@ body.playing main{padding-bottom:calc(env(safe-area-inset-bottom) + 170px)}
  </div>
 
  <div class="card"><h2>Start over</h2><p class="sub">Clears all progress and recordings on this phone.</p><button class="danger" onclick="resetAll()">Reset all progress</button></div>
- <p class="foot">Quran text: Tanzil (via alquran.cloud) · Mushaf pages: Quran.com · Recitations: everyayah.com</p>
+ <p class="foot">Quran text: Tanzil (via alquran.cloud) · Mushaf pages and word meanings: Quran.com · Recitations: everyayah.com</p>
 </section>
 
 <!-- ============ FEEDBACK & UPDATES ============ -->
@@ -458,7 +489,7 @@ body.playing main{padding-bottom:calc(env(safe-area-inset-bottom) + 170px)}
  <div class="card">
   <h2>About</h2>
   <div class="about"><img src="icon.png" alt=""><div><b>Hifdh</b><span class="sub" style="margin:0">Memorise the Quran, one ayah at a time.</span><br><span class="ver" id="verTag"></span></div></div>
-  <p class="sub" style="margin:14px 0 0">Quran text: Tanzil (via alquran.cloud) · Mushaf pages and fonts: Quran.com · Recitations: everyayah.com. Your progress and recordings stay on your phone.</p>
+  <p class="sub" style="margin:14px 0 0">Quran text: Tanzil (via alquran.cloud) · Mushaf pages, fonts and word meanings: Quran.com · Recitations: everyayah.com. Your progress and recordings stay on your phone.</p>
   <button class="soft" style="width:100%;margin-top:14px" onclick="checkUpdate(true)">🔄 Check for updates</button>
  </div>
 </section>
@@ -471,6 +502,17 @@ body.playing main{padding-bottom:calc(env(safe-area-inset-bottom) + 170px)}
  <button id="n-feedback" onclick="tab('feedback')"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4zM8 9.5h8M8 12.5h5"/></svg>Feedback</button>
 </nav>
 
+<div class="imm" id="imm" aria-hidden="true">
+ <div class="imBar" id="imBar">
+  <button class="imB" onclick="closeImm()" aria-label="Close full screen"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <div class="imT"><b id="imTitle"></b><span id="imSub"></span></div>
+  <button class="imB" id="imTheme" onclick="toggleTheme()" aria-label="Day or night">☀️</button>
+  <button class="imB" id="imMic" onclick="toggleMic()" aria-label="Recite"><svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+  <button class="imB" id="imPlay" onclick="immPlay()" aria-label="Listen">▶</button>
+ </div>
+ <div class="imPage" id="imPage"></div>
+</div>
+<div class="wsheet" id="wsheet" role="dialog" aria-label="Word meaning"><button class="wsX" onclick="closeWs()" aria-label="Close">✕</button><div class="wsAr" id="wsAr"></div><div class="wsM" id="wsM"></div><div class="wsTr" id="wsTr"></div><button class="soft" id="wsPlay" onclick="wsPlay()">🔊 Hear this ayah</button></div>
 <div class="player" id="player"><button onclick="stopPlayer()" aria-label="Stop">■</button><div class="pi"><b id="plT"></b><span id="plS"></span></div><button class="rp" id="plR" onclick="cycleRepeat()">🔁 1×</button><button class="pp" id="plP" onclick="togglePause()" aria-label="Play or pause">❚❚</button></div>
 <div class="gal" id="gal"><button class="gx" onclick="closeGarden()" aria-label="Close">✕</button>
  <img id="galImg" alt=""><div class="gt" id="galT"></div><div class="gs" id="galS"></div>
@@ -482,7 +524,7 @@ body.playing main{padding-bottom:calc(env(safe-area-inset-bottom) + 170px)}
 <script id="app">
 /* ========== SETTINGS: edit these links. Leave one as '' to hide its card. ========== */
 const SETTINGS={
- version:'3.1',
+ version:'3.2',
  communityLink:'https://chat.whatsapp.com/INKnnJ0rrD9AliIeyFUOsa',
  suggestionsLink:'https://chat.whatsapp.com/FeCkj8STUZkHilwuN1XAhy?s=cl&p=i&iam=2',
  appLink:'' /* leave blank to share this site's own address */
@@ -545,7 +587,7 @@ function buildIndex(){ALL=[];JT.fill(0);WC={};PG=[];let off=0;
   if(s.n!==1&&s.n!==9){const t=s.a[0].t.split(/\s+/);if(t.length>4&&norm(t.slice(0,4).join(' '))==='بسم الله الرحمن الرحيم')s.a[0].t=t.slice(4).join(' ')}
   s.a.forEach((x,i)=>{const pg=x.p||1;(PG[pg]=PG[pg]||[]).push(ALL.length);ALL.push({s:s.n,a:i+1,j:x.j,p:pg,k:K(s.n,i+1)});JT[x.j]++});off+=s.a.length})}
 const ord=k=>{const[s,a]=k.split(':').map(Number);return OFF[s]+a};
-function wordsOf(s,a){const k=K(s,a);if(WC[k])return WC[k];const out=[];
+function wordsOf(s,a){const k=K(s,a);if(WC[k])return WC[k];const out=[];if(!Q[s-1]||!Q[s-1].a[a-1])return out;
  let pre='';for(const tok of Q[s-1].a[a-1].t.split(/\s+/)){if(!tok)continue;const n=norm(tok);if(!n){if(out.length)out[out.length-1].d+=' '+tok;else pre+=tok+' ';continue}out.push({d:pre+tok,n});pre=''}
  if(pre&&out.length)out[0].d=pre+out[0].d;return WC[k]=out}
 const surahKeys=s=>Q[s-1].a.map((_,i)=>K(s,i+1));
@@ -605,15 +647,18 @@ const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'
 const QCF_A=p=>`https://verses.quran.foundation/fonts/quran/hafs/v2/woff2/p${p}.woff2`;
 const QCF_B=p=>`https://static-cdn.tarteel.ai/qul/fonts/quran_fonts/v2/ttf/p${p}.ttf`;
 const pageMem={},fontP={},fontOK={};let snOK=false;
+const pageP={};
 async function getPage(p){
  if(pageMem[p])return pageMem[p];
- try{const c=await getKV('pg2:'+p);if(c&&c.length)return pageMem[p]=c}catch(e){}
- try{const ctl=window.AbortController?new AbortController():null;const to=setTimeout(()=>ctl&&ctl.abort(),9000);
+ try{const c=await getKV('pg2:'+p);if(c&&c.length){pageMem[p]=c;if(!('m' in c[0]))setTimeout(()=>fetchPage(p),800) /* saved before word meanings existed */;return c}}catch(e){}
+ return fetchPage(p)}
+function fetchPage(p){if(pageP[p])return pageP[p];
+ return pageP[p]=(async()=>{try{const ctl=window.AbortController?new AbortController():null;const to=setTimeout(()=>ctl&&ctl.abort(),9000);
   const r=await fetch(`https://api.quran.com/api/v4/verses/by_page/${p}?words=true&word_fields=code_v2,text_uthmani,line_number,page_number&per_page=all`,ctl?{signal:ctl.signal}:{});clearTimeout(to);
   if(!r.ok)return null;const j=await r.json();const w=[];
-  for(const v of j.verses||[])for(const x of v.words||[])w.push({k:v.verse_key,c:x.code_v2||'',t:x.text_uthmani||'',l:x.line_number||0,e:x.char_type_name==='end'});
+  for(const v of j.verses||[])for(const x of v.words||[])w.push({k:v.verse_key,c:x.code_v2||'',t:x.text_uthmani||'',l:x.line_number||0,e:x.char_type_name==='end',m:(x.translation&&x.translation.text)||'',tr:(x.transliteration&&x.transliteration.text)||''});
   if(!w.length||w.some(x=>!x.l||!x.k))return null;
-  pageMem[p]=w;putKV('pg2:'+p,w).catch(()=>{});return w}catch(e){return null}}
+  pageMem[p]=w;putKV('pg2:'+p,w).catch(()=>{});return w}catch(e){return null}finally{delete pageP[p]}})()}
 function loadFont(p){
  if(fontOK[p])return Promise.resolve(true);if(fontP[p])return fontP[p];
  if(!window.FontFace||!document.fonts)return Promise.resolve(false);
@@ -665,7 +710,7 @@ function drawFlow(p){
 function mount(p,inner,kind){
  const f=ALL[PG[p][0]];
  $('mushaf').innerHTML=`<div class="mpage ${kind}" data-p="${p}"><div class="mhead"><span>${esc(Q[f.s-1].ar)}</span><span>الجزء ${arNum(f.j)}</span></div>${inner}<div class="mfoot">${arNum(p)}</div></div>`;
- indexWords();if(kind==='lines')fitLines();paint()}
+ indexWords();if(kind==='lines')fitLines();if(wsCur&&wsCur.p!==p)closeWs();paint();immBar()}
 function indexWords(){PW={};$('mushaf').querySelectorAll('.mw,.me').forEach(el=>{const k=el.dataset.k,o=PW[k]||(PW[k]={w:[],n:[],e:[]});
  if(el.classList.contains('me'))o.e.push(el);else{el.dataset.i=o.w.length;o.w.push(el);o.n.push(norm(el.dataset.t||el.textContent))}})}
 function mapFor(k){const o=PW[k];if(!o)return null;if(o.map)return o.map;
@@ -673,10 +718,19 @@ function mapFor(k){const o=PW[k];if(!o)return null;if(o.map)return o.map;
  if(o.n.length===full.length)o.w.forEach((el,i)=>map[i]=el);
  else{let f=0,first=true;o.n.forEach((n,pi)=>{if(!n)return;const lim=first?full.length:Math.min(full.length,f+3);for(let q=f;q<lim;q++)if(sim(full[q],n)){map[q]=o.w[pi];f=q+1;first=false;return}})}
  o.map=map;o.inv=new Map();map.forEach((el,i)=>{if(el)o.inv.set(el,i)});return map}
-function fitLines(){const box=$('mushaf').querySelector('.mlines');if(!box)return;const W=box.clientWidth;if(!W)return;
- const ls=[...box.querySelectorAll('.ml')],cen=shownPage<=2;box.style.fontSize='20px';ls.forEach(l=>l.classList.toggle('c',cen));box.classList.add('measure');
+function fitLines(){const mz=$('mushaf'),box=mz.querySelector('.mlines');if(!box)return;
+ mz.style.width='';box.style.removeProperty('--lh');
+ const W=box.clientWidth;if(!W)return;
+ const ls=[...box.querySelectorAll('.ml')],cen=shownPage<=2,k=cen?0.94:0.985;box.style.fontSize='20px';ls.forEach(l=>l.classList.toggle('c',cen));box.classList.add('measure');
  const ws=ls.map(l=>l.getBoundingClientRect().width);box.classList.remove('measure');
- const M=Math.max(1,...ws);box.style.fontSize=Math.max(10,Math.min(44,20*W*(cen?0.94:0.985)/M))+'px';
+ const M=Math.max(1,...ws),fw=Math.max(10,Math.min(44,20*W*k/M));let fs=fw;box.style.fontSize=fs+'px';
+ if(immOn){/* full screen. Portrait: the whole page fills the screen, lines spread like a printed mushaf.
+             Landscape (too short for a readable whole page): size by width, up to 30px, and scroll down. */
+  const pg=$('imPage'),cs=getComputedStyle(pg),aH=pg.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom),aW=pg.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  const mp=mz.querySelector('.mpage'),rows=box.children.length||15,fixed=mp.offsetHeight-box.offsetHeight,room=aH-fixed,fh=room/(rows*2.05);
+  if(room>0&&fh>=fw*0.7){fs=Math.max(10,Math.min(fw,fh));box.style.fontSize=fs+'px';box.style.setProperty('--lh',Math.max(fs*2.05,Math.min(room/rows,fs*2.7))+'px')}
+  else{fs=Math.min(fw,30);box.style.fontSize=fs+'px'}
+  if(fs<fw-0.5)mz.style.width=Math.min(aW,(M*fs/20)/k+(mp.offsetWidth-box.clientWidth)+2)+'px'}
  ls.forEach((l,i)=>l.classList.toggle('c',cen||ws[i]<M*0.8))}
 let fitT=null;addEventListener('resize',()=>{clearTimeout(fitT);fitT=setTimeout(fitLines,150)});
 
@@ -693,6 +747,7 @@ function paint(){
    const said=fi!==undefined&&m[fi],missed=fi!==undefined&&!m[fi]&&after[fi]>=2&&full[fi];
    if(said)c+=' ok';else if(missed)c+=' miss';
    if(fi!==undefined&&fi===nxt)c+=' nxt';
+   if(wsCur&&k===wsCur.k&&pi===wsCur.i&&!hidK)c+=' wsel';
    const pk=peek.has(k+'#'+pi);
    if(hidK&&!said&&!missed)c+=pk?' peek':' hid';
    el.className=c});
@@ -704,17 +759,61 @@ function updInfo(){if(!Q.length)return;const s=Q[cur.s-1],k=curK(),l=S.lv[k]||0;
  $('lvl').textContent=mode==='revise'?'Recite from memory. Tap a hidden word to peek.':mode==='listen'?(S.rec[k]?'You have a recording of this ayah 🎧':'Tap any ayah on the page to select it.'):l===3?'Memorised ✦':l===0?'New ayah · recite it correctly 3 times':`Learning · ${3-l} more time${3-l>1?'s':''}`;
  $('eyeBtn').classList.toggle('on',hide);$('eyeL').textContent=hide?'Show':'Hide';updPageLbl();
  if(mode==='learn'&&S.last!==k){S.last=k;save()}}
-function updPageLbl(){const p=shownPage||pageOf(cur.s,cur.a),f=PG[p]&&ALL[PG[p][0]];$('pgLbl').textContent=`Page ${p}${f?' · Juz '+f.j:''}`}
+function updPageLbl(){const p=shownPage||pageOf(cur.s,cur.a),f=PG[p]&&ALL[PG[p][0]];$('pgLbl').innerHTML=`Page ${p}${f?`<span class="pj"> · Juz ${f.j}</span>`:''}`;immBar()}
 function showCur(){if(!Q.length)return;const p=pageOf(cur.s,cur.a);if(p!==shownPage)renderPage(p);else paint();updInfo()}
 function selectAyah(s,a){cur={s,a};resetProg();peek.clear();
  if(player.on&&player.src&&mode==='listen'){startPlayer(player.src,curK(),player.single);return}
  if(player.on)stopPlayer();showCur()}
-$('mushaf').addEventListener('click',e=>{const el=e.target.closest('.mw,.me');if(!el||!Q.length)return;const k=el.dataset.k;
+$('mushaf').addEventListener('click',e=>{const el=e.target.closest('.mw,.me');if(!Q.length)return;
+ if(!el){if(wsCur)closeWs();else if(immOn)immUI();return}
+ const k=el.dataset.k,[s,a]=k.split(':').map(Number);
  if(el.classList.contains('hid')||el.classList.contains('peek')){const id=k+'#'+el.dataset.i;peek.has(id)?peek.delete(id):peek.add(id);paint();return}
- if(mode==='revise')return;const[s,a]=k.split(':').map(Number);if(s&&a)selectAyah(s,a)});
+ if(el.classList.contains('me')){closeWs();if(mode!=='revise'&&s&&a)selectAyah(s,a);return}  /* ayah number: choose this ayah (in Listen, play from it) */
+ if(mode!=='revise'&&!player.on&&s&&a&&curK()!==k)selectAyah(s,a);
+ showWord(el)});
+$('imPage').addEventListener('click',e=>{if(!e.target.closest('#mushaf')){if(wsCur)closeWs();else immUI()}});
+document.addEventListener('click',e=>{if(wsCur&&!e.target.closest('#wsheet,#mushaf,#player'))closeWs()},true);
+
+/* ---------- word meanings ---------- */
+let wsCur=null;
+async function showWord(el){
+ const k=el.dataset.k,i=+el.dataset.i,p=shownPage,[s,a]=k.split(':').map(Number),qcf=!!el.closest('.mlines')&&!el.closest('.uni');
+ wsCur={k,i,p};paint();
+ $('wsAr').innerHTML=qcf?`<span style="font-family:qcf${p}">${esc(el.textContent)}</span>`:esc(el.dataset.t||el.textContent);
+ $('wsM').textContent='…';$('wsTr').textContent=`${Q[s-1].name} ${k}`;$('wsPlay').textContent=mode==='listen'?'▶ Play from this ayah':'🔊 Hear this ayah';$('wsheet').classList.add('on');
+ let d=pageMem[p];if(!d||!d.length||!('m' in d[0]))d=await fetchPage(p);
+ if(!wsCur||wsCur.k!==k||wsCur.i!==i||wsCur.p!==p)return;
+ const w=d&&d.filter(x=>x.k===k&&!x.e)[i];
+ if(w&&w.m){$('wsM').textContent=w.m;$('wsTr').innerHTML=(w.tr?`<i>${esc(w.tr)}</i> · `:'')+esc(`${Q[s-1].name} ${k}`);if(!qcf&&w.t)$('wsAr').textContent=w.t}
+ else $('wsM').textContent=navigator.onLine===false?'Word meanings need the internet the first time you open a page.':'No meaning found for this word.'}
+function closeWs(){if(!wsCur&&!$('wsheet').classList.contains('on'))return;wsCur=null;$('wsheet').classList.remove('on');paint()}
+function wsPlay(){if(!wsCur)return;const k=wsCur.k,[s,a]=k.split(':').map(Number);closeWs();
+ if(mode==='listen'){cur={s,a};resetProg();startPlayer('reciter',k,false)}else startPlayer('reciter',k,true)}
+
+/* ---------- full-screen mushaf ---------- */
+let immOn=false,immT=null,immFs=false;
+function openImm(){if(!Q.length||immOn)return;immOn=true;closeWs();
+ $('imPage').appendChild($('mushaf'));$('imm').classList.add('on');$('imm').setAttribute('aria-hidden','false');document.body.classList.add('immOn');
+ immBar();immUI(true);requestAnimationFrame(fitLines);
+ try{const de=document.documentElement,sa=navigator.standalone||matchMedia('(display-mode: standalone)').matches;if(de.requestFullscreen&&!sa)de.requestFullscreen().then(()=>{immFs=true}).catch(()=>{})}catch(e){}}
+function closeImm(){if(!immOn)return;immOn=false;immFs=false;closeWs();clearTimeout(immT);
+ $('practice').insertBefore($('mushaf'),$('pnav'));$('imm').classList.remove('on','bare');$('imm').setAttribute('aria-hidden','true');document.body.classList.remove('immOn');
+ requestAnimationFrame(fitLines);try{if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{})}catch(e){}
+ $('practice').scrollIntoView({block:'start'})}
+function immUI(show){if(!immOn)return;clearTimeout(immT);const im=$('imm');if(show===undefined)show=im.classList.contains('bare');im.classList.toggle('bare',!show);
+ if(show&&!wantMic)immT=setTimeout(()=>{if(immOn&&!wantMic)im.classList.add('bare')},3500)}
+function immBar(){if(!immOn)return;const p=shownPage,f=PG[p]&&ALL[PG[p][0]];
+ $('imTitle').textContent=f?Q[f.s-1].name:'';$('imSub').textContent=wantMic?($('heard').textContent||'Listening…'):`Page ${p}${f?' · Juz '+f.j:''}`;
+ $('imPlay').textContent=player.on&&!audio.paused?'❚❚':'▶';$('imMic').classList.toggle('live',wantMic);$('imMic').style.display=mode==='listen'?'none':'';
+ $('imTheme').textContent=document.documentElement.dataset.theme==='day'?'🌙':'☀️';if(wantMic)immUI(true)}
+function immPlay(){if(player.on){togglePause();return}const p=shownPage,k=PG[p]&&PG[p].some(i=>ALL[i].k===curK())?curK():ALL[PG[p][0]].k;startPlayer('reciter',k,false)}
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&immOn&&immFs)closeImm()});
+document.addEventListener('keydown',e=>{if(!immOn)return;if(e.key==='Escape')closeImm();else if(e.key==='ArrowLeft')turn(1);else if(e.key==='ArrowRight')turn(-1)});
 let sx=null,sy=0;
-$('mushaf').addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
-$('mushaf').addEventListener('touchend',e=>{if(sx===null)return;const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;sx=null;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)turn(dx>0?1:-1)},{passive:true});
+/* swipe to turn pages (on the page, and on the margins around it in full screen) */
+[$('mushaf'),$('imPage')].forEach(z=>{const own=e=>z.id==='mushaf'||!e.target.closest('#mushaf');
+ z.addEventListener('touchstart',e=>{if(own(e)){sx=e.touches[0].clientX;sy=e.touches[0].clientY}},{passive:true});
+ z.addEventListener('touchend',e=>{if(sx===null||!own(e))return;const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;sx=null;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)turn(dx>0?1:-1)},{passive:true})});
 function turn(d){if(!Q.length)return;
  if(mode==='revise'){if(queue.length>1){if(d>0)queue.push(queue.shift());else queue.unshift(queue.pop())}nextRevise();return}
  const p=Math.max(1,Math.min(604,(shownPage||pageOf(cur.s,cur.a))+d));if(p===shownPage||!PG[p])return;
@@ -723,7 +822,7 @@ function pickSurah(){if(player.on)stopPlayer();cur={s:+$('sur').value,a:1};reset
 function pickAyah(){if(player.on)stopPlayer();cur.a=+$('aya').value;resetProg();peek.clear();showCur()}
 function stepAyah(d,keep){const i=Math.max(0,Math.min(ALL.length-1,ord(curK())-1+d)),x=ALL[i];cur={s:x.s,a:x.a};resetProg(keep);peek.clear();showCur()}
 function setMode(m){
- mode=m;micOff();stopRecording();if(m!=='listen'&&player.on)stopPlayer();
+ mode=m;micOff();stopRecording();closeWs();if(m!=='listen'&&player.on)stopPlayer();
  document.querySelectorAll('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
  const pr=$('practice');pr.classList.remove('isEmpty');pr.classList.toggle('listenMode',m==='listen');
  $('pickRow').classList.toggle('hidden',m==='revise');$('revHead').classList.toggle('hidden',m!=='revise');
@@ -784,7 +883,7 @@ function simC(a,b){const key=a+'|'+b;let v=SIMC.get(key);if(v===undefined){v=sim
 function joinSim(a,b){if(a.length<4||b.length<4)return false;if(a===b)return true;const sa=skel(a),sb=skel(b);if(sa.length>=3&&sa===sb)return true;
  const L=Math.max(a.length,b.length);return Math.abs(a.length-b.length)<=2&&1-lev(a,b)/L>=.8}
 function resetProg(keep){prog={k:Q.length?curK():'',cm:[],end:0,sid:-1};if(!keep)segSnap=lastSaid.slice();clearTimeout(doneT)}
-function micUI(){$('micBtn').classList.toggle('live',wantMic);$('micL').textContent=wantMic?'Listening':'Recite';paint()}
+function micUI(){$('micBtn').classList.toggle('live',wantMic);$('micL').textContent=wantMic?'Listening':'Recite';paint();immBar()}
 function micStart(){
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
  if(!SR){$('heard').textContent='Voice checking is not available in this browser. Open the app in Safari, or use the buttons.';return}
@@ -805,7 +904,7 @@ function micStart(){
 function micOff(){wantMic=false;const r=rec;rec=null;if(r){try{r.abort()}catch(e){}}clearTimeout(doneT);clearTimeout(evT);if(Q.length)micUI()}
 function toggleMic(){if(!Q.length)return;if(wantMic)micOff();else{quick=0;heardAt=Date.now();micStart();if(wantMic&&Date.now()>busyUntil)$('heard').textContent='Listening… start reciting'}}
 function onHeard(t){lastSaid=norm(t).split(' ').filter(Boolean);heardAt=Date.now();
- $('heard').textContent=t.trim().split(/\s+/).slice(-7).join(' ');tryEval()}
+ $('heard').textContent=t.trim().split(/\s+/).slice(-7).join(' ');immBar();tryEval()}
 function tryEval(){clearTimeout(evT);
  if(!Q.length||mode==='listen'||$('practice').classList.contains('isEmpty'))return;
  if(Date.now()<busyUntil){evT=setTimeout(()=>{if(wantMic)tryEval()},busyUntil-Date.now()+30);return}
@@ -895,7 +994,7 @@ function startPlayer(src,fromK,single){
  if(!list.length){toast(src==='mine'?'No recordings from this ayah onwards in this surah yet. Use Record in Learn.':'Nothing to play');return}
  if(src==='reciter'&&!single&&list[0].a===1&&s!==1&&s!==9)list.unshift({s,a:1,b:true});
  player={on:true,src,list,i:0,left:S.rep||1,k:'',single:!!single};
- document.body.classList.add('playing');$('player').classList.add('on');playItem()}
+ document.body.classList.add('playing');$('player').classList.add('on');if(immOn)requestAnimationFrame(fitLines);playItem()}
 async function playItem(){
  if(!player.on)return;const it=player.list[player.i];if(!it){finishPlayer();return}
  const k=K(it.s,it.a);player.k=it.b?'':k;
@@ -912,15 +1011,20 @@ async function playItem(){
 audio.addEventListener('ended',()=>{if(!player.on||audio.src.startsWith('data:'))return;const it=player.list[player.i];
  if(it&&!it.b&&player.left>1){player.left--;audio.currentTime=0;const p=audio.play();if(p)p.catch(()=>{});updPlayerUI();return}
  player.i++;player.left=S.rep||1;playItem()});
-audio.addEventListener('error',()=>{if(!player.on||!audio.src||audio.src.startsWith('data:'))return;toast(player.src==='reciter'?'Could not play the recitation. Check your internet connection.':'Could not play this recording.');stopPlayer()});
+let plErr=0;
+audio.addEventListener('error',()=>{if(!player.on||!audio.src||audio.src.startsWith('data:'))return;const it=player.list[player.i];
+ /* one missing file: skip it; two in a row usually means no internet, so stop */
+ if(player.src==='reciter'&&++plErr<2&&player.list[player.i+1]){toast(it&&it.b?'Could not load the bismillah, skipping it':`Could not load ayah ${it?it.a:''}, skipping it`);player.i++;player.left=S.rep||1;playItem();return}
+ plErr=0;toast(player.src==='reciter'?'Could not play the recitation. Check your internet connection.':'Could not play this recording.');stopPlayer()});
+audio.addEventListener('playing',()=>{plErr=0});
 audio.addEventListener('play',()=>updPlayerUI());audio.addEventListener('pause',()=>updPlayerUI());
 function finishPlayer(){const s=player.list.length&&player.list[player.list.length-1].s;const single=player.single;stopPlayer();if(!single)toast(player.src==='mine'?'Finished your recordings ✦':`Finished Surah ${s?Q[s-1].name:''} ✦`)}
-function stopPlayer(){player.on=false;player.k='';try{audio.pause()}catch(e){}$('player').classList.remove('on');document.body.classList.remove('playing');paint()}
+function stopPlayer(){player.on=false;player.k='';try{audio.pause()}catch(e){}$('player').classList.remove('on');document.body.classList.remove('playing');paint();immBar();if(immOn)requestAnimationFrame(fitLines)}
 function togglePause(){if(!player.on)return;if(audio.paused){const p=audio.play();if(p)p.catch(()=>{})}else audio.pause()}
 function updPlayerUI(){if(!player.on)return;const it=player.list[player.i];if(!it)return;
  $('plT').textContent=it.b?'Bismillah':`${Q[it.s-1].name} · Ayah ${it.a}${(S.rep||1)>1?` · ${(S.rep||1)-player.left+1}/${S.rep}`:''}`;
  $('plS').textContent=player.src==='reciter'?recInfo()[1]:'My recordings';
- $('plR').textContent=`🔁 ${S.rep||1}×`;$('plP').textContent=audio.paused?'▶':'❚❚'}
+ $('plR').textContent=`🔁 ${S.rep||1}×`;$('plP').textContent=audio.paused?'▶':'❚❚';immBar()}
 function mediaMeta(it){try{if(!('mediaSession' in navigator)||!window.MediaMetadata)return;
  navigator.mediaSession.metadata=new MediaMetadata({title:it.b?'Bismillah':`${Q[it.s-1].name} ${it.a}`,artist:player.src==='reciter'?recInfo()[1]:'My recordings',album:'Hifdh',artwork:[{src:'icon.png',sizes:'512x512',type:'image/png'}]});
  navigator.mediaSession.setActionHandler('play',()=>audio.play());navigator.mediaSession.setActionHandler('pause',()=>audio.pause());
@@ -940,7 +1044,7 @@ function fillSettings(){const ro=RECITERS.map(r=>`<option value="${r[0]}">${r[1]
 /* ---------- day & night ---------- */
 function applyTheme(t){t=t==='day'?'day':'night';document.documentElement.dataset.theme=t;try{localStorage.setItem('hifdh-theme',t)}catch(e){}
  $('themeBtn').textContent=t==='day'?'🌙':'☀️';const mc=document.querySelector('meta[name=theme-color]');if(mc)mc.content=t==='day'?'#f4ecda':'#070f24';
- const tc=$('themeChips');if(tc)tc.innerHTML=[['night','🌙 Night'],['day','☀️ Day']].map(([v,l])=>`<button class="${t===v?'on':''}" onclick="applyTheme('${v}')">${l}</button>`).join('')}
+ immBar();const tc=$('themeChips');if(tc)tc.innerHTML=[['night','🌙 Night'],['day','☀️ Day']].map(([v,l])=>`<button class="${t===v?'on':''}" onclick="applyTheme('${v}')">${l}</button>`).join('')}
 function toggleTheme(){applyTheme(document.documentElement.dataset.theme==='day'?'night':'day')}
 
 /* ---------- Today card ---------- */
@@ -1070,7 +1174,7 @@ async function applyUpdate(){
  location.replace(APP_URL+'?u='+encodeURIComponent(updSig)+location.hash)}
 
 /* ---------- tabs & init ---------- */
-function tab(n){document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.id===n));
+function tab(n){closeImm();closeWs();document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.id===n));
  ['today','journey','mine','feedback'].forEach(x=>$('n-'+x).classList.toggle('on',x===n));
  if(n!=='today'){micOff();stopRecording()}else requestAnimationFrame(fitLines);
  if(n==='journey')renderJourney();if(n==='mine')markGrids();if(n==='today')refreshToday();scrollTo(0,0)}
