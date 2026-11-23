@@ -266,7 +266,8 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
 .ayinfo .dots{margin:0}
 .ctl .ic.em{font-size:21px}
 .listenMode .ctl,.listenMode .grade{display:none!important}
-.isEmpty .mushaf,.isEmpty .pnav,.isEmpty .ayinfo,.isEmpty .lvl,.isEmpty .ctl,.isEmpty .grade,.isEmpty .heard{display:none!important}
+.isEmpty .mushaf,.isEmpty .pnav,.isEmpty .ayinfo,.isEmpty .lvl,.isEmpty .ctl,.isEmpty .grade{display:none!important}
+.revMic{display:block;width:100%;margin-top:14px}
 .selrow{display:grid;grid-template-columns:1.6fr 1fr;gap:8px}
 /* ---- player ---- */
 .player{position:fixed;left:10px;right:10px;bottom:calc(env(safe-area-inset-bottom) + 72px);z-index:25;max-width:540px;margin:0 auto;background:var(--card);border:1px solid var(--gold);border-radius:18px;padding:9px 10px;display:none;align-items:center;gap:8px;box-shadow:0 10px 30px rgba(0,0,0,.4);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
@@ -567,8 +568,13 @@ const DIA=/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g;
 function norm(t){return t.replace(DIA,'').replace(/[ٱأإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/[^\u0621-\u064A\s]/g,'').replace(/\s+/g,' ').trim()}
 const skel=w=>w.replace(/[اويء]/g,'');
 function lev(a,b){const m=a.length,n=b.length;let p=Array.from({length:n+1},(_,j)=>j);for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[n]}
-function sim(a,b){if(!a||!b)return false;if(a===b)return true;const sa=skel(a),sb=skel(b);if(sa&&sa===sb)return true;
- if(a.length>=4&&b.length>=4&&(a.includes(b)||b.includes(a)))return true;const L=Math.max(a.length,b.length);return L>=3&&1-lev(a,b)/L>=.7}
+const PREF=new Set(['و','ف','ب','ل','ك','ال','وال','فال','بال','كال','لل','ول','فل','وب','فب','وك','فك']);
+/* same word? exact; same 3+ consonants once long vowels/hamza are dropped (so أيها is not هو, إله is not له);
+   one has a prefix the other lacks (و ف ب ل ال …); or at most ~30% of letters differ */
+function sim(a,b){if(!a||!b)return false;if(a===b)return true;const sa=skel(a),sb=skel(b);
+ if(sa.length>=3&&sa===sb)return true;
+ const lo=a.length>=b.length?a:b,sh=lo===a?b:a;if(sh.length>=3&&lo.endsWith(sh)&&PREF.has(lo.slice(0,lo.length-sh.length)))return true;
+ const L=Math.max(a.length,b.length);return L>=3&&1-lev(a,b)/L>=.7}
 
 /* ---------- Quran data ---------- */
 let Q=[],ALL=[],OFF=[0],JT=new Array(31).fill(0),WC={},PG=[];
@@ -756,7 +762,7 @@ function updInfo(){if(!Q.length)return;const s=Q[cur.s-1],k=curK(),l=S.lv[k]||0;
  $('sur').value=cur.s;fillAya();$('aya').value=cur.a;
  $('ref').textContent=`${s.name} · Ayah ${cur.a}`;
  $('dots').innerHTML=[1,2,3].map(i=>`<i class="${l>=i?'on':''}"></i>`).join('');
- $('lvl').textContent=mode==='revise'?'Recite from memory. Tap a hidden word to peek.':mode==='listen'?(S.rec[k]?'You have a recording of this ayah 🎧':'Tap any ayah on the page to select it.'):l===3?'Memorised ✦':l===0?'New ayah · recite it correctly 3 times':`Learning · ${3-l} more time${3-l>1?'s':''}`;
+ $('lvl').textContent=mode==='revise'?'Recite from memory, or start any other ayah and it will jump there. Tap a hidden word to peek.':mode==='listen'?(S.rec[k]?'You have a recording of this ayah 🎧':'Tap any ayah on the page to select it.'):l===3?'Memorised ✦':l===0?'New ayah · recite it correctly 3 times':`Learning · ${3-l} more time${3-l>1?'s':''}`;
  $('eyeBtn').classList.toggle('on',hide);$('eyeL').textContent=hide?'Show':'Hide';updPageLbl();
  if(mode==='learn'&&S.last!==k){S.last=k;save()}}
 function updPageLbl(){const p=shownPage||pageOf(cur.s,cur.a),f=PG[p]&&ALL[PG[p][0]];$('pgLbl').innerHTML=`Page ${p}${f?`<span class="pj"> · Juz ${f.j}</span>`:''}`;immBar()}
@@ -768,7 +774,7 @@ $('mushaf').addEventListener('click',e=>{const el=e.target.closest('.mw,.me');if
  if(!el){if(wsCur)closeWs();else if(immOn)immUI();return}
  const k=el.dataset.k,[s,a]=k.split(':').map(Number);
  if(el.classList.contains('hid')||el.classList.contains('peek')){const id=k+'#'+el.dataset.i;peek.has(id)?peek.delete(id):peek.add(id);paint();return}
- if(el.classList.contains('me')){closeWs();if(mode!=='revise'&&s&&a)selectAyah(s,a);return}  /* ayah number: choose this ayah (in Listen, play from it) */
+ if(el.classList.contains('me')){closeWs();if(!s||!a)return;if(mode==='revise'){if(k!==curK())jumpTo(ALL[ord(k)-1],lastSaid.length)}else selectAyah(s,a);return}  /* ayah number: choose this ayah (in Listen, play from it; in Revise, revise it) */
  if(mode!=='revise'&&!player.on&&s&&a&&curK()!==k)selectAyah(s,a);
  showWord(el)});
 $('imPage').addEventListener('click',e=>{if(!e.target.closest('#mushaf')){if(wsCur)closeWs();else immUI()}});
@@ -834,9 +840,9 @@ function setMode(m){
  hide=false;
  if(m==='learn'&&S.last){const[s,a]=S.last.split(':').map(Number);if(Q[s-1]&&a<=Q[s-1].a.length)cur={s,a}}
  showCur()}
-function nextRevise(){const pr=$('practice');
- if(!queue.length){pr.classList.add('isEmpty');$('revHead').innerHTML=`<div class="empty"><b>${session?'Revision complete ✦':'All caught up ✦'}</b>${session?'Now on to new ayahs…':'Memorised ayahs come back here when it is time to review them.'}</div>`;
-  micOff();if(session){session=false;setTimeout(()=>{if(mode==='revise'){setMode('learn');jumpToNextNew();toast('Revision done ✦ Time for new ayahs')}},1600)}
+function nextRevise(){const pr=$('practice');follow=false;
+ if(!queue.length){pr.classList.add('isEmpty');$('revHead').innerHTML=`<div class="empty"><b>${session?'Revision complete ✦':'All caught up ✦'}</b>${session?'Now on to new ayahs…':'Memorised ayahs come back here when it is time to review them.<button class="gold revMic" id="revMic" onclick="toggleMic()"></button>'}</div>`;micUI();
+  if(session){micOff();}if(session){session=false;setTimeout(()=>{if(mode==='revise'){setMode('learn');jumpToNextNew();toast('Revision done ✦ Time for new ayahs')}},1600)}
   refreshToday();return}
  pr.classList.remove('isEmpty');const[s,a]=queue[0].split(':').map(Number);cur={s,a};hide=true;resetProg(true);peek.clear();showCur();
  $('revHead').textContent=`Revision · ${queue.length} left`}
@@ -850,10 +856,14 @@ function grade(d,fromMic){
  if(!Q.length||$('practice').classList.contains('isEmpty'))return;
  const k=curK();markDay();
  if(mode==='revise'){const t=today();
-  if(d>0){S.iv[k]=Math.min(90,Math.max(1,(S.iv[k]||1)*2));S.rv[k]=t+S.iv[k];toast(pick(REVPRAISE))}
-  else{S.iv[k]=1;S.rv[k]=t+1;toast('No worries, it will come back tomorrow')}
-  S.rvd[TK()]=(S.rvd[TK()]||0)+1;save();queue.shift();if(!checkMilestones(true))burst();
-  if(fromMic){busyUntil=Date.now()+700;setTimeout(()=>{nextRevise();refreshToday()},500)}else{resetProg();nextRevise();refreshToday()}
+  if(S.lv[k]===3){if(d>0){S.iv[k]=Math.min(90,Math.max(1,(S.iv[k]||1)*2));S.rv[k]=t+S.iv[k];toast(pick(REVPRAISE))}
+   else{S.iv[k]=1;S.rv[k]=t+1;toast('No worries, it will come back tomorrow')}}
+  else toast(d>0?'Masha\'Allah ✦':'Keep at it, you will get there 💛');
+  S.rvd[TK()]=(S.rvd[TK()]||0)+1;save();const qi=queue.indexOf(k);if(qi>=0)queue.splice(qi,1);if(!checkMilestones(true))burst();
+  if(fromMic){busyUntil=Date.now()+700;setTimeout(()=>{
+    if(follow&&curK()===k&&ord(k)<ALL.length){const x=ALL[ord(k)];cur={s:x.s,a:x.a};hide=true;resetProg(true);peek.clear();showCur();$('revHead').textContent=`Revision · ${queue.length} left`}
+    else nextRevise();refreshToday()},500)}
+  else{resetProg();nextRevise();refreshToday()}
   return}
  const b=S.lv[k]||0,a=Math.max(0,Math.min(3,b+(d>0?1:-1)));
  if(a)S.lv[k]=a;else delete S.lv[k];
@@ -873,17 +883,17 @@ function burst(){const pr=$('practice');pr.classList.add('burst');setTimeout(()=
 /* How it works: everything said in the current listening session is lined up against the whole ayah, in order.
    Green words stay green, so a pause, a restart or the recognizer rewriting its guess never undoes them,
    and you can go back and say a missed word again. */
-let rec=null,wantMic=false,sid=0,quick=0,heardAt=0,lastSaid=[],segSnap=[],doneT=null,evT=null,prog={k:'',cm:[],end:0,sid:-1};
+let rec=null,wantMic=false,micResume=false,lastErr='',sid=0,quick=0,heardAt=0,lastSaid=[],segSnap=[],doneT=null,evT=null,prog={k:'',cm:[],end:0,sid:-1};
 const LETTERS=new Set(['الف','لام','ميم','صاد','را','راء','ري','كاف','ها','هاء','يا','ياء','عين','طا','طاء','سين','حا','حاء','قاف','نون','الم','المص','الر','المر','كهيعص','طه','طسم','طس','يس','حم','عسق']);
 const MUQ=new Set(['الم','المص','الر','المر','كهيعص','طه','طسم','طس','يس','ص','حم','عسق','ق','ن']);
-const SRERR={'not-allowed':'Microphone access is blocked. Allow the microphone for Safari in your iPhone Settings, then tap Recite.','service-not-allowed':'Voice checking needs Dictation. Turn it on in Settings › General › Keyboard › Dictation, then tap Recite.','audio-capture':'No microphone was found.','network':'Voice checking needs an internet connection.','language-not-supported':'Arabic voice recognition is not available on this device.'};
+const SRERR={'not-allowed':'Microphone access is blocked. Allow the microphone for Safari in your iPhone Settings, then tap Recite.','service-not-allowed':'Voice checking needs Dictation. Turn it on in Settings › General › Keyboard › Dictation, then tap Recite.','network':'Voice checking needs an internet connection.','language-not-supported':'Arabic voice recognition is not available on this device.'};
 const SIMC=new Map();
 function simC(a,b){const key=a+'|'+b;let v=SIMC.get(key);if(v===undefined){v=sim(a,b);if(SIMC.size>30000)SIMC.clear();SIMC.set(key,v)}return v}
 /* stricter test for one spoken word standing for two ayah words (or the reverse): whole words must line up */
 function joinSim(a,b){if(a.length<4||b.length<4)return false;if(a===b)return true;const sa=skel(a),sb=skel(b);if(sa.length>=3&&sa===sb)return true;
  const L=Math.max(a.length,b.length);return Math.abs(a.length-b.length)<=2&&1-lev(a,b)/L>=.8}
 function resetProg(keep){prog={k:Q.length?curK():'',cm:[],end:0,sid:-1};if(!keep)segSnap=lastSaid.slice();clearTimeout(doneT)}
-function micUI(){$('micBtn').classList.toggle('live',wantMic);$('micL').textContent=wantMic?'Listening':'Recite';paint();immBar()}
+function micUI(){$('micBtn').classList.toggle('live',wantMic);$('micL').textContent=wantMic?'Listening':'Recite';const rm=$('revMic');if(rm)rm.textContent=wantMic?'Listening… start any ayah':'🎙 Recite any ayah from memory';paint();immBar()}
 function micStart(){
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
  if(!SR){$('heard').textContent='Voice checking is not available in this browser. Open the app in Safari, or use the buttons.';return}
@@ -892,23 +902,48 @@ function micStart(){
  lastSaid=[];segSnap=[];sid++;
  const r=new SR(),t0=Date.now();let got=false;rec=r;r.lang='ar-SA';r.continuous=true;r.interimResults=true;r.maxAlternatives=1;
  r.onresult=e=>{if(rec!==r)return;got=true;quick=0;let t='';for(let i=0;i<e.results.length;i++)t+=e.results[i][0].transcript+' ';onHeard(t)};
- r.onerror=e=>{if(rec!==r)return;const msg=SRERR[e.error];if(msg){wantMic=false;rec=null;try{r.abort()}catch(_){}micUI();$('heard').textContent=msg}};
+ r.onerror=e=>{if(rec!==r)return;lastErr=e.error||'';const msg=SRERR[e.error];
+  /* errors while the app is in the background (e.g. 'audio-capture' when switching apps) are temporary: listening resumes on return */
+  if(msg&&!document.hidden){wantMic=false;rec=null;try{r.abort()}catch(_){}micUI();$('heard').textContent=msg}};
  r.onend=()=>{if(rec!==r)return;rec=null;if(!wantMic){micUI();return}
+  if(document.hidden){wantMic=false;micResume=true;micUI();return}  /* left the app: pick up again on return */
   /* iPhone ends a session at every pause, so keep listening; only give up if it fails to start again and again */
   if(!got&&Date.now()-t0<1000)quick++;else quick=0;
-  if(quick>=6){wantMic=false;micUI();$('heard').textContent='The microphone keeps stopping. Tap Recite to try again.';return}
+  if(quick>=6){wantMic=false;micUI();$('heard').textContent=lastErr==='audio-capture'?'Could not use the microphone. If another app is using it, close that app, then tap Recite.':'The microphone keeps stopping. Tap Recite to try again.';return}
   if(Date.now()-heardAt>60000){wantMic=false;micUI();$('heard').textContent='Stopped listening after a minute of silence. Tap Recite to carry on.';return}
-  setTimeout(()=>{if(wantMic&&!rec)micStart()},quick?Math.min(2000,300*quick):120)};
+  setTimeout(()=>{if(!wantMic||rec)return;if(document.hidden){wantMic=false;micResume=true;micUI();return}micStart()},quick?Math.min(2000,300*quick):120)};
  try{r.start();wantMic=true;micUI()}
  catch(e){rec=null;wantMic=false;micUI();$('heard').textContent='Could not start the microphone. Tap Recite again.'}}
 function micOff(){wantMic=false;const r=rec;rec=null;if(r){try{r.abort()}catch(e){}}clearTimeout(doneT);clearTimeout(evT);if(Q.length)micUI()}
-function toggleMic(){if(!Q.length)return;if(wantMic)micOff();else{quick=0;heardAt=Date.now();micStart();if(wantMic&&Date.now()>busyUntil)$('heard').textContent='Listening… start reciting'}}
+function toggleMic(){if(!Q.length)return;micResume=false;if(wantMic)micOff();else{quick=0;heardAt=Date.now();if(mode==='revise'&&!AIX)setTimeout(buildAIX,30);micStart();if(wantMic&&Date.now()>busyUntil)$('heard').textContent='Listening… start reciting'}}
 function onHeard(t){lastSaid=norm(t).split(' ').filter(Boolean);heardAt=Date.now();
  $('heard').textContent=t.trim().split(/\s+/).slice(-7).join(' ');immBar();tryEval()}
 function tryEval(){clearTimeout(evT);
- if(!Q.length||mode==='listen'||$('practice').classList.contains('isEmpty'))return;
+ if(!Q.length||mode==='listen')return;
  if(Date.now()<busyUntil){evT=setTimeout(()=>{if(wantMic)tryEval()},busyUntil-Date.now()+30);return}
+ if($('practice').classList.contains('isEmpty')){if(mode==='revise')reviseSearch();return}
  evaluate()}
+/* ---------- revise: recite any ayah and the app finds it, then follows you ---------- */
+let AIX=null,follow=false;
+const akey=w=>{const k=skel(w);return k.length>=2?k:w};
+function buildAIX(){if(AIX||!ALL.length)return;const ix=new Map();
+ for(let n=0;n<ALL.length;n++){const x=ALL[n],W=wordsOf(x.s,x.a);for(let i=0;i+1<W.length;i++){const b=akey(W[i].n)+' '+akey(W[i+1].n);let l=ix.get(b);if(!l)ix.set(b,l=[]);if(l[l.length-1]!==n)l.push(n)}}
+ AIX=ix}
+/* which ayah are these words from? needs 3+ words in order and a clear winner; the current ayah, the next one, memorised ayahs and starting at the beginning count in its favour */
+function findAyah(ws){if(ws.length<3)return null;buildAIX();if(!AIX)return null;
+ const ck=curK(),near=ord(ck),keys=ws.map(akey),votes=new Map();
+ for(let i=0;i+1<keys.length;i++){const l=AIX.get(keys[i]+' '+keys[i+1]);if(!l||l.length>300)continue;for(const n of l)votes.set(n,(votes.get(n)||0)+1)}
+ let best=null,b2=-1;
+ for(const [n] of [...votes].sort((a,b)=>b[1]-a[1]).slice(0,40)){const x=ALL[n],W=wordsOf(x.s,x.a).map(w=>w.n),r=align(ws,W,x.a===1||x.k==='42:2');
+  let m=0,first=-1;r.m.forEach((v,i)=>{if(v){m++;if(first<0)first=i}});if(m<3)continue;
+  const on=n+1,sc=m+(first===0?0.6:0)+(r.used[ws.length-1]?0.5:0)+(S.lv[x.k]===3?0.4:0)+(x.k===ck?2:on===near+1?1.5:Math.abs(on-near)<8?0.3:0);
+  if(!best||sc>best.sc){if(best)b2=Math.max(b2,best.sc);best={x,sc}}else b2=Math.max(b2,sc)}
+ return best&&best.sc>=b2+0.9?best.x:null}
+/* where the found ayah starts in what was said: look a few words before the unmatched tail, so opening words said before it became clear still count */
+function cutFor(x,seg,b0,from){const W=wordsOf(x.s,x.a).map(w=>w.n),st=Math.max(0,from-6),r=align(seg.slice(st),W,x.a===1||x.k==='42:2'),q=r.used.indexOf(true);return b0+st+(q<0?from-st:q)}
+function jumpTo(x,cut){segSnap=lastSaid.slice(0,cut);cur={s:x.s,a:x.a};hide=true;follow=true;resetProg(true);peek.clear();
+ $('practice').classList.remove('isEmpty');showCur();$('revHead').textContent=`Revision · ${queue.length} left`;$('heard').textContent=`↪ ${Q[x.s-1].name} · Ayah ${x.a}`}
+function reviseSearch(){const b0=segStart(lastSaid),seg=lastSaid.slice(b0),ws=seg.slice(-12),x=findAyah(ws);if(x){jumpTo(x,cutFor(x,seg,b0,seg.length-ws.length));evaluate(true)}}
 /* where the current ayah starts in the session transcript (words before it belonged to the previous ayah) */
 function segStart(said){const L=segSnap.length;if(!L)return 0;
  let k=0;while(k<L&&k<said.length&&said[k]===segSnap[k])k++;if(k===L)return L;
@@ -918,7 +953,7 @@ function segStart(said){const L=segSnap.length;if(!L)return 0;
  return best}
 /* in-order alignment of spoken words to ayah words (also allows one spoken word for two ayah words, and two for one) */
 function align(seg,W,muq,skip){
- const n=seg.length,M=W.length,m=new Array(M).fill(false),used=new Array(n).fill(false);if(!n||!M)return{m,used};
+ const n=seg.length,M=W.length,m=new Array(M).fill(false),used=new Array(n).fill(false),pairs=[];if(!n||!M)return{m,used,pairs};
  const okW=i=>!(skip&&skip[i])&&!!W[i];
  const ok=(q,i)=>okW(i)&&(muq&&i===0&&MUQ.has(W[0])?(LETTERS.has(seg[q])||simC(seg[q],W[0])):simC(seg[q],W[i]));
  const mg=(q,i)=>okW(i)&&okW(i+1)&&joinSim(seg[q],W[i]+W[i+1]);
@@ -933,21 +968,29 @@ function align(seg,W,muq,skip){
     and pair each needed word with the most recent thing said */
  for(let q=n,i=M;q>0&&i>0;){const v=dp[q][i];
   if(v===dp[q][i-1]){i--;continue}
-  if(v===dp[q-1][i-1]+1&&ok(q-1,i-1)){m[i-1]=used[q-1]=true;q--;i--;continue}
-  if(i>1&&v===dp[q-1][i-2]+2&&mg(q-1,i-2)){m[i-1]=m[i-2]=used[q-1]=true;q--;i-=2;continue}
-  if(q>1&&v===dp[q-2][i-1]+1&&sp(q-2,i-1)){m[i-1]=used[q-1]=used[q-2]=true;q-=2;i--;continue}
+  if(v===dp[q-1][i-1]+1&&ok(q-1,i-1)){m[i-1]=used[q-1]=true;pairs.push([q-1,i-1]);q--;i--;continue}
+  if(i>1&&v===dp[q-1][i-2]+2&&mg(q-1,i-2)){m[i-1]=m[i-2]=used[q-1]=true;pairs.push([q-1,i-1],[q-1,i-2]);q--;i-=2;continue}
+  if(q>1&&v===dp[q-2][i-1]+1&&sp(q-2,i-1)){m[i-1]=used[q-1]=used[q-2]=true;pairs.push([q-1,i-1],[q-2,i-1]);q-=2;i--;continue}
   q--}
- return{m,used}}
-function evaluate(){
+ return{m,used,pairs}}
+/* ignore stray matches: one or two words far ahead of the rest (e.g. a repeated إلا pairing with a later إلا in the ayah) */
+function dropStray(r,cm,G){const idxs=[];for(let i=0;i<r.m.length;i++)if(r.m[i]||cm[i])idxs.push(i);
+ const runs=[];for(const i of idxs){const last=runs[runs.length-1];if(last&&i-last[last.length-1]-1<=G)last.push(i);else runs.push([i])}
+ runs.forEach((run,ri)=>{if(run.length>2||(ri===0&&run[0]<=G))return;
+  for(const i of run)if(r.m[i]&&!cm[i]){r.m[i]=false;for(const [q,j] of r.pairs)if(j===i)r.used[q]=false}})}
+function evaluate(jumped){
  const k=curK();if(prog.k!==k)resetProg(true);
  const W=wordsOf(cur.s,cur.a).map(w=>w.n),b0=segStart(lastSaid),seg=lastSaid.slice(b0),muq=cur.a===1||k==='42:2';
- const cm=W.map((_,i)=>!!prog.cm[i]),p1=align(seg,W,muq);let front=-1;
+ const cm=W.map((_,i)=>!!prog.cm[i]),p1=align(seg,W,muq);dropStray(p1,cm,4);let front=-1;
  W.forEach((_,i)=>{if(p1.m[i])cm[i]=true;if(cm[i])front=i});
  /* second pass: words you went back for, using spoken words the first pass did not need */
  const skip=W.map((_,i)=>cm[i]||i>front),rest=[],idx=[];seg.forEach((w,q)=>{if(!p1.used[q]){rest.push(w);idx.push(q)}});
  const p2=align(rest,W,muq,skip);let lastUsed=-1;
  p1.used.forEach((u,q)=>{if(u&&q>lastUsed)lastUsed=q});p2.used.forEach((u,q)=>{if(u&&idx[q]>lastUsed)lastUsed=idx[q]});
  W.forEach((_,i)=>{if(p2.m[i])cm[i]=true});
+ if(mode==='revise'&&wantMic&&!jumped&&seg.length>=3){/* at most one of the last few words fits this ayah: look for the ayah being recited */
+  const usedAll=p1.used.slice();p2.used.forEach((u,q)=>{if(u)usedAll[idx[q]]=true});const rc=Math.min(4,seg.length);let u=0;for(let q=seg.length-rc;q<seg.length;q++)if(usedAll[q])u++;
+  if(u<=1){const ws=seg.slice(-12),x=findAyah(ws);if(x&&x.k!==k){jumpTo(x,cutFor(x,seg,b0,seg.length-ws.length));evaluate(true);return}}}
  prog.cm=cm;if(lastUsed>=0){prog.end=b0+lastUsed+1;prog.sid=sid}
  let real=0,got=0,lastReal=-1,lastHit=-1;W.forEach((w,i)=>{if(w){real++;lastReal=i;if(cm[i]){got++;lastHit=i}}});
  const sc=got/(real||1);paint();
@@ -1182,7 +1225,12 @@ function refreshAll(){refreshToday();setMode(mode==='revise'?'learn':mode);if($(
 function initUI(){const opts=Q.map(s=>`<option value="${s.n}">${s.n}. ${s.name}</option>`).join('');$('sur').innerHTML=opts;$('rs').innerHTML=opts;rangeLimits();
  fillSettings();applyTheme(document.documentElement.dataset.theme);loadSurahFont();getPage(1).then(d=>{if(d)loadFont(1)});
  checkMilestones(false);setMode('learn');refreshToday()}
-document.addEventListener('visibilitychange',()=>{if(document.hidden){micOff();stopRecording()}else{setDate();refreshToday();requestAnimationFrame(fitLines);checkUpdate()}});
+document.addEventListener('visibilitychange',()=>{
+ if(document.hidden){if(wantMic)micResume=true;micOff();stopRecording()}
+ else{setDate();refreshToday();requestAnimationFrame(fitLines);checkUpdate();if(micResume){micResume=false;setTimeout(resumeMic,700)}}});
+/* back in the app after reciting: listen again, keeping the words already heard */
+function resumeMic(){if(document.hidden||wantMic||!Q.length||mode==='listen'||!$('today').classList.contains('on')||player.on)return;
+ quick=0;heardAt=Date.now();micStart();if(wantMic)$('heard').textContent='Listening again… carry on reciting'}
 setDate();setupFeedback();
 applyTheme(document.documentElement.dataset.theme);
 load().catch(e=>{console.error(e);setMushafMsg('<div><b style="color:var(--gold)">Could not load the Quran</b><br>Please connect to the internet the first time, then <a href="" style="color:var(--gold)">tap here to try again</a>.</div>')});
