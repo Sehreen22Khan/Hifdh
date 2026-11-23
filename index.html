@@ -683,13 +683,14 @@ let fitT=null;addEventListener('resize',()=>{clearTimeout(fitT);fitT=setTimeout(
 function paint(){
  const ck=curK(),co=ord(ck),m=prog.k===ck?prog.cm:[],full=wordsOf(cur.s,cur.a).map(w=>w.n);
  let last=-1;m.forEach((v,i)=>{if(v)last=i});
+ const after=[];for(let i=full.length-1,c=0;i>=0;i--){after[i]=c;if(m[i])c++}
  let nxt=-1;if(wantMic){for(let i=last+1;i<full.length;i++)if(full[i]){nxt=i;break}}
  const showSel=!(mode==='listen'&&player.on);
  for(const k in PW){const o=PW[k],isC=k===ck,ko=ord(k),hidK=hide&&mode!=='listen'&&ko>=co,isP=player.on&&k===player.k;
   if(isC)mapFor(k);
   o.w.forEach((el,pi)=>{const fi=isC&&o.inv?o.inv.get(el):undefined;let c='mw';
    if(isC&&showSel)c+=' cur';if(isP)c+=' play';
-   const said=fi!==undefined&&m[fi],missed=fi!==undefined&&!m[fi]&&fi<last&&full[fi];
+   const said=fi!==undefined&&m[fi],missed=fi!==undefined&&!m[fi]&&after[fi]>=2&&full[fi];
    if(said)c+=' ok';else if(missed)c+=' miss';
    if(fi!==undefined&&fi===nxt)c+=' nxt';
    const pk=peek.has(k+'#'+pi);
@@ -770,50 +771,95 @@ function grade(d,fromMic){
 function burst(){const pr=$('practice');pr.classList.add('burst');setTimeout(()=>pr.classList.remove('burst'),700)}
 
 /* ---------- voice recognition (live word highlighting) ---------- */
-let rec=null,wantMic=false,starts=[],base=0,lastSaid=[],doneT=null,prog={k:'',com:[],st:0,cm:[]};
+/* How it works: everything said in the current listening session is lined up against the whole ayah, in order.
+   Green words stay green, so a pause, a restart or the recognizer rewriting its guess never undoes them,
+   and you can go back and say a missed word again. */
+let rec=null,wantMic=false,sid=0,quick=0,heardAt=0,lastSaid=[],segSnap=[],doneT=null,evT=null,prog={k:'',cm:[],end:0,sid:-1};
 const LETTERS=new Set(['الف','لام','ميم','صاد','را','راء','ري','كاف','ها','هاء','يا','ياء','عين','طا','طاء','سين','حا','حاء','قاف','نون','الم','المص','الر','المر','كهيعص','طه','طسم','طس','يس','حم','عسق']);
 const MUQ=new Set(['الم','المص','الر','المر','كهيعص','طه','طسم','طس','يس','ص','حم','عسق','ق','ن']);
 const SRERR={'not-allowed':'Microphone access is blocked. Allow the microphone for Safari in your iPhone Settings, then tap Recite.','service-not-allowed':'Voice checking needs Dictation. Turn it on in Settings › General › Keyboard › Dictation, then tap Recite.','audio-capture':'No microphone was found.','network':'Voice checking needs an internet connection.','language-not-supported':'Arabic voice recognition is not available on this device.'};
-function resetProg(keepBase){prog={k:Q.length?curK():'',com:[],st:0,cm:[]};if(!keepBase)base=lastSaid.length;clearTimeout(doneT)}
+const SIMC=new Map();
+function simC(a,b){const key=a+'|'+b;let v=SIMC.get(key);if(v===undefined){v=sim(a,b);if(SIMC.size>30000)SIMC.clear();SIMC.set(key,v)}return v}
+/* stricter test for one spoken word standing for two ayah words (or the reverse): whole words must line up */
+function joinSim(a,b){if(a.length<4||b.length<4)return false;if(a===b)return true;const sa=skel(a),sb=skel(b);if(sa.length>=3&&sa===sb)return true;
+ const L=Math.max(a.length,b.length);return Math.abs(a.length-b.length)<=2&&1-lev(a,b)/L>=.8}
+function resetProg(keep){prog={k:Q.length?curK():'',cm:[],end:0,sid:-1};if(!keep)segSnap=lastSaid.slice();clearTimeout(doneT)}
 function micUI(){$('micBtn').classList.toggle('live',wantMic);$('micL').textContent=wantMic?'Listening':'Recite';paint()}
 function micStart(){
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
  if(!SR){$('heard').textContent='Voice checking is not available in this browser. Open the app in Safari, or use the buttons.';return}
  if(mr)stopRecording();if(player.on)stopPlayer();
- starts=starts.filter(t=>Date.now()-t<6000);starts.push(Date.now());
- if(starts.length>5){wantMic=false;micUI();$('heard').textContent='The microphone keeps stopping. Tap Recite to try again.';return}
- if(prog.k===curK()){prog.com=prog.cm.slice();let l=-1;prog.com.forEach((v,i)=>{if(v)l=i});prog.st=l+1}else resetProg(true);
- lastSaid=[];base=0;
- const r=new SR();rec=r;r.lang='ar-SA';r.continuous=true;r.interimResults=true;r.maxAlternatives=1;
- r.onresult=e=>{if(rec!==r)return;let t='';for(let i=0;i<e.results.length;i++)t+=e.results[i][0].transcript+' ';onHeard(t)};
+ if(prog.k!==curK())resetProg(true);
+ lastSaid=[];segSnap=[];sid++;
+ const r=new SR(),t0=Date.now();let got=false;rec=r;r.lang='ar-SA';r.continuous=true;r.interimResults=true;r.maxAlternatives=1;
+ r.onresult=e=>{if(rec!==r)return;got=true;quick=0;let t='';for(let i=0;i<e.results.length;i++)t+=e.results[i][0].transcript+' ';onHeard(t)};
  r.onerror=e=>{if(rec!==r)return;const msg=SRERR[e.error];if(msg){wantMic=false;rec=null;try{r.abort()}catch(_){}micUI();$('heard').textContent=msg}};
- r.onend=()=>{if(rec!==r)return;rec=null;if(wantMic)setTimeout(()=>{if(wantMic&&!rec)micStart()},200);else micUI()};
- try{r.start();wantMic=true;micUI();if(Date.now()>busyUntil)$('heard').textContent='Listening… start reciting'}
+ r.onend=()=>{if(rec!==r)return;rec=null;if(!wantMic){micUI();return}
+  /* iPhone ends a session at every pause, so keep listening; only give up if it fails to start again and again */
+  if(!got&&Date.now()-t0<1000)quick++;else quick=0;
+  if(quick>=6){wantMic=false;micUI();$('heard').textContent='The microphone keeps stopping. Tap Recite to try again.';return}
+  if(Date.now()-heardAt>60000){wantMic=false;micUI();$('heard').textContent='Stopped listening after a minute of silence. Tap Recite to carry on.';return}
+  setTimeout(()=>{if(wantMic&&!rec)micStart()},quick?Math.min(2000,300*quick):120)};
+ try{r.start();wantMic=true;micUI()}
  catch(e){rec=null;wantMic=false;micUI();$('heard').textContent='Could not start the microphone. Tap Recite again.'}}
-function micOff(){wantMic=false;const r=rec;rec=null;if(r){try{r.abort()}catch(e){}}clearTimeout(doneT);if(Q.length)micUI()}
-function toggleMic(){if(!Q.length)return;if(wantMic)micOff();else{starts=[];micStart()}}
-function onHeard(t){const said=norm(t).split(' ').filter(Boolean);lastSaid=said;
- $('heard').textContent=t.trim().split(/\s+/).slice(-7).join(' ');
- if(Date.now()<busyUntil||!Q.length||mode==='listen'||$('practice').classList.contains('isEmpty'))return;evaluate()}
-function matchFrom(said,W,st,muq){const m=new Array(W.length).fill(false);let j=0;
- for(let i=st;i<W.length;i++){const w=W[i];if(!w)continue;
-  if(muq&&i===0&&MUQ.has(w)){for(let q=j;q<said.length;q++){if(LETTERS.has(said[q])||sim(said[q],w)){let e=q+1;while(e<said.length&&LETTERS.has(said[e]))e++;m[i]=true;j=e;break}}continue}
-  for(let q=j;q<Math.min(said.length,j+8);q++)if(sim(said[q],w)){m[i]=true;j=q+1;break}}
- return{m,j}}
+function micOff(){wantMic=false;const r=rec;rec=null;if(r){try{r.abort()}catch(e){}}clearTimeout(doneT);clearTimeout(evT);if(Q.length)micUI()}
+function toggleMic(){if(!Q.length)return;if(wantMic)micOff();else{quick=0;heardAt=Date.now();micStart();if(wantMic&&Date.now()>busyUntil)$('heard').textContent='Listening… start reciting'}}
+function onHeard(t){lastSaid=norm(t).split(' ').filter(Boolean);heardAt=Date.now();
+ $('heard').textContent=t.trim().split(/\s+/).slice(-7).join(' ');tryEval()}
+function tryEval(){clearTimeout(evT);
+ if(!Q.length||mode==='listen'||$('practice').classList.contains('isEmpty'))return;
+ if(Date.now()<busyUntil){evT=setTimeout(()=>{if(wantMic)tryEval()},busyUntil-Date.now()+30);return}
+ evaluate()}
+/* where the current ayah starts in the session transcript (words before it belonged to the previous ayah) */
+function segStart(said){const L=segSnap.length;if(!L)return 0;
+ let k=0;while(k<L&&k<said.length&&said[k]===segSnap[k])k++;if(k===L)return L;
+ const tail=segSnap.slice(-3);let best=Math.min(L,said.length),bs=0;
+ for(let p=Math.max(1,L-4);p<=Math.min(said.length,L+3);p++){let c=0;for(let t=1;t<=tail.length&&p-t>=0;t++)if(simC(said[p-t],tail[tail.length-t]))c++;
+  if(c>bs||(c===bs&&c&&Math.abs(p-L)<Math.abs(best-L))){bs=c;best=p}}
+ return best}
+/* in-order alignment of spoken words to ayah words (also allows one spoken word for two ayah words, and two for one) */
+function align(seg,W,muq,skip){
+ const n=seg.length,M=W.length,m=new Array(M).fill(false),used=new Array(n).fill(false);if(!n||!M)return{m,used};
+ const okW=i=>!(skip&&skip[i])&&!!W[i];
+ const ok=(q,i)=>okW(i)&&(muq&&i===0&&MUQ.has(W[0])?(LETTERS.has(seg[q])||simC(seg[q],W[0])):simC(seg[q],W[i]));
+ const mg=(q,i)=>okW(i)&&okW(i+1)&&joinSim(seg[q],W[i]+W[i+1]);
+ const sp=(q,i)=>okW(i)&&joinSim(seg[q]+seg[q+1],W[i]);
+ const dp=[];for(let q=0;q<=n;q++)dp.push(new Uint16Array(M+1));
+ for(let q=1;q<=n;q++)for(let i=1;i<=M;i++){let v=Math.max(dp[q-1][i],dp[q][i-1]);
+  if(dp[q-1][i-1]+1>v&&ok(q-1,i-1))v=dp[q-1][i-1]+1;
+  if(i>1&&dp[q-1][i-2]+2>v&&mg(q-1,i-2))v=dp[q-1][i-2]+2;
+  if(q>1&&dp[q-2][i-1]+1>v&&sp(q-2,i-1))v=dp[q-2][i-1]+1;
+  dp[q][i]=v}
+ /* walk back: leave out ayah words the best score does not need (so nothing ahead of you lights up early),
+    and pair each needed word with the most recent thing said */
+ for(let q=n,i=M;q>0&&i>0;){const v=dp[q][i];
+  if(v===dp[q][i-1]){i--;continue}
+  if(v===dp[q-1][i-1]+1&&ok(q-1,i-1)){m[i-1]=used[q-1]=true;q--;i--;continue}
+  if(i>1&&v===dp[q-1][i-2]+2&&mg(q-1,i-2)){m[i-1]=m[i-2]=used[q-1]=true;q--;i-=2;continue}
+  if(q>1&&v===dp[q-2][i-1]+1&&sp(q-2,i-1)){m[i-1]=used[q-1]=used[q-2]=true;q-=2;i--;continue}
+  q--}
+ return{m,used}}
 function evaluate(){
  const k=curK();if(prog.k!==k)resetProg(true);
- const W=wordsOf(cur.s,cur.a).map(w=>w.n),said=lastSaid.slice(base),muq=cur.a===1||k==='42:2';
- const{m,j}=matchFrom(said,W,prog.st,muq);
- const cm=W.map((_,i)=>!!(prog.com[i]||m[i]));prog.cm=cm;
+ const W=wordsOf(cur.s,cur.a).map(w=>w.n),b0=segStart(lastSaid),seg=lastSaid.slice(b0),muq=cur.a===1||k==='42:2';
+ const cm=W.map((_,i)=>!!prog.cm[i]),p1=align(seg,W,muq);let front=-1;
+ W.forEach((_,i)=>{if(p1.m[i])cm[i]=true;if(cm[i])front=i});
+ /* second pass: words you went back for, using spoken words the first pass did not need */
+ const skip=W.map((_,i)=>cm[i]||i>front),rest=[],idx=[];seg.forEach((w,q)=>{if(!p1.used[q]){rest.push(w);idx.push(q)}});
+ const p2=align(rest,W,muq,skip);let lastUsed=-1;
+ p1.used.forEach((u,q)=>{if(u&&q>lastUsed)lastUsed=q});p2.used.forEach((u,q)=>{if(u&&idx[q]>lastUsed)lastUsed=idx[q]});
+ W.forEach((_,i)=>{if(p2.m[i])cm[i]=true});
+ prog.cm=cm;if(lastUsed>=0){prog.end=b0+lastUsed+1;prog.sid=sid}
  let real=0,got=0,lastReal=-1,lastHit=-1;W.forEach((w,i)=>{if(w){real++;lastReal=i;if(cm[i]){got++;lastHit=i}}});
  const sc=got/(real||1);paint();
  const map=mapFor(k);
  if(map&&wantMic&&!prog.turned){let nx=-1;for(let i=lastHit+1;i<W.length;i++)if(W[i]){nx=i;break}
   const mx=map.reduce((a,el,i)=>el?i:a,-1);if(nx>mx&&mx>=0&&got>0&&shownPage<604){prog.turned=true;renderPage(shownPage+1)}}
- clearTimeout(doneT);const th=S.th||.8,nb=base+j;
- if((cm[lastReal]&&sc>=th)||sc>=.999)complete(nb,sc);
- else if(sc>=th)doneT=setTimeout(()=>{if(prog.k===k&&wantMic)complete(nb,sc)},1800)}
-function complete(nb,sc){clearTimeout(doneT);base=nb;busyUntil=Date.now()+700;$('heard').textContent=`✨ ${Math.round(sc*100)}% matched`;grade(1,true)}
+ clearTimeout(doneT);const th=S.th||.8;
+ if((cm[lastReal]&&sc>=th)||sc>=.999)complete(sc);
+ else if(sc>=th)doneT=setTimeout(()=>{if(prog.k===k&&wantMic)complete(sc)},3500) /* last word not heard yet: give time to recall it */}
+function complete(sc){clearTimeout(doneT);const e=prog.sid===sid?prog.end:0;segSnap=lastSaid.slice(0,Math.min(e,lastSaid.length));
+ busyUntil=Date.now()+700;$('heard').textContent=`✨ ${Math.round(sc*100)}% matched`;grade(1,true)}
 
 /* ---------- recording ---------- */
 let mr=null,chunks=[],recT0=0,recTimer=null;const urls={};
