@@ -328,6 +328,36 @@ body.immOn.playing .wsheet{bottom:calc(env(safe-area-inset-bottom) + 78px)}
 .wsTr i{color:var(--gold);font-style:italic}
 .wsheet .soft{width:100%;margin-top:12px;padding:11px;border-radius:14px;font-size:15px}
 .mw.wsel{background:var(--hl);box-shadow:inset 0 -2.5px 0 var(--gold)}
+/* ---- mistakes ---- */
+.mlist{display:grid;gap:8px}
+.mrow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:11px 12px;border-radius:14px;border:1px solid var(--line);background:var(--field);color:var(--text)}
+.mrow .mi{flex:1;min-width:0}
+.mrow .mi b{display:block;font-size:14px}
+.mrow .mi span{display:block;font-size:12px;color:var(--mut)}
+.mrow .ma{font:400 20px/1.3 "Amiri",serif;color:var(--miss);direction:rtl;flex:none;max-width:42%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mmore{width:100%}
+.tog{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:14px;color:var(--text)}
+.tog input{width:20px;height:20px;flex:none;accent-color:var(--gold)}
+.tog em{color:var(--mut);font-style:normal}
+.mrev{position:fixed;inset:0;z-index:46;background:rgba(3,8,20,.62);display:none;align-items:flex-end;justify-content:center;padding:10px 10px calc(env(safe-area-inset-bottom) + 10px)}
+.mrev.on{display:flex}
+body.playing .mrev{padding-bottom:calc(env(safe-area-inset-bottom) + 76px)}
+body.mrOn .player{z-index:47;bottom:calc(env(safe-area-inset-bottom) + 10px)}
+.mrevIn{position:relative;width:100%;max-width:540px;max-height:calc(100vh - 30px);overflow:auto;background:var(--paper);color:var(--ink);border:1px solid var(--gold);border-radius:22px;padding:16px 16px 12px;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+.mrT{display:block;font:700 22px/1.2 "Cormorant Garamond",serif;color:var(--gold);padding-right:36px}
+.mrD{display:block;color:var(--mut);font-size:13px;margin:2px 0 6px}
+.mrL{font-size:11.5px;color:var(--mut);text-transform:uppercase;letter-spacing:1px;margin-top:10px}
+.mrW{font:400 26px/2.05 "UthmanicHafs","Amiri Quran","Amiri",serif;direction:rtl;text-align:right}
+.mrW .x{color:var(--miss);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:7px}
+.mrS{font:400 22px/1.8 "Amiri",serif;direction:rtl;text-align:right}
+.mrS .x{color:var(--miss)}
+.mrS.none{font:italic 15px/1.5 -apple-system,sans-serif;direction:ltr;text-align:left;color:var(--mut)}
+.mrB{margin-top:12px}
+.mrB button{padding:12px 8px;font-size:15px}
+.mrN{display:flex;justify-content:space-between;align-items:center;margin-top:12px;color:var(--mut);font-size:13px}
+.mrN button{padding:8px 11px;border-radius:12px;border:1px solid var(--line);color:var(--text);font-size:13px}
+.mrN button:disabled{opacity:.3}
+.sub a{color:var(--gold)}
 body.playing main{padding-bottom:calc(env(safe-area-inset-bottom) + 170px)}
 </style>
 </head>
@@ -385,6 +415,13 @@ body.playing main{padding-bottom:calc(env(safe-area-inset-bottom) + 170px)}
    <button class="soft" onclick="playFrom('mine')">🎧 Play my recordings from this ayah</button>
    <p class="sub" style="margin:0;text-align:center">Tap any ayah on the page to choose where to start.</p>
   </div>
+ </div>
+
+ <div class="card" id="misCard">
+  <h2>Mistakes to review</h2>
+  <p class="sub" id="misSub"></p>
+  <div class="mlist" id="misList"></div>
+  <label class="tog"><input type="checkbox" id="keepVoice" onchange="setKeepVoice(this.checked)"><span>🎙 Keep my voice with each mistake <em>(beta)</em></span></label>
  </div>
 </section>
 
@@ -465,7 +502,7 @@ body.playing main{padding-bottom:calc(env(safe-area-inset-bottom) + 170px)}
  </div>
 
  <div class="card"><h2>Start over</h2><p class="sub">Clears all progress and recordings on this phone.</p><button class="danger" onclick="resetAll()">Reset all progress</button></div>
- <p class="foot">Quran text: Tanzil (via alquran.cloud) · Mushaf pages and word meanings: Quran.com · Recitations: everyayah.com</p>
+ <p class="foot">Quran text: Tanzil Project (tanzil.net) via alquran.cloud · Mushaf pages, word meanings and fonts: Quran.com / Quran Foundation, King Fahd Quran Printing Complex · Recitations: EveryAyah</p>
 </section>
 
 <!-- ============ FEEDBACK & UPDATES ============ -->
@@ -500,7 +537,8 @@ body.playing main{padding-bottom:calc(env(safe-area-inset-bottom) + 170px)}
  <div class="card">
   <h2>About</h2>
   <div class="about"><img src="icon.png" alt=""><div><b>Hifdh</b><span class="sub" style="margin:0">Memorise the Quran, one ayah at a time.</span><br><span class="ver" id="verTag"></span></div></div>
-  <p class="sub" style="margin:14px 0 0">Quran text: Tanzil (via alquran.cloud) · Mushaf pages, fonts and word meanings: Quran.com · Recitations: everyayah.com. Your progress and recordings stay on your phone.</p>
+  <p class="sub" style="margin:14px 0 0">Quran text: <a href="https://tanzil.net" target="_blank" rel="noopener noreferrer">Tanzil Project</a> (tanzil.net), via alquran.cloud. Mushaf page layout, word-by-word meanings and fonts: <a href="https://quran.com" target="_blank" rel="noopener noreferrer">Quran.com</a> / Quran Foundation. Mushaf (QCF) fonts: King Fahd Glorious Quran Printing Complex. Recitations: <a href="https://everyayah.com" target="_blank" rel="noopener noreferrer">EveryAyah</a>, with each reciter named in the player. App fonts: Amiri and Cormorant Garamond (SIL Open Font License).</p>
+  <p class="sub" style="margin:10px 0 0">Privacy: no accounts, no ads, no tracking. Your progress, mistakes and recordings stay on your phone. Voice checking uses your phone's own dictation (on iPhone, Apple's), which may process your voice on Apple's servers.</p>
   <button class="soft" style="width:100%;margin-top:14px" onclick="checkUpdate(true)">🔄 Check for updates</button>
  </div>
 </section>
@@ -525,6 +563,15 @@ body.playing main{padding-bottom:calc(env(safe-area-inset-bottom) + 170px)}
  <div class="imPage" id="imPage"></div>
 </div>
 <div class="wsheet gosheet" id="goSheet" role="dialog" aria-label="Go to"><button class="wsX" onclick="closeGo()" aria-label="Close">✕</button><div class="goT">Go to</div><div class="goto"><label>Surah<select id="goSur" onchange="goFill()"></select></label><label>Ayah<select id="goAya"></select></label></div><button class="gold" id="goBtn" onclick="goNow()">Go</button></div>
+<div class="mrev" id="mrev" role="dialog" aria-label="Review a mistake"><div class="mrevIn">
+ <button class="wsX" onclick="closeMis()" aria-label="Close">✕</button>
+ <b class="mrT" id="mrT"></b><span class="mrD" id="mrD"></span>
+ <div class="mrL">Written</div><div class="mrW" id="mrW"></div>
+ <div class="mrL">You said</div><div class="mrS" id="mrS"></div>
+ <div class="row2 mrB"><button class="gold" onclick="misPlay('reciter')">🔊 Reciter</button><button class="soft" id="mrMine" onclick="misPlay('mine')">🎧 My voice</button></div>
+ <div class="row2 mrB"><button class="soft" onclick="misPractise()">Practise this ayah</button><button class="soft" onclick="misDone()">Reviewed ✓</button></div>
+ <div class="mrN"><button id="mrPrev" onclick="misStep(-1)">‹ Newer</button><span id="mrC"></span><button id="mrNext" onclick="misStep(1)">Older ›</button></div>
+</div></div>
 <div class="wsheet" id="wsheet" role="dialog" aria-label="Word meaning"><button class="wsX" onclick="closeWs()" aria-label="Close">✕</button><div class="wsAr" id="wsAr"></div><div class="wsM" id="wsM"></div><div class="wsTr" id="wsTr"></div><button class="soft" id="wsPlay" onclick="wsPlay()">🔊 Hear this ayah</button></div>
 <div class="player" id="player"><button onclick="stopPlayer()" aria-label="Stop">■</button><div class="pi"><b id="plT"></b><span id="plS"></span></div><button class="rp" id="plR" onclick="cycleRepeat()">🔁 1×</button><button class="pp" id="plP" onclick="togglePause()" aria-label="Play or pause">❚❚</button></div>
 <div class="gal" id="gal"><button class="gx" onclick="closeGarden()" aria-label="Close">✕</button>
@@ -537,7 +584,7 @@ body.playing main{padding-bottom:calc(env(safe-area-inset-bottom) + 170px)}
 <script id="app">
 /* ========== SETTINGS: edit these links. Leave one as '' to hide its card. ========== */
 const SETTINGS={
- version:'3.3',
+ version:'3.4',
  communityLink:'https://chat.whatsapp.com/INKnnJ0rrD9AliIeyFUOsa',
  suggestionsLink:'https://chat.whatsapp.com/FeCkj8STUZkHilwuN1XAhy?s=cl&p=i&iam=2',
  appLink:'' /* leave blank to share this site's own address */
@@ -574,6 +621,7 @@ const putKV=(k,v)=>idb('kv','readwrite',s=>s.put(v,k));
 const getRec=k=>idb('rec','readonly',s=>s.get(k));
 const putRec=(k,v)=>idb('rec','readwrite',s=>s.put(v,k));
 const clearRecs=()=>idb('rec','readwrite',s=>s.clear());
+const delRec=k=>idb('rec','readwrite',s=>s.delete(k));
 
 /* ---------- Arabic matching ---------- */
 const DIA=/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g;
@@ -878,7 +926,7 @@ function toggleHide(){hide=!hide;peek.clear();paint();updInfo()}
 
 function grade(d,fromMic){
  if(!Q.length||$('practice').classList.contains('isEmpty'))return;
- const k=curK();markDay();
+ const k=curK();markDay();if(d<0&&!fromMic)misMark(k);
  if(mode==='revise'){const t=today();
   if(S.lv[k]===3){if(d>0){S.iv[k]=Math.min(90,Math.max(1,(S.iv[k]||1)*2));S.rv[k]=t+S.iv[k];toast(pick(REVPRAISE))}
    else{S.iv[k]=1;S.rv[k]=t+1;toast('No worries, it will come back tomorrow')}}
@@ -916,17 +964,18 @@ function simC(a,b){const key=a+'|'+b;let v=SIMC.get(key);if(v===undefined){v=sim
 /* stricter test for one spoken word standing for two ayah words (or the reverse): whole words must line up */
 function joinSim(a,b){if(a.length<4||b.length<4)return false;if(a===b)return true;
  const L=Math.max(a.length,b.length);return Math.abs(a.length-b.length)<=2&&1-lev(a,b)/L>=.8}
-function resetProg(keep){prog={k:Q.length?curK():'',cm:[],end:0,sid:-1};if(!keep)segSnap=lastSaid.slice();clearTimeout(doneT)}
+function resetProg(keep){const old=prog;if(old&&old.k&&!old.logged)misLog(old,false);voiceCut(old&&old.rec);  /* an attempt ends: save its mistakes, close its recording */
+ prog={k:Q.length?curK():'',cm:[],end:0,sid:-1,said:[],prev:[]};if(!keep)segSnap=lastSaid.slice();clearTimeout(doneT)}
 function micUI(){$('micBtn').classList.toggle('live',wantMic);$('micL').textContent=wantMic?'Listening':'Recite';const rm=$('revMic');if(rm)rm.textContent=wantMic?'Listening… start any ayah':'🎙 Recite any ayah from memory';paint();immBar()}
 function micStart(){
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
  if(!SR){$('heard').textContent='Voice checking is not available in this browser. Open the app in Safari, or use the buttons.';return}
  if(mr)stopRecording();if(player.on)stopPlayer();
- if(prog.k!==curK())resetProg(true);
+ if(prog.k!==curK())resetProg(true);else prog.prev=(prog.said||[]).slice();  /* same ayah: keep what was heard before the pause */
  lastSaid=[];segSnap=[];sid++;
  const r=new SR(),t0=Date.now();let got=false;rec=r;r.lang='ar-SA';r.continuous=true;r.interimResults=true;r.maxAlternatives=1;
  r.onresult=e=>{if(rec!==r)return;got=true;quick=0;let t='';for(let i=0;i<e.results.length;i++)t+=e.results[i][0].transcript+' ';onHeard(t)};
- r.onerror=e=>{if(rec!==r)return;lastErr=e.error||'';const msg=SRERR[e.error];
+ r.onerror=e=>{if(rec!==r)return;lastErr=e.error||'';const msg=SRERR[e.error];if(e.error==='audio-capture'&&vrec.st&&!document.hidden)voiceFail();  /* keeping the voice blocked the checking: stop keeping it */
   /* errors while the app is in the background (e.g. 'audio-capture' when switching apps) are temporary: listening resumes on return */
   if(msg&&!document.hidden){wantMic=false;rec=null;try{r.abort()}catch(_){}micUI();$('heard').textContent=msg}};
  r.onend=()=>{if(rec!==r)return;rec=null;if(!wantMic){micUI();return}
@@ -936,9 +985,9 @@ function micStart(){
   if(quick>=6){wantMic=false;micUI();$('heard').textContent=lastErr==='audio-capture'?'Could not use the microphone. If another app is using it, close that app, then tap Recite.':'The microphone keeps stopping. Tap Recite to try again.';return}
   if(Date.now()-heardAt>60000){wantMic=false;micUI();$('heard').textContent='Stopped listening after a minute of silence. Tap Recite to carry on.';return}
   setTimeout(()=>{if(!wantMic||rec)return;if(document.hidden){wantMic=false;micResume=true;micUI();return}micStart()},quick?Math.min(2000,300*quick):120)};
- try{r.start();wantMic=true;micUI()}
+ try{r.start();wantMic=true;micUI();if(S.keepVoice)voiceOpen()}
  catch(e){rec=null;wantMic=false;micUI();$('heard').textContent='Could not start the microphone. Tap Recite again.'}}
-function micOff(){wantMic=false;const r=rec;rec=null;if(r){try{r.abort()}catch(e){}}clearTimeout(doneT);clearTimeout(evT);if(Q.length)micUI()}
+function micOff(){wantMic=false;const r=rec;rec=null;if(r){try{r.abort()}catch(e){}}clearTimeout(doneT);clearTimeout(evT);voiceClose();if(Q.length)micUI()}
 function toggleMic(){if(!Q.length)return;micResume=false;if(wantMic)micOff();else{quick=0;heardAt=Date.now();revScope='all';if(mode==='revise')resetProg() /* tapping the mic in Revise is a fresh start */;if(mode==='revise'&&!AIX)setTimeout(buildAIX,30);micStart();if(wantMic&&Date.now()>busyUntil)$('heard').textContent='Listening… start reciting'}}
 function onHeard(t){lastSaid=norm(t).split(' ').filter(Boolean);heardAt=Date.now();
  $('heard').textContent=t.trim().split(/\s+/).slice(-7).join(' ');immBar();tryEval()}
@@ -965,7 +1014,7 @@ function findAyah(ws,onlyPage){if(ws.length<3)return null;buildAIX();if(!AIX)ret
  return best&&best.sc>=b2+0.9?best.x:null}
 /* where the found ayah starts in what was said: look a few words before the unmatched tail, so opening words said before it became clear still count */
 function cutFor(x,seg,b0,from){const W=wordsOf(x.s,x.a).map(w=>w.n),st=Math.max(0,from-6),r=align(seg.slice(st),W,x.a===1||x.k==='42:2'),q=r.used.indexOf(true);return b0+st+(q<0?from-st:q)}
-function jumpTo(x,cut){segSnap=lastSaid.slice(0,cut);cur={s:x.s,a:x.a};hide=true;follow=true;revScope='';resetProg(true);peek.clear();
+function jumpTo(x,cut){prog.logged=true;segSnap=lastSaid.slice(0,cut);  /* switching ayah is not a mistake */cur={s:x.s,a:x.a};hide=true;follow=true;revScope='';resetProg(true);peek.clear();
  $('practice').classList.remove('isEmpty');showCur();$('revHead').textContent=`Revision · ${queue.length} left`;$('heard').textContent=`↪ ${Q[x.s-1].name} · Ayah ${x.a}`}
 /* you chose a place in Revise (page turn, Go to, ayah number): revise from there, words hidden */
 function reviseGoTo(n,a){if(player.on)stopPlayer();cur={s:n,a};hide=true;follow=true;revScope='page';resetProg();peek.clear();$('practice').classList.remove('isEmpty');showCur();$('revHead').textContent=`Revision · ${queue.length} left`}
@@ -1023,9 +1072,10 @@ function evaluate(jumped){
    if(revScope){const ws=seg.slice(-12),x=findAyah(ws,revScope==='page'?shownPage:0);if(x&&x.k!==k){jumpTo(x,cutFor(x,seg,b0,seg.length-ws.length));evaluate(true);return}}
    else{const nx=ALL[ord(k)];if(nx){/* locked on: only step on to the next ayah, never jump elsewhere (a slip into a similar ayah shows as a mistake) */
     const ws=seg.slice(-8),Wn=wordsOf(nx.s,nx.a).map(w=>w.n),r=align(ws,Wn,nx.a===1||nx.k==='42:2');let m=0,f=-1;r.m.forEach((v,i)=>{if(v){m++;if(f<0)f=i}});
-    if(m>=3&&f>=0&&f<=1){prog.cm=cm;follow=true;if(sc>=th){complete(sc);return}
+    if(m>=3&&f>=0&&f<=1){prog.cm=cm;if(lastUsed>=0)prog.said=(prog.prev||[]).concat(seg.slice(0,Math.max(lastUsed+1,seg.length-ws.length)));follow=true;if(sc>=th){complete(sc);return}
+     misLog(prog,true);  /* moved on without finishing: the rest counts as missed */
      toast(`Moving on to ayah ${nx.a}`);jumpTo(nx,cutFor(nx,seg,b0,seg.length-ws.length));evaluate(true);return}}}}}
- prog.cm=cm;if(lastUsed>=0){prog.end=b0+lastUsed+1;prog.sid=sid}
+ prog.cm=cm;if(lastUsed>=0){prog.end=b0+lastUsed+1;prog.sid=sid;prog.said=(prog.prev||[]).concat(seg.slice(0,lastUsed+1))}
  paint();
  const map=mapFor(k);
  if(map&&wantMic&&!prog.turned){let nx=-1;for(let i=lastHit+1;i<W.length;i++)if(W[i]){nx=i;break}
@@ -1033,7 +1083,7 @@ function evaluate(jumped){
  clearTimeout(doneT);
  if((cm[lastReal]&&sc>=th)||sc>=.999)complete(sc);
  else if(sc>=th)doneT=setTimeout(()=>{if(prog.k===k&&wantMic)complete(sc)},3500) /* last word not heard yet: give time to recall it */}
-function complete(sc){clearTimeout(doneT);const e=prog.sid===sid?prog.end:0;segSnap=lastSaid.slice(0,Math.min(e,lastSaid.length));
+function complete(sc){clearTimeout(doneT);misLog(prog,true);const e=prog.sid===sid?prog.end:0;segSnap=lastSaid.slice(0,Math.min(e,lastSaid.length));
  busyUntil=Date.now()+700;$('heard').textContent=`✨ ${Math.round(sc*100)}% matched`;grade(1,true)}
 
 /* ---------- recording ---------- */
@@ -1079,8 +1129,8 @@ async function playItem(){
  updPlayerUI();
  let url;
  if(player.src==='reciter')url=it.b?`https://everyayah.com/data/${recInfo()[0]}/001001.mp3`:recUrl(it.s,it.a);
- else{url=urls[k];if(!url){try{const b=await getRec(k);if(b)url=urls[k]=URL.createObjectURL(b)}catch(e){}}
-  if(!player.on)return;if(!url){player.i++;player.left=S.rep||1;return playItem()}}
+ else{const key=player.src==='clip'?player.clip:k;url=urls[key];if(!url){try{const b=await getRec(key);if(b)url=urls[key]=URL.createObjectURL(b)}catch(e){}}
+  if(!player.on)return;if(!url){if(player.src==='clip'){toast('That recording is not on this phone');stopPlayer();return}player.i++;player.left=S.rep||1;return playItem()}}
  audio.src=url;const pr=audio.play();if(pr)pr.catch(err=>{if(player.on&&err&&err.name==='NotAllowedError'){updPlayerUI();toast('Tap ▶ to play')}});
  const nx=player.list[player.i+1];if(nx&&player.src==='reciter'){try{pre.src=nx.b?url:recUrl(nx.s,nx.a);pre.load()}catch(e){}}
  mediaMeta(it)}
@@ -1098,8 +1148,8 @@ function finishPlayer(){const s=player.list.length&&player.list[player.list.leng
 function stopPlayer(){player.on=false;player.k='';try{audio.pause()}catch(e){}$('player').classList.remove('on');document.body.classList.remove('playing');paint();immBar();if(immOn)requestAnimationFrame(fitLines)}
 function togglePause(){if(!player.on)return;if(audio.paused){const p=audio.play();if(p)p.catch(()=>{})}else audio.pause()}
 function updPlayerUI(){if(!player.on)return;const it=player.list[player.i];if(!it)return;
- $('plT').textContent=it.b?'Bismillah':`${Q[it.s-1].name} · Ayah ${it.a}${(S.rep||1)>1?` · ${(S.rep||1)-player.left+1}/${S.rep}`:''}`;
- $('plS').textContent=player.src==='reciter'?recInfo()[1]:'My recordings';
+ $('plT').textContent=it.b?'Bismillah':`${Q[it.s-1].name} · Ayah ${it.a}${player.src!=='clip'&&(S.rep||1)>1?` · ${(S.rep||1)-player.left+1}/${S.rep}`:''}`;
+ $('plS').textContent=player.src==='reciter'?recInfo()[1]:player.src==='clip'?'My voice (that time)':'My recordings';
  $('plR').textContent=`🔁 ${S.rep||1}×`;$('plP').textContent=audio.paused?'▶':'❚❚';immBar()}
 function mediaMeta(it){try{if(!('mediaSession' in navigator)||!window.MediaMetadata)return;
  navigator.mediaSession.metadata=new MediaMetadata({title:it.b?'Bismillah':`${Q[it.s-1].name} ${it.a}`,artist:player.src==='reciter'?recInfo()[1]:'My recordings',album:'Hifdh',artwork:[{src:'icon.png',sizes:'512x512',type:'image/png'}]});
@@ -1124,7 +1174,7 @@ function applyTheme(t){t=t==='day'?'day':'night';document.documentElement.datase
 function toggleTheme(){applyTheme(document.documentElement.dataset.theme==='day'?'night':'day')}
 
 /* ---------- Today card ---------- */
-function refreshToday(){if(!Q.length)return;const due=dueKeys().length,nw=S.nw[TK()]||0,st=streak();
+function refreshToday(){if(!Q.length)return;renderMis();const due=dueKeys().length,nw=S.nw[TK()]||0,st=streak();
  $('pRev').textContent=due;$('pNew').textContent=`${nw}/${S.goal}`;$('goalFill').style.width=Math.min(100,nw/S.goal*100)+'%';$('streakN').textContent=st;
  const nx=nextNewFrom(S.last||'1:1');
  $('startHint').textContent=due?`${due} ayah${due>1?'s':''} to revise first, then new ayahs`:nw>=S.goal?'Today\'s goal is done, masha\'Allah! Keep going if you like ✦':nx?`Next: ${Q[nx.s-1].name}, ayah ${nx.a}`:'You have memorised the whole Quran. Allahumma barik!';
@@ -1187,7 +1237,7 @@ function markRange(on){const s=+$('rs').value;let a=+$('rf').value,b=+$('rt').va
 /* ---------- backup ---------- */
 async function allRecs(){const d=await dbP;return new Promise(r=>{const out={},q=d.transaction('rec').objectStore('rec').openCursor();q.onsuccess=e=>{const c=e.target.result;if(c){out[c.key]=c.value;c.continue()}else r(out)};q.onerror=()=>r(out)})}
 const b64=b=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)});
-async function exportData(){toast('Preparing backup…');let audioMap={};try{const recs=await allRecs();for(const k in recs)audioMap[k]=await b64(recs[k])}catch(e){}
+async function exportData(){toast('Preparing backup…');let audioMap={};try{const recs=await allRecs();for(const k in recs)if(!String(k).startsWith('mis:'))audioMap[k]=await b64(recs[k])}catch(e){}
  const file=new File([JSON.stringify({app:'hifdh',v:1,S,audio:audioMap})],`hifdh-backup-${TK()}.json`,{type:'application/json'});
  if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Hifdh backup'})}catch(e){}}
  else{const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=file.name;document.body.appendChild(a);a.click();a.remove()}}
@@ -1215,6 +1265,66 @@ async function shareApp(){const url=appUrl(),text='Hifdh: a free app to help you
  try{await navigator.clipboard.writeText(url);toast('Link copied ✦ Paste it to share')}
  catch(e){const t=document.createElement('textarea');t.value=url;t.setAttribute('readonly','');t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();t.setSelectionRange(0,url.length);
   let ok=false;try{ok=document.execCommand('copy')}catch(_){}t.remove();ok?toast('Link copied ✦ Paste it to share'):prompt('Copy this link to share the app:',url)}}
+
+/* ---------- mistakes: what you missed, what you said, your voice ---------- */
+/* S.mis: [{id,k,t,m,x:[missed word indexes],s:'words heard',v:1 if your voice was kept, mk:1 if you marked it yourself}] */
+const misList=()=>(S.mis||[]).slice().reverse();
+function misAdd(o){const r=Object.assign({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),t:Date.now(),m:mode==='revise'?'revise':'learn',x:[],s:'',v:0},o);
+ (S.mis=S.mis||[]).push(r);if(S.mis.length>200){S.mis.splice(0,S.mis.length-200).forEach(g=>{if(g.v)delRec('mis:'+g.id).catch(()=>{})})}save();renderMis();return r}
+/* an attempt at an ayah ended: keep it if words were missed (all: the attempt was finished or abandoned, so every unheard word counts) */
+function misLog(p,all){if(!p||p.logged||!p.k||!Q.length)return null;p.logged=true;
+ const[s,a]=p.k.split(':').map(Number),W=wordsOf(s,a).map(w=>w.n),cm=p.cm||[];let got=0;W.forEach((w,i)=>{if(w&&cm[i])got++});if(got<3)return null;
+ const after=[];for(let i=W.length-1,c=0;i>=0;i--){after[i]=c;if(cm[i])c++}
+ const x=[];W.forEach((w,i)=>{if(w&&!cm[i]&&(all||after[i]>=2))x.push(i)});if(!x.length)return null;
+ const r=p.rec=misAdd({k:p.k,x,s:(p.said||[]).slice(-80).join(' ')});
+ if(vrec.pend&&vrec.pend.k===p.k&&Date.now()-vrec.pend.t<6e5){saveClip(r,vrec.pend.b);vrec.pend=null}
+ return r}
+function misMark(k){const L=S.mis||[],last=L[L.length-1];if(last&&last.k===k&&last.mk&&Date.now()-last.t<36e5){last.t=Date.now();save();renderMis();return}misAdd({k,mk:1})}
+function misAge(t){const d=dayNum(new Date(t)),n=today();return d===n?'today':d===n-1?'yesterday':new Date(t).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}
+const misWhat=r=>r.mk?'marked to practise':`${r.x.length} word${r.x.length>1?'s':''} missed`;
+function renderMis(){const el=$('misList');if(!el||!Q.length)return;const L=misList();
+ $('misSub').textContent=L.length?`${L.length} saved. Tap one to compare what you said with what is written, and listen again.`:'When you recite and miss words, the ayah is saved here so you can compare what you said with what is written, and listen again.';
+ el.innerHTML=L.slice(0,5).map((r,i)=>{const[s,a]=r.k.split(':').map(Number),W=wordsOf(s,a),w=r.x.slice(0,2).map(j=>W[j]?W[j].d:'').join(' ');
+  return`<button class="mrow" onclick="openMis(${i})"><span class="mi"><b>${esc(Q[s-1].name)} ${r.k}</b><span>${misWhat(r)} · ${misAge(r.t)}${r.v?' · 🎧':''}</span></span><span class="ma">${esc(w)}</span></button>`}).join('')
+  +(L.length>5?`<button class="soft mmore" onclick="openMis(0)">See all ${L.length}</button>`:'');
+ const kv=$('keepVoice');if(kv)kv.checked=!!S.keepVoice}
+let misI=0;const misCur=()=>misList()[misI];
+function openMis(i){if(!Q.length)return;closeWs();misI=i;drawMis();$('mrev').classList.add('on');document.body.classList.add('mrOn')}
+function closeMis(){$('mrev').classList.remove('on');document.body.classList.remove('mrOn')}
+$('mrev').addEventListener('click',e=>{if(e.target.id==='mrev')closeMis()});
+function drawMis(){const L=misList(),r=L[misI];if(!r){closeMis();return}const[s,a]=r.k.split(':').map(Number),W=wordsOf(s,a);
+ $('mrT').textContent=`${Q[s-1].name} · Ayah ${a}`;$('mrD').textContent=`${misAge(r.t)} · ${r.m==='revise'?'Revise':'Learn'} · ${misWhat(r)}`;
+ $('mrW').innerHTML=W.map((w,i)=>`<span class="${r.x.includes(i)?'x':''}">${esc(w.d)}</span>`).join(' ');
+ const said=(r.s||'').split(' ').filter(Boolean);
+ if(said.length){const u=align(said,W.map(w=>w.n),a===1||r.k==='42:2').used;$('mrS').className='mrS';$('mrS').innerHTML=said.map((w,q)=>`<span class="${u[q]?'':'x'}">${esc(w)}</span>`).join(' ')}
+ else{$('mrS').className='mrS none';$('mrS').textContent=r.mk?'You marked this ayah to practise again.':'Nothing was heard.'}
+ $('mrMine').textContent=r.v?'🎧 My voice':'🎧 My recording';$('mrC').textContent=`${misI+1} / ${L.length}`;$('mrPrev').disabled=misI===0;$('mrNext').disabled=misI>=L.length-1}
+function misStep(d){const n=misI+d;if(n<0||n>=misList().length)return;misI=n;drawMis()}
+function misDone(){const r=misCur();if(!r)return;S.mis=S.mis.filter(x=>x!==r);if(r.v)delRec('mis:'+r.id).catch(()=>{});save();renderMis();
+ const n=misList().length;if(!n){closeMis();toast('All reviewed ✦');return}misI=Math.min(misI,n-1);drawMis()}
+function misPractise(){const r=misCur();if(!r)return;closeMis();tab('today');if(mode==='listen')setMode('learn');const[s,a]=r.k.split(':').map(Number);
+ if(mode==='revise')reviseGoTo(s,a);else selectAyah(s,a);setTimeout(()=>$('practice').scrollIntoView({behavior:'smooth',block:'start'}),60)}
+function misPlay(w){const r=misCur();if(!r)return;
+ if(w==='reciter'){startPlayer('reciter',r.k,true);return}
+ if(r.v){unlockAudio();const[s,a]=r.k.split(':').map(Number);micOff();stopRecording();player={on:true,src:'clip',clip:'mis:'+r.id,list:[{s,a}],i:0,left:1,k:'',single:true};document.body.classList.add('playing');$('player').classList.add('on');playItem();return}
+ if(S.rec[r.k]){unlockAudio();startPlayer('mine',r.k,true);return}
+ toast(S.keepVoice?'No recording was kept for this one.':'Turn on "Keep my voice with each mistake", or use Record in Learn.')}
+/* optional: record your voice while the app checks it, one clip per ayah attempt; kept only when that attempt has mistakes (newest 30) */
+let vrec={st:null,mr:null,type:'',pend:null,opening:false};
+const voiceOK=()=>!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder);
+async function voiceOpen(){if(!S.keepVoice||!voiceOK()||vrec.st||vrec.opening)return;vrec.opening=true;
+ try{const st=await navigator.mediaDevices.getUserMedia({audio:true});vrec.opening=false;if(!wantMic||!S.keepVoice){st.getTracks().forEach(t=>t.stop());return}
+  vrec.st=st;vrec.type=['audio/mp4','audio/webm;codecs=opus','audio/webm'].find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||'';voiceSeg()}
+ catch(e){vrec.opening=false;voiceFail()}}
+function voiceSeg(){if(!vrec.st||vrec.mr)return;try{const r=new MediaRecorder(vrec.st,vrec.type?{mimeType:vrec.type}:undefined);r._ch=[];r._k=prog.k||curK();
+  r.ondataavailable=e=>{if(e.data&&e.data.size)r._ch.push(e.data)};r.start();vrec.mr=r}catch(e){voiceFail()}}
+function voiceCut(rec){const r=vrec.mr;vrec.mr=null;
+ if(r&&r.state!=='inactive'){r.onstop=()=>{const b=new Blob(r._ch,{type:r.mimeType||vrec.type||'audio/mp4'});if(b.size<1500)return;if(rec)saveClip(rec,b);else vrec.pend={k:r._k,b,t:Date.now()}};try{r.stop()}catch(e){}}
+ if(wantMic&&vrec.st)voiceSeg()}
+function saveClip(rec,b){putRec('mis:'+rec.id,b).then(()=>{rec.v=1;const w=(S.mis||[]).filter(x=>x.v);if(w.length>30)w.slice(0,w.length-30).forEach(x=>{x.v=0;delRec('mis:'+x.id).catch(()=>{})});save();renderMis()}).catch(()=>{})}
+function voiceClose(){voiceCut(prog&&prog.rec);if(vrec.st){vrec.st.getTracks().forEach(t=>t.stop());vrec.st=null}}
+function voiceFail(){voiceClose();if(S.keepVoice){S.keepVoice=false;save();renderMis();toast('This phone cannot keep your voice while checking it, so that option is off.')}}
+function setKeepVoice(on){S.keepVoice=!!on&&voiceOK();save();if(on&&!S.keepVoice)toast('Recording is not supported on this browser');if(S.keepVoice&&wantMic)voiceOpen();if(!S.keepVoice)voiceClose();renderMis()}
 
 /* ---------- app updates: spot a newer copy on the website and offer to load it ---------- */
 const APP_URL=location.origin+location.pathname,updTried=new URLSearchParams(location.search).get('u');
