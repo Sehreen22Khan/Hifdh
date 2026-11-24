@@ -259,6 +259,7 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(232,198,110,.7))}
 .mw.nxt{box-shadow:inset 0 -2.5px 0 var(--gold)}
 .mw.hid{color:transparent!important;background:rgba(201,162,74,.17)}
 .mw.peek{color:var(--ink)!important;background:var(--hl)}
+.mw.hid.play,.mw.peek.play{background:rgba(60,192,140,.42)} /* the ayah being played stands out even when hidden */
 .pnav{display:flex;justify-content:space-between;align-items:center;margin:10px 0 2px;gap:6px}
 .pnav button{padding:9px 12px;border-radius:12px;border:1px solid var(--line);background:var(--field);font-size:14px;color:var(--text);white-space:nowrap}
 .pnav span{color:var(--mut);font-size:13px;text-align:center}
@@ -301,7 +302,16 @@ body.immOn.playing .imPage{padding-bottom:calc(env(safe-area-inset-bottom) + 74p
 .imB{width:42px;height:42px;flex:none;border-radius:50%;border:1px solid var(--line);background:var(--field);color:var(--text);display:grid;place-items:center;font-size:16px}
 .imB svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .imB.live{background:var(--em);border-color:var(--em);color:#06281b}
-.imT{flex:1;min-width:0;text-align:center}
+.imT{flex:1;min-width:0;text-align:center;padding:2px 0}
+.imT b:after{content:" ▾";font-size:.65em;opacity:.8}
+.imB.on{color:var(--gold);border-color:var(--gold)}
+@media (max-width:360px){.imBar{gap:5px;padding-left:6px;padding-right:6px}.imB{width:37px;height:37px}}
+@media (max-width:340px){#imTheme{display:none}}
+.gosheet .goT{font:700 20px/1.2 "Cormorant Garamond",serif;color:var(--gold);margin:2px 0 12px}
+.gosheet .goto{margin-bottom:10px;text-align:left}
+.gosheet label{display:block;font-size:12px;color:var(--mut)}
+.gosheet label select{margin-top:4px}
+.gosheet .gold{width:100%}
 .imT b{display:block;font:700 19px/1.2 "Cormorant Garamond",serif;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .imT span{display:block;font-size:12.5px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;unicode-bidi:plaintext}
 body.immOn .player{z-index:35;bottom:calc(env(safe-area-inset-bottom) + 10px)}
@@ -506,13 +516,15 @@ body.playing main{padding-bottom:calc(env(safe-area-inset-bottom) + 170px)}
 <div class="imm" id="imm" aria-hidden="true">
  <div class="imBar" id="imBar">
   <button class="imB" onclick="closeImm()" aria-label="Close full screen"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-  <div class="imT"><b id="imTitle"></b><span id="imSub"></span></div>
+  <button class="imT" id="imTitleBtn" onclick="openGo()" aria-label="Go to a surah or ayah"><b id="imTitle"></b><span id="imSub"></span></button>
+  <button class="imB" id="imEye" onclick="toggleHide()" aria-label="Hide words"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
   <button class="imB" id="imTheme" onclick="toggleTheme()" aria-label="Day or night">☀️</button>
   <button class="imB" id="imMic" onclick="toggleMic()" aria-label="Recite"><svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
   <button class="imB" id="imPlay" onclick="immPlay()" aria-label="Listen">▶</button>
  </div>
  <div class="imPage" id="imPage"></div>
 </div>
+<div class="wsheet gosheet" id="goSheet" role="dialog" aria-label="Go to"><button class="wsX" onclick="closeGo()" aria-label="Close">✕</button><div class="goT">Go to</div><div class="goto"><label>Surah<select id="goSur" onchange="goFill()"></select></label><label>Ayah<select id="goAya"></select></label></div><button class="gold" id="goBtn" onclick="goNow()">Go</button></div>
 <div class="wsheet" id="wsheet" role="dialog" aria-label="Word meaning"><button class="wsX" onclick="closeWs()" aria-label="Close">✕</button><div class="wsAr" id="wsAr"></div><div class="wsM" id="wsM"></div><div class="wsTr" id="wsTr"></div><button class="soft" id="wsPlay" onclick="wsPlay()">🔊 Hear this ayah</button></div>
 <div class="player" id="player"><button onclick="stopPlayer()" aria-label="Stop">■</button><div class="pi"><b id="plT"></b><span id="plS"></span></div><button class="rp" id="plR" onclick="cycleRepeat()">🔁 1×</button><button class="pp" id="plP" onclick="togglePause()" aria-label="Play or pause">❚❚</button></div>
 <div class="gal" id="gal"><button class="gx" onclick="closeGarden()" aria-label="Close">✕</button>
@@ -525,7 +537,7 @@ body.playing main{padding-bottom:calc(env(safe-area-inset-bottom) + 170px)}
 <script id="app">
 /* ========== SETTINGS: edit these links. Leave one as '' to hide its card. ========== */
 const SETTINGS={
- version:'3.2',
+ version:'3.3',
  communityLink:'https://chat.whatsapp.com/INKnnJ0rrD9AliIeyFUOsa',
  suggestionsLink:'https://chat.whatsapp.com/FeCkj8STUZkHilwuN1XAhy?s=cl&p=i&iam=2',
  appLink:'' /* leave blank to share this site's own address */
@@ -774,11 +786,11 @@ $('mushaf').addEventListener('click',e=>{const el=e.target.closest('.mw,.me');if
  if(!el){if(wsCur)closeWs();else if(immOn)immUI();return}
  const k=el.dataset.k,[s,a]=k.split(':').map(Number);
  if(el.classList.contains('hid')||el.classList.contains('peek')){const id=k+'#'+el.dataset.i;peek.has(id)?peek.delete(id):peek.add(id);paint();return}
- if(el.classList.contains('me')){closeWs();if(!s||!a)return;if(mode==='revise'){if(k!==curK())jumpTo(ALL[ord(k)-1],lastSaid.length)}else selectAyah(s,a);return}  /* ayah number: choose this ayah (in Listen, play from it; in Revise, revise it) */
+ if(el.classList.contains('me')){closeWs();if(!s||!a)return;if(mode==='revise'){if(k!==curK())reviseGoTo(s,a)}else selectAyah(s,a);return}  /* ayah number: choose this ayah (in Listen, play from it; in Revise, revise it) */
  if(mode!=='revise'&&!player.on&&s&&a&&curK()!==k)selectAyah(s,a);
  showWord(el)});
 $('imPage').addEventListener('click',e=>{if(!e.target.closest('#mushaf')){if(wsCur)closeWs();else immUI()}});
-document.addEventListener('click',e=>{if(wsCur&&!e.target.closest('#wsheet,#mushaf,#player'))closeWs()},true);
+document.addEventListener('click',e=>{if(wsCur&&!e.target.closest('#wsheet,#mushaf,#player'))closeWs();if($('goSheet').classList.contains('on')&&!e.target.closest('#goSheet,#imTitleBtn'))closeGo()},true);
 
 /* ---------- word meanings ---------- */
 let wsCur=null;
@@ -811,19 +823,31 @@ function immUI(show){if(!immOn)return;clearTimeout(immT);const im=$('imm');if(sh
 function immBar(){if(!immOn)return;const p=shownPage,f=PG[p]&&ALL[PG[p][0]];
  $('imTitle').textContent=f?Q[f.s-1].name:'';$('imSub').textContent=wantMic?($('heard').textContent||'Listening…'):`Page ${p}${f?' · Juz '+f.j:''}`;
  $('imPlay').textContent=player.on&&!audio.paused?'❚❚':'▶';$('imMic').classList.toggle('live',wantMic);$('imMic').style.display=mode==='listen'?'none':'';
+ const ey=$('imEye');ey.style.display=mode==='listen'?'none':'';ey.classList.toggle('on',hide);ey.setAttribute('aria-label',hide?'Show words':'Hide words');
  $('imTheme').textContent=document.documentElement.dataset.theme==='day'?'🌙':'☀️';if(wantMic)immUI(true)}
 function immPlay(){if(player.on){togglePause();return}const p=shownPage,k=PG[p]&&PG[p].some(i=>ALL[i].k===curK())?curK():ALL[PG[p][0]].k;startPlayer('reciter',k,false)}
 document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&immOn&&immFs)closeImm()});
-document.addEventListener('keydown',e=>{if(!immOn)return;if(e.key==='Escape')closeImm();else if(e.key==='ArrowLeft')turn(1);else if(e.key==='ArrowRight')turn(-1)});
+document.addEventListener('keydown',e=>{if(!immOn)return;if(e.key==='Escape')closeImm();else if(e.key==='ArrowLeft')turnPage(1);else if(e.key==='ArrowRight')turnPage(-1)});
+/* go to a surah / ayah (from the full-screen title) */
+function openGo(){if(!Q.length)return;closeWs();const g=$('goSur');if(!g.options.length)g.innerHTML=Q.map(x=>`<option value="${x.n}">${x.n}. ${x.name}</option>`).join('');
+ g.value=cur.s;goFill();$('goAya').value=cur.a;$('goSheet').classList.add('on');if(immOn){clearTimeout(immT);$('imm').classList.remove('bare')}}
+function goFill(){const n=+$('goSur').value;$('goAya').innerHTML=Q[n-1].a.map((_,i)=>`<option value="${i+1}">${i+1}</option>`).join('')}
+function closeGo(){$('goSheet').classList.remove('on');if(immOn)immUI(true)}
+function goNow(){const n=+$('goSur').value,a=+$('goAya').value;closeGo();if(mode==='revise')reviseGoTo(n,a);else selectAyah(n,a)}
 let sx=null,sy=0;
 /* swipe to turn pages (on the page, and on the margins around it in full screen) */
 [$('mushaf'),$('imPage')].forEach(z=>{const own=e=>z.id==='mushaf'||!e.target.closest('#mushaf');
  z.addEventListener('touchstart',e=>{if(own(e)){sx=e.touches[0].clientX;sy=e.touches[0].clientY}},{passive:true});
- z.addEventListener('touchend',e=>{if(sx===null||!own(e))return;const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;sx=null;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)turn(dx>0?1:-1)},{passive:true})});
+ z.addEventListener('touchend',e=>{if(sx===null||!own(e))return;const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;sx=null;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)turnPage(dx>0?1:-1)},{passive:true})});
+/* Skip / Back buttons: in Revise they move through the due list, otherwise they turn the page */
 function turn(d){if(!Q.length)return;
  if(mode==='revise'){if(queue.length>1){if(d>0)queue.push(queue.shift());else queue.unshift(queue.pop())}nextRevise();return}
+ turnPage(d)}
+/* swipe / arrows: always turn the page (in Revise: revise that page freely, words hidden) */
+function turnPage(d){if(!Q.length)return;
  const p=Math.max(1,Math.min(604,(shownPage||pageOf(cur.s,cur.a))+d));if(p===shownPage||!PG[p])return;
- const x=ALL[PG[p][0]];cur={s:x.s,a:x.a};resetProg();peek.clear();if(player.on)stopPlayer();renderPage(p);updInfo()}
+ const x=ALL[PG[p][0]];if(mode==='revise'){reviseGoTo(x.s,x.a);return}
+ cur={s:x.s,a:x.a};resetProg();peek.clear();if(player.on)stopPlayer();renderPage(p);updInfo()}
 function pickSurah(){if(player.on)stopPlayer();cur={s:+$('sur').value,a:1};resetProg();peek.clear();showCur()}
 function pickAyah(){if(player.on)stopPlayer();cur.a=+$('aya').value;resetProg();peek.clear();showCur()}
 function stepAyah(d,keep){const i=Math.max(0,Math.min(ALL.length-1,ord(curK())-1+d)),x=ALL[i];cur={s:x.s,a:x.a};resetProg(keep);peek.clear();showCur()}
@@ -840,7 +864,7 @@ function setMode(m){
  hide=false;
  if(m==='learn'&&S.last){const[s,a]=S.last.split(':').map(Number);if(Q[s-1]&&a<=Q[s-1].a.length)cur={s,a}}
  showCur()}
-function nextRevise(){const pr=$('practice');follow=false;
+function nextRevise(){const pr=$('practice');follow=false;revScope='page';
  if(!queue.length){pr.classList.add('isEmpty');$('revHead').innerHTML=`<div class="empty"><b>${session?'Revision complete ✦':'All caught up ✦'}</b>${session?'Now on to new ayahs…':'Memorised ayahs come back here when it is time to review them.<button class="gold revMic" id="revMic" onclick="toggleMic()"></button>'}</div>`;micUI();
   if(session){micOff();}if(session){session=false;setTimeout(()=>{if(mode==='revise'){setMode('learn');jumpToNextNew();toast('Revision done ✦ Time for new ayahs')}},1600)}
   refreshToday();return}
@@ -861,7 +885,7 @@ function grade(d,fromMic){
   else toast(d>0?'Masha\'Allah ✦':'Keep at it, you will get there 💛');
   S.rvd[TK()]=(S.rvd[TK()]||0)+1;save();const qi=queue.indexOf(k);if(qi>=0)queue.splice(qi,1);if(!checkMilestones(true))burst();
   if(fromMic){busyUntil=Date.now()+700;setTimeout(()=>{
-    if(follow&&curK()===k&&ord(k)<ALL.length){const x=ALL[ord(k)];cur={s:x.s,a:x.a};hide=true;resetProg(true);peek.clear();showCur();$('revHead').textContent=`Revision · ${queue.length} left`}
+    if(curK()===k&&ord(k)<ALL.length){const x=ALL[ord(k)];follow=true;cur={s:x.s,a:x.a};hide=true;resetProg(true);peek.clear();showCur();$('revHead').textContent=`Revision · ${queue.length} left`}
     else nextRevise();refreshToday()},500)}
   else{resetProg();nextRevise();refreshToday()}
   return}
@@ -890,7 +914,7 @@ const SRERR={'not-allowed':'Microphone access is blocked. Allow the microphone f
 const SIMC=new Map();
 function simC(a,b){const key=a+'|'+b;let v=SIMC.get(key);if(v===undefined){v=sim(a,b);if(SIMC.size>30000)SIMC.clear();SIMC.set(key,v)}return v}
 /* stricter test for one spoken word standing for two ayah words (or the reverse): whole words must line up */
-function joinSim(a,b){if(a.length<4||b.length<4)return false;if(a===b)return true;const sa=skel(a),sb=skel(b);if(sa.length>=3&&sa===sb)return true;
+function joinSim(a,b){if(a.length<4||b.length<4)return false;if(a===b)return true;
  const L=Math.max(a.length,b.length);return Math.abs(a.length-b.length)<=2&&1-lev(a,b)/L>=.8}
 function resetProg(keep){prog={k:Q.length?curK():'',cm:[],end:0,sid:-1};if(!keep)segSnap=lastSaid.slice();clearTimeout(doneT)}
 function micUI(){$('micBtn').classList.toggle('live',wantMic);$('micL').textContent=wantMic?'Listening':'Recite';const rm=$('revMic');if(rm)rm.textContent=wantMic?'Listening… start any ayah':'🎙 Recite any ayah from memory';paint();immBar()}
@@ -915,7 +939,7 @@ function micStart(){
  try{r.start();wantMic=true;micUI()}
  catch(e){rec=null;wantMic=false;micUI();$('heard').textContent='Could not start the microphone. Tap Recite again.'}}
 function micOff(){wantMic=false;const r=rec;rec=null;if(r){try{r.abort()}catch(e){}}clearTimeout(doneT);clearTimeout(evT);if(Q.length)micUI()}
-function toggleMic(){if(!Q.length)return;micResume=false;if(wantMic)micOff();else{quick=0;heardAt=Date.now();if(mode==='revise'&&!AIX)setTimeout(buildAIX,30);micStart();if(wantMic&&Date.now()>busyUntil)$('heard').textContent='Listening… start reciting'}}
+function toggleMic(){if(!Q.length)return;micResume=false;if(wantMic)micOff();else{quick=0;heardAt=Date.now();revScope='all';if(mode==='revise')resetProg() /* tapping the mic in Revise is a fresh start */;if(mode==='revise'&&!AIX)setTimeout(buildAIX,30);micStart();if(wantMic&&Date.now()>busyUntil)$('heard').textContent='Listening… start reciting'}}
 function onHeard(t){lastSaid=norm(t).split(' ').filter(Boolean);heardAt=Date.now();
  $('heard').textContent=t.trim().split(/\s+/).slice(-7).join(' ');immBar();tryEval()}
 function tryEval(){clearTimeout(evT);
@@ -924,26 +948,28 @@ function tryEval(){clearTimeout(evT);
  if($('practice').classList.contains('isEmpty')){if(mode==='revise')reviseSearch();return}
  evaluate()}
 /* ---------- revise: recite any ayah and the app finds it, then follows you ---------- */
-let AIX=null,follow=false;
+let AIX=null,follow=false,revScope='all'; /* where Revise may look for the ayah you start: 'all' (you just tapped the mic), 'page' (after moving to a page), '' (locked on: follow in order) */
 const akey=w=>{const k=skel(w);return k.length>=2?k:w};
 function buildAIX(){if(AIX||!ALL.length)return;const ix=new Map();
  for(let n=0;n<ALL.length;n++){const x=ALL[n],W=wordsOf(x.s,x.a);for(let i=0;i+1<W.length;i++){const b=akey(W[i].n)+' '+akey(W[i+1].n);let l=ix.get(b);if(!l)ix.set(b,l=[]);if(l[l.length-1]!==n)l.push(n)}}
  AIX=ix}
 /* which ayah are these words from? needs 3+ words in order and a clear winner; the current ayah, the next one, memorised ayahs and starting at the beginning count in its favour */
-function findAyah(ws){if(ws.length<3)return null;buildAIX();if(!AIX)return null;
+function findAyah(ws,onlyPage){if(ws.length<3)return null;buildAIX();if(!AIX)return null;
  const ck=curK(),near=ord(ck),keys=ws.map(akey),votes=new Map();
  for(let i=0;i+1<keys.length;i++){const l=AIX.get(keys[i]+' '+keys[i+1]);if(!l||l.length>300)continue;for(const n of l)votes.set(n,(votes.get(n)||0)+1)}
  let best=null,b2=-1;
- for(const [n] of [...votes].sort((a,b)=>b[1]-a[1]).slice(0,40)){const x=ALL[n],W=wordsOf(x.s,x.a).map(w=>w.n),r=align(ws,W,x.a===1||x.k==='42:2');
+ for(const [n] of [...votes].sort((a,b)=>b[1]-a[1]).slice(0,40)){const x=ALL[n];if(onlyPage&&x.p!==onlyPage)continue;const W=wordsOf(x.s,x.a).map(w=>w.n),r=align(ws,W,x.a===1||x.k==='42:2');
   let m=0,first=-1;r.m.forEach((v,i)=>{if(v){m++;if(first<0)first=i}});if(m<3)continue;
   const on=n+1,sc=m+(first===0?0.6:0)+(r.used[ws.length-1]?0.5:0)+(S.lv[x.k]===3?0.4:0)+(x.k===ck?2:on===near+1?1.5:Math.abs(on-near)<8?0.3:0);
   if(!best||sc>best.sc){if(best)b2=Math.max(b2,best.sc);best={x,sc}}else b2=Math.max(b2,sc)}
  return best&&best.sc>=b2+0.9?best.x:null}
 /* where the found ayah starts in what was said: look a few words before the unmatched tail, so opening words said before it became clear still count */
 function cutFor(x,seg,b0,from){const W=wordsOf(x.s,x.a).map(w=>w.n),st=Math.max(0,from-6),r=align(seg.slice(st),W,x.a===1||x.k==='42:2'),q=r.used.indexOf(true);return b0+st+(q<0?from-st:q)}
-function jumpTo(x,cut){segSnap=lastSaid.slice(0,cut);cur={s:x.s,a:x.a};hide=true;follow=true;resetProg(true);peek.clear();
+function jumpTo(x,cut){segSnap=lastSaid.slice(0,cut);cur={s:x.s,a:x.a};hide=true;follow=true;revScope='';resetProg(true);peek.clear();
  $('practice').classList.remove('isEmpty');showCur();$('revHead').textContent=`Revision · ${queue.length} left`;$('heard').textContent=`↪ ${Q[x.s-1].name} · Ayah ${x.a}`}
-function reviseSearch(){const b0=segStart(lastSaid),seg=lastSaid.slice(b0),ws=seg.slice(-12),x=findAyah(ws);if(x){jumpTo(x,cutFor(x,seg,b0,seg.length-ws.length));evaluate(true)}}
+/* you chose a place in Revise (page turn, Go to, ayah number): revise from there, words hidden */
+function reviseGoTo(n,a){if(player.on)stopPlayer();cur={s:n,a};hide=true;follow=true;revScope='page';resetProg();peek.clear();$('practice').classList.remove('isEmpty');showCur();$('revHead').textContent=`Revision · ${queue.length} left`}
+function reviseSearch(){if(!revScope)return;const b0=segStart(lastSaid),seg=lastSaid.slice(b0),ws=seg.slice(-12),x=findAyah(ws,revScope==='page'?shownPage:0);if(x){jumpTo(x,cutFor(x,seg,b0,seg.length-ws.length));evaluate(true)}}
 /* where the current ayah starts in the session transcript (words before it belonged to the previous ayah) */
 function segStart(said){const L=segSnap.length;if(!L)return 0;
  let k=0;while(k<L&&k<said.length&&said[k]===segSnap[k])k++;if(k===L)return L;
@@ -988,16 +1014,23 @@ function evaluate(jumped){
  const p2=align(rest,W,muq,skip);let lastUsed=-1;
  p1.used.forEach((u,q)=>{if(u&&q>lastUsed)lastUsed=q});p2.used.forEach((u,q)=>{if(u&&idx[q]>lastUsed)lastUsed=idx[q]});
  W.forEach((_,i)=>{if(p2.m[i])cm[i]=true});
- if(mode==='revise'&&wantMic&&!jumped&&seg.length>=3){/* at most one of the last few words fits this ayah: look for the ayah being recited */
+ let real=0,got=0,lastReal=-1,lastHit=-1,firstHit=-1;W.forEach((w,i)=>{if(w){real++;lastReal=i;if(cm[i]){got++;lastHit=i;if(firstHit<0)firstHit=i}}});
+ const sc=got/(real||1),th=S.th||.8;
+ if(mode==='revise'&&wantMic&&!jumped&&seg.length>=3){
+  if(revScope){for(let i=0;i<=2;i++)if(cm[i]&&cm[i+1]&&cm[i+2]){revScope='';break}}  /* 3 words in a row from the start of the ayah on screen: lock on and follow in order */
   const usedAll=p1.used.slice();p2.used.forEach((u,q)=>{if(u)usedAll[idx[q]]=true});const rc=Math.min(4,seg.length);let u=0;for(let q=seg.length-rc;q<seg.length;q++)if(usedAll[q])u++;
-  if(u<=1){const ws=seg.slice(-12),x=findAyah(ws);if(x&&x.k!==k){jumpTo(x,cutFor(x,seg,b0,seg.length-ws.length));evaluate(true);return}}}
+  if(u<=1){/* at most one of the last few words fits this ayah */
+   if(revScope){const ws=seg.slice(-12),x=findAyah(ws,revScope==='page'?shownPage:0);if(x&&x.k!==k){jumpTo(x,cutFor(x,seg,b0,seg.length-ws.length));evaluate(true);return}}
+   else{const nx=ALL[ord(k)];if(nx){/* locked on: only step on to the next ayah, never jump elsewhere (a slip into a similar ayah shows as a mistake) */
+    const ws=seg.slice(-8),Wn=wordsOf(nx.s,nx.a).map(w=>w.n),r=align(ws,Wn,nx.a===1||nx.k==='42:2');let m=0,f=-1;r.m.forEach((v,i)=>{if(v){m++;if(f<0)f=i}});
+    if(m>=3&&f>=0&&f<=1){prog.cm=cm;follow=true;if(sc>=th){complete(sc);return}
+     toast(`Moving on to ayah ${nx.a}`);jumpTo(nx,cutFor(nx,seg,b0,seg.length-ws.length));evaluate(true);return}}}}}
  prog.cm=cm;if(lastUsed>=0){prog.end=b0+lastUsed+1;prog.sid=sid}
- let real=0,got=0,lastReal=-1,lastHit=-1;W.forEach((w,i)=>{if(w){real++;lastReal=i;if(cm[i]){got++;lastHit=i}}});
- const sc=got/(real||1);paint();
+ paint();
  const map=mapFor(k);
  if(map&&wantMic&&!prog.turned){let nx=-1;for(let i=lastHit+1;i<W.length;i++)if(W[i]){nx=i;break}
   const mx=map.reduce((a,el,i)=>el?i:a,-1);if(nx>mx&&mx>=0&&got>0&&shownPage<604){prog.turned=true;renderPage(shownPage+1)}}
- clearTimeout(doneT);const th=S.th||.8;
+ clearTimeout(doneT);
  if((cm[lastReal]&&sc>=th)||sc>=.999)complete(sc);
  else if(sc>=th)doneT=setTimeout(()=>{if(prog.k===k&&wantMic)complete(sc)},3500) /* last word not heard yet: give time to recall it */}
 function complete(sc){clearTimeout(doneT);const e=prog.sid===sid?prog.end:0;segSnap=lastSaid.slice(0,Math.min(e,lastSaid.length));
@@ -1217,7 +1250,7 @@ async function applyUpdate(){
  location.replace(APP_URL+'?u='+encodeURIComponent(updSig)+location.hash)}
 
 /* ---------- tabs & init ---------- */
-function tab(n){closeImm();closeWs();document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.id===n));
+function tab(n){closeImm();closeWs();closeGo();document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.id===n));
  ['today','journey','mine','feedback'].forEach(x=>$('n-'+x).classList.toggle('on',x===n));
  if(n!=='today'){micOff();stopRecording()}else requestAnimationFrame(fitLines);
  if(n==='journey')renderJourney();if(n==='mine')markGrids();if(n==='today')refreshToday();scrollTo(0,0)}
